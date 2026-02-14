@@ -1,0 +1,11 @@
+Hi {{name}},
+
+Thanks for reaching out! I have a few times available:
+
+• {{option_1}}
+• {{option_2}}
+• {{option_3}}
+
+Let me know which works best for you, or if you'd prefer a different time.
+
+{{signature}}
