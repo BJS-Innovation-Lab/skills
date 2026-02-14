@@ -9,6 +9,7 @@ Shared capabilities for BJS Labs AI agents (Sam, Sage, Sybil, Saber).
 | [a2a-protocol](./a2a-protocol/) | Agent-to-Agent communication via WebSocket relay | ✅ Active |
 | [agentic-learning](./agentic-learning/) | Self-improving memory, decisions, and evolution | ✅ Active |
 | [appointment-booking](./appointment-booking/) | WhatsApp scheduling synced to Google Calendar | ✅ Active |
+| [research-intelligence](./research-intelligence/) | Automated research discovery + synthesis (arXiv, Semantic Scholar) | ✅ Active |
 | [content-creation](./content-creation/) | Content creation with voice extraction + creative process | ✅ Active |
 | [creativity-engine](./creativity-engine/) | Stakes Protocol + Semantic Memory Mining for creative content | ✅ Active |
 | [decision-frameworks](./decision-frameworks/) | Structured decision-making patterns | ✅ Active |
