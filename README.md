@@ -8,9 +8,12 @@ Shared capabilities for BJS Labs AI agents (Sam, Sage, Sybil, Saber).
 |-------|-------------|--------|
 | [a2a-protocol](./a2a-protocol/) | Agent-to-Agent communication via WebSocket relay | ✅ Active |
 | [agentic-learning](./agentic-learning/) | Self-improving memory, decisions, and evolution | ✅ Active |
+| [content-creation](./content-creation/) | Content creation with voice extraction + creative process | ✅ Active |
 | [creativity-engine](./creativity-engine/) | Stakes Protocol + Semantic Memory Mining for creative content | ✅ Active |
 | [decision-frameworks](./decision-frameworks/) | Structured decision-making patterns | ✅ Active |
 | [email-drafter](./email-drafter/) | Business email drafting with templates | ✅ Active |
+| [marketing-creativity](./marketing-creativity/) | Brand voice extraction + living client profiles | ✅ Active |
+| [marketing-module](./marketing-module/) | Marketing entry point, enforces client profiles | ✅ Active |
 | [meeting-summarizer](./meeting-summarizer/) | Voice-dictated notes → structured summaries | ✅ Active |
 | [smb-crm](./smb-crm/) | Customer database for Mexican SMBs (Sheets + Supabase) | ✅ Active |
 | [evolver](./evolver/) | Capability evolution engine | 🔧 Beta |
