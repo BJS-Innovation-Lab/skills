@@ -22,7 +22,40 @@ Reference: Mikkilineni (2026) "Comparing Agentic AI with Mindful Machine Impleme
 
 ---
 
-## Three Checks
+## Critical: Drift vs Evolution
+
+**Not all change is bad.** The brand profile is a LIVING document, not a constitution.
+
+| | Drift (bad) | Evolution (good) |
+|---|------------|------------------|
+| **Source** | Agent forgetting or getting lazy | Owner feedback, customer language, results data |
+| **Direction** | Toward generic/template | Toward more specific/authentic |
+| **Owner aware?** | No — happens silently | Yes — driven by their input or approved |
+| **Action** | Correct back to profile | UPDATE the profile |
+
+### How Brand Evolution Happens Naturally
+
+The agent should update brand docs when:
+
+1. **Owner gives voice feedback** — "I love that tone" / "Too formal" / "More like this" → update voice.md dimensions and log the shift
+2. **Customer language evolves** — new phrases, new ways of describing the product → add to customers.md
+3. **Results show a pattern** — casual posts get 3x engagement → propose voice.md update to owner: "Data suggests shifting Funny↔Serious from 40 to 30. Want to try it?"
+4. **Business pivots** — new product, new market, new values → trigger a mini-intake (3-5 questions, not full 14)
+
+### The Rule
+- **Agent detects a change → proposes update → owner approves → profile evolves**
+- The agent NEVER silently updates the brand profile. Always ask.
+- Log every profile change in the document's changelog with date and reason.
+
+### In the Coherence Check
+When scoring voice match, the check should ask:
+- "Is this deviation moving toward generic (drift) or toward something more specific and authentic (evolution)?"
+- If evolution: flag it as a **profile update opportunity**, not a violation
+- If drift: flag it as a correction needed
+
+---
+
+## Four Checks
 
 ### 1. Voice Drift Check (Weekly)
 
@@ -129,6 +162,50 @@ Reference: Mikkilineni (2026) "Comparing Agentic AI with Mindful Machine Impleme
 
 **Recommendation:** Add emoji usage guidelines to voice.md. Keep proactive suggestions — it's good behavior.
 ```
+
+---
+
+### 4. Brand Evolution Check (Weekly, alongside Voice Drift)
+
+**What:** Identify moments where the brand profile should be UPDATED, not enforced.
+
+**Process:**
+1. Review the week's owner interactions — look for voice feedback, tone corrections, new preferences
+2. Review customer language — any new phrases or ways of describing the product?
+3. Review content performance — which pieces got the best engagement? What's the pattern?
+4. Compare: does the current voice.md still match where the owner is heading?
+
+**Output:**
+```markdown
+## 🌱 Brand Evolution Report — {date}
+
+### Owner Signals
+- Owner said "I love how casual that WhatsApp message was" (Feb 12) → voice.md Casual↔Formal may need adjusting from 30 to 25
+- Owner rejected a formal email subject line twice this week → pattern, not one-off
+
+### Customer Language
+- New phrase from customers: "mi compañero digital" (my digital partner) → add to customers.md
+- 3 customers used "tranquilidad" when describing the product → matches Johan's "socio estratégico" framing
+
+### Performance Data
+- Posts with emojis: 2.5x engagement vs without → consider adding emoji guidelines to voice.md
+- Spanish-only posts outperformed bilingual 3:1 → market signal
+
+### Proposed Profile Updates
+1. **voice.md** — Shift Casual↔Formal from 30 → 25 (owner keeps pushing more casual)
+2. **customers.md** — Add "mi compañero digital" to customer language section
+3. **voice.md** — Add emoji usage guidelines (currently not mentioned)
+
+**⚠️ These are proposals. Send to owner for approval before updating.**
+```
+
+**The approval flow:**
+1. Agent compiles proposals
+2. Sends to owner via preferred channel: "Hey! Based on this week, I think our brand voice is evolving. Here are 3 small updates I'd suggest. Want me to make them?"
+3. Owner approves/rejects/modifies
+4. Agent updates the docs and logs the change
+
+This keeps the brand alive without the agent going rogue.
 
 ---
 
