@@ -1,0 +1,25 @@
+{
+  "name": "agentic-learning",
+  "version": "0.1.0",
+  "description": "Self-improving memory, decision-making, and evolution for AI agents",
+  "author": "BJS Labs",
+  "private": true,
+  "license": "PROPRIETARY",
+  "keywords": [
+    "learning",
+    "memory",
+    "decisions",
+    "self-improvement",
+    "evolution",
+    "procedures"
+  ],
+  "dependencies": [
+    "failure-analyzer",
+    "reflect-learn",
+    "decision-frameworks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BJS-Innovation-Lab/agentic-learning.git"
+  }
+}
