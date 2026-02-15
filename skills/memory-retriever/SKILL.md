@@ -254,21 +254,37 @@ Return:
 - **Memory Sync (RAG)** — retriever can use Supabase vector search for semantic queries
 - **Boot Memory Audit** — retriever can check MEMORY.md accuracy against source files
 
-### Supabase Vector Search (Advanced)
+### Supabase Integration (CORE — Not Optional)
 
-For semantic search beyond file scanning, the retriever can query the RAG database:
+The retriever searches THREE sources simultaneously:
 
-```javascript
-// The retriever sub-agent can run this
-const { data } = await supabase.rpc('match_documents', {
-  query_embedding: embedding,
-  match_threshold: 0.7,
-  match_count: 10,
-  filter_agent: 'sybil'
-});
+1. **Local files** — keyword search across memory/*.md, working/, learning/
+2. **RAG embeddings** — semantic vector search in Supabase (agent-specific documents)
+3. **BJS Knowledge Base** — shared KB with procedures, best practices, tool guides
+
+**The sub-agent should run the unified search tool:**
+
+```bash
+# Search all sources
+node skills/memory-retriever/scripts/search-supabase.cjs "your query" --sources all
+
+# Search specific sources
+node skills/memory-retriever/scripts/search-supabase.cjs "calendar fix" --sources kb
+node skills/memory-retriever/scripts/search-supabase.cjs "Santos tokens" --sources rag,files
+
+# Different agent's memory
+node skills/memory-retriever/scripts/search-supabase.cjs "client status" --agent santos
+
+# Output as JSON for programmatic use
+node skills/memory-retriever/scripts/search-supabase.cjs "pricing" --json
 ```
 
-This enables: "find memories SIMILAR to X" even if the exact words don't match.
+**Why all three matter:**
+- **Files** catch things not yet synced to Supabase (last 30 min)
+- **RAG** finds semantically similar content even with different wording
+- **KB** surfaces team-wide knowledge the agent might not have locally
+
+The retriever sub-agent should ALWAYS use `--sources all` unless there's a specific reason to narrow it.
 
 ## Usage Examples
 
