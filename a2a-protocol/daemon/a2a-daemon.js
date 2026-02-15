@@ -182,32 +182,30 @@ async function triggerOpenClawWake(message, attempt = 1) {
   
   // Build context-rich wake message
   const contentPreview = typeof message.content === 'string' 
-    ? message.content.slice(0, 150)
-    : JSON.stringify(message.content).slice(0, 150);
+    ? message.content.slice(0, 300)
+    : JSON.stringify(message.content).slice(0, 300);
   
   const priorityEmoji = { low: '⚪', normal: '🔵', high: '🟠', urgent: '🔴' };
   const pEmoji = priorityEmoji[message.priority] || '🔵';
   
-  const wakeText = `[SYSTEM A2A] 📨 Mensaje de ${message.fromName}
-━━━━━━━━━━━━━━━━━
-De: ${message.fromName} (${message.from})
-Asunto: ${message.subject || 'Sin asunto'}
-Prioridad: ${pEmoji} ${message.priority || 'normal'}
-━━━━━━━━━━━━━━━━━
-Contenido: ${contentPreview}
-━━━━━━━━━━━━━━━━━
-INSTRUCCIONES: Lee el skill a2a-protocol. Procesa este mensaje y responde via A2A.
-Comando para responder: ./scripts/daemon-send.sh ${message.from} '{"respuesta":"..."}' --type response`;
+  const wakeText = `[A2A] 📨 Message from ${message.fromName} | ${message.subject || 'No subject'} | ${pEmoji} ${message.priority || 'normal'} — Check A2A inbox for full message.`;
   
-  // Use openclaw agent CLI to inject message into the session
+  // IMPORTANT: Use system event, NOT agent --message
+  // agent --message creates an isolated session that auto-responds with incomplete context
+  // system event queues a notification for the MAIN session to see on next heartbeat/interaction
+  //
+  // For high-priority messages, use --mode now to wake immediately
+  // For normal priority, use next-heartbeat to avoid interrupting
+  const wakeMode = (message.priority === 'high' || message.priority === 'urgent') ? 'now' : 'next-heartbeat';
+  
   const escapedText = wakeText.replace(/"/g, '\\"').replace(/\n/g, ' ');
-  const cmd = `openclaw agent --message "${escapedText}" --session-id main --json`;
+  const cmd = `openclaw system event --text "${escapedText}" --mode ${wakeMode} --json`;
   
-  log('🔗 Triggering OpenClaw via CLI...', { command: 'openclaw agent', attempt });
+  log('🔗 Triggering OpenClaw via system event...', { mode: wakeMode, attempt });
   
-  exec(cmd, { timeout: 60000 }, (err, stdout, stderr) => {
+  exec(cmd, { timeout: 30000 }, (err, stdout, stderr) => {
     if (err) {
-      log('⚠️ OpenClaw agent CLI failed', { error: err.message, attempt, stderr: stderr?.slice(0, 200) });
+      log('⚠️ OpenClaw system event failed', { error: err.message, attempt, stderr: stderr?.slice(0, 200) });
       
       // Retry logic
       if (attempt < WAKE_MAX_RETRIES) {
@@ -218,7 +216,7 @@ Comando para responder: ./scripts/daemon-send.sh ${message.from} '{"respuesta":"
         triggerWakeViaFile(wakeText);
       }
     } else {
-      log('⚡ OpenClaw wake triggered via CLI!', { stdout: stdout?.slice(0, 200) });
+      log('⚡ OpenClaw system event queued!', { mode: wakeMode, stdout: stdout?.slice(0, 200) });
     }
   });
 }
