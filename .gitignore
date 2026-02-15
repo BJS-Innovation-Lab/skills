@@ -1,31 +1,19 @@
-# OS
-.DS_Store
-Thumbs.db
+# Secrets
+.env
+.env.local
+rag/.env
+client_secret*.json
+
+# State files
+rag/.sync-state.json
+rag/.last-index
 
 # Dependencies
 node_modules/
-package-lock.json
+venv/
 
-# Environment
-.env
-.env.local
-*.local
+# OS
+.DS_Store
 
-# Logs
-*.log
-logs/
-
-# Build
-dist/
-build/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Secrets (never commit)
-**/secrets/
-*.key
-*.pem
+# 1password env (contains op:// refs, not secrets, but skip anyway)
+*.env.1password
