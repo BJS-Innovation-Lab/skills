@@ -323,6 +323,63 @@ Load all context about Café Bonito client.
 ```
 **Gets back:** Brand profile, previous content created, María's preferences, price point ($5.50 lattes), tone (elegante pero cálido), known issue (wrong price incident), prevention protocol in place.
 
+## Tools
+
+### Unified Search (search-supabase.cjs)
+Three-source search: local files + RAG embeddings + BJS Knowledge Base.
+
+### Auto-Retrieve (auto-retrieve.cjs)
+Smart-trigger classifier → automatic search. Pass a message, it decides if retrieval is needed and runs the search if so. Returns JSON with trigger decision + results.
+
+```bash
+node skills/memory-retriever/scripts/auto-retrieve.cjs "what did Santos say about tokens?"
+# → triggered: true, tier: shared, 23 results
+
+node skills/memory-retriever/scripts/auto-retrieve.cjs "hey how's it going"
+# → triggered: false, no search
+```
+
+### Outcome Checker (outcome-checker.cjs)
+Scans learning entries for corrections/insights without outcomes, then uses the retriever to search for evidence. Replaces manual file scanning.
+
+```bash
+node skills/agentic-learning/scripts/outcome-checker.cjs           # Check 3+ day old entries
+node skills/agentic-learning/scripts/outcome-checker.cjs --min-age 0  # Check all entries
+node skills/agentic-learning/scripts/outcome-checker.cjs --json       # For sub-agent consumption
+```
+
+### Pre-Compaction Save (pre-compaction-save.cjs)
+Emergency memory dump before context compaction. Appends timestamped snapshot to daily log.
+
+```bash
+node skills/memory-retriever/scripts/pre-compaction-save.cjs "Bridget approved the callback rule for A2A. Commit a9a0b34."
+```
+
+**When to use:** When you notice context is getting heavy (long conversation, many tool calls, approaching compaction). Save critical recent context that might be lost.
+
+## Benchmark Results
+
+Tested Feb 15, 2026 (7 queries by Sybil + Saber):
+- **memory_search (built-in):** 40% miss rate, avg 0.6 results, avg 38% confidence
+- **Sub-agent retriever:** 0% miss rate, avg 15.9 results, multi-source corroboration
+- Sub-agent wins on precision (commits, timestamps, line numbers), gap detection, source citations
+- Built-in wins on speed (no spawn delay)
+- Full benchmark: `research/memory-retriever-benchmark.md`
+
+## Critical Rule: MEMORY.md Curation Stays Manual
+
+The sub-agent retriever is SUPPLEMENTAL, not a replacement for curated boot memory. 
+
+**Risk:** If agents stop curating MEMORY.md because "the retriever will find it," boot context quality degrades over time. The retriever can't help if the agent doesn't know what to ASK for.
+
+**Rule:** MEMORY.md must always contain:
+- Identity + core principles (who am I, how do I operate)
+- Active goals (what am I working on right now)
+- Key pointers (where to find detailed context)
+- Recent learning (what changed recently)
+
+The retriever handles everything else — detailed history, cross-references, evidence, precision lookups.
+
 ## For All Agents
 
 This skill works for every agent in the team. Each agent searches their OWN memory files. The retriever sub-agent inherits the spawning agent's file access.
