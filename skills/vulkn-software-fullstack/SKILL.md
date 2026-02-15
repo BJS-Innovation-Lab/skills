@@ -100,10 +100,30 @@ Think deeply about this. Don't default to using both if Next.js API routes can h
 
 ### Git Workflow & Branching
 
+#### 🔴 CRITICAL: Git Author for Vercel Deploys
+
+**ALL commits MUST use the Santos author identity:**
+```bash
+git config user.name "santos-vulkn"
+git config user.email "santos@vulkn-ai.com"
+```
+
+**Why:** Vercel only allows deployments from git authors that have access to the Vercel project. `santos-vulkn` is the account with Vercel access. If you commit with any other author email, Vercel will reject the deploy with: _"Git author must have access to the project on Vercel to create deployments."_
+
+**Set this in every repo you clone, BEFORE your first commit.** Run it once per repo — it's saved in `.git/config`.
+
 ```bash
 # Clone your repos (first time only)
 git clone https://github.com/VULKN-AI/{client}-frontend
 git clone https://github.com/VULKN-AI/{client}-backend
+
+# IMMEDIATELY set author (do this first!)
+cd {client}-frontend
+git config user.name "santos-vulkn"
+git config user.email "santos@vulkn-ai.com"
+cd ../{client}-backend
+git config user.name "santos-vulkn"
+git config user.email "santos@vulkn-ai.com"
 
 # Feature development — use branches
 git checkout -b feat/description
