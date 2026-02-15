@@ -101,30 +101,55 @@ See `railway/SKILL.md`
 - Output: backend URL
 
 ### Step 5: Deliver Keys to Field Agent
-Via A2A, send the field agent their `config/infra.json`:
+Via A2A, send the field agent their `config/infra.json`.
+
+**What field agents receive (project-scoped ONLY):**
 
 ```json
 {
   "client_name": "{client}",
   "github": {
-    "frontend_repo": "https://github.com/BJS-Innovation-Lab/{client}-frontend",
-    "backend_repo": "https://github.com/BJS-Innovation-Lab/{client}-backend"
+    "token": "github_pat_...",
+    "note": "Fine-grained PAT scoped to ONLY their 2 repos (read/write)",
+    "frontend_repo": "https://github.com/VULKN-AI/{client}-frontend",
+    "backend_repo": "https://github.com/VULKN-AI/{client}-backend"
   },
   "supabase": {
-    "project_url": "https://{project_id}.supabase.co",
+    "project_url": "https://{ref}.supabase.co",
     "anon_key": "eyJ...",
     "service_role_key": "eyJ..."
   },
   "vercel": {
     "project_url": "https://{client}.vercel.app",
-    "project_id": "prj_..."
+    "project_token": "prj_token_...",
+    "note": "Project-scoped token — can view logs, deploys, env vars for THIS project only"
   },
   "railway": {
     "service_url": "https://{client}-backend.up.railway.app",
-    "project_id": "..."
+    "project_token": "proj_token_...",
+    "note": "Project token — can view logs, redeploy, manage vars for THIS project only"
   }
 }
 ```
+
+**Token creation checklist per field agent:**
+1. **GitHub** — Create fine-grained PAT via API: scope to VULKN-AI org, repository access ONLY to `{client}-frontend` + `{client}-backend`, permissions: contents (read/write), metadata (read)
+2. **Supabase** — Get anon_key + service_role_key from project API keys (these are already project-scoped by design)
+3. **Vercel** — Create project-scoped token: Dashboard → Project → Settings → Tokens (or via API)
+4. **Railway** — Create project token: `mutation { projectTokenCreate(input: { projectId: "...", name: "field-agent" }) }`
+
+**What field agents can do with these tokens:**
+- ✅ Push code to their repos → auto-deploy
+- ✅ View Vercel deploy logs and errors
+- ✅ View Railway service logs and errors
+- ✅ Read/write to their Supabase DB
+- ✅ Redeploy their services
+
+**What field agents CANNOT do:**
+- ❌ See other clients' projects
+- ❌ Create new projects/repos
+- ❌ Access org-level settings or billing
+- ❌ Modify other agents' infrastructure
 
 ## Security Rules
 

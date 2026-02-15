@@ -17,3 +17,4 @@ venv/
 
 # 1password env (contains op:// refs, not secrets, but skip anyway)
 *.env.1password
+skills/vulkn-software-manager/config/hq-tokens.json
