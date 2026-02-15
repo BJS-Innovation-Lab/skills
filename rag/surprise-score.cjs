@@ -36,11 +36,13 @@ const EMBEDDING_MODEL = 'text-embedding-3-small';
 const EMBEDDING_DIMS = 1536;
 
 // Signal weights (must sum to 1.0)
+// Adjusted per Saber's review: correction signal bumped to 0.25 (strong language signal),
+// topic novelty dropped to 0.15 (keyword overlap is crude, semantic novelty covers most cases)
 const WEIGHTS = {
   semanticNovelty: 0.30,
   contradiction: 0.30,
-  topicNovelty: 0.20,
-  correctionSignal: 0.20,
+  topicNovelty: 0.15,
+  correctionSignal: 0.25,
 };
 
 // Similarity thresholds for classification
@@ -69,6 +71,41 @@ const CORRECTION_PATTERNS = [
   /\bnot\s+true/i,
   /\bopposite\s+of\s+what/i,
 ];
+
+// Negation flip patterns — catches "X works" vs "X does NOT work" (high similarity, opposite meaning)
+const NEGATION_FLIP_PATTERNS = [
+  /\b(does|do|did|is|was|were|are|will|would|should|could|has|have)\s+not\b/i,
+  /\b(doesn't|don't|didn't|isn't|wasn't|weren't|aren't|won't|wouldn't|shouldn't|couldn't|hasn't|haven't)\b/i,
+  /\bnever\b/i,
+  /\bno\s+longer\b/i,
+  /\bstopped?\s+(working|using|doing)/i,
+  /\bfailed?\b/i,
+  /\bbroken?\b/i,
+  /\bdeprecated\b/i,
+];
+
+// Time-sensitive evolution patterns — "old approach" vs "new better approach"
+const EVOLUTION_PATTERNS = [
+  /\b(now|currently|as\s+of|since|after\s+updating?)\b/i,
+  /\b(used\s+to|previously|before|formerly|originally|old\s+approach)\b/i,
+  /\b(better|improved|upgraded?|replaced?|migrated?|switched?\s+to)\b/i,
+  /\b(v[0-9]|version\s+[0-9]|phase\s+[0-9])\b/i,
+  /\b(new\s+approach|new\s+way|now\s+we|going\s+forward)\b/i,
+];
+
+// Domain jargon — common AI/agent terms that should NOT score as novel topics
+const KNOWN_JARGON = new Set([
+  'embedding', 'embeddings', 'vector', 'vectors', 'cosine', 'similarity',
+  'agent', 'agents', 'multi-agent', 'agentic', 'autonomous',
+  'prompt', 'prompts', 'context', 'token', 'tokens', 'inference',
+  'supabase', 'postgres', 'database', 'schema', 'migration',
+  'memory', 'retrieval', 'recall', 'working', 'episodic', 'semantic',
+  'learning', 'reinforcement', 'correction', 'insight', 'outcome',
+  'deployment', 'daemon', 'socket', 'relay', 'webhook',
+  'notion', 'telegram', 'discord', 'whatsapp', 'openclaw',
+  'heartbeat', 'cron', 'session', 'bootstrap', 'onboarding',
+  'escalation', 'field', 'client', 'owner', 'founder',
+]);
 
 // Contradiction indicators (negation + assertion patterns)
 const CONTRADICTION_PATTERNS = [
@@ -252,13 +289,32 @@ function computeContradiction(text, inputEmbedding, existingEntries, existingEmb
     }
   }
   
-  // Combine: pattern-based (40%) + embedding-based (60%)
-  const score = (patternScore * 0.4) + (embeddingContradiction * 0.6);
+  // Negation flip detection: high similarity + negation language = likely contradiction
+  // Catches "X works" vs "X does NOT work" — embedding sees them as similar, but meaning flips
+  let negationFlipScore = 0;
+  let negationMatches = 0;
+  for (const pattern of NEGATION_FLIP_PATTERNS) {
+    if (pattern.test(text)) negationMatches++;
+  }
+  if (negationMatches > 0 && existingEmbeddings.length > 0) {
+    for (let i = 0; i < existingEmbeddings.length; i++) {
+      const sim = cosineSimilarity(inputEmbedding, existingEmbeddings[i].embedding);
+      // Very high similarity + negation = strong contradiction signal
+      if (sim > 0.75) {
+        negationFlipScore = Math.max(negationFlipScore, sim * Math.min(1.0, negationMatches * 0.4));
+      }
+    }
+  }
+
+  // Combine: pattern-based (30%) + embedding-based (40%) + negation flips (30%)
+  const score = (patternScore * 0.3) + (embeddingContradiction * 0.4) + (negationFlipScore * 0.3);
   
   return {
     score: Math.min(1.0, score),
     patternMatches: matchCount,
     embeddingContradiction,
+    negationFlipScore: Math.round(negationFlipScore * 1000) / 1000,
+    negationMatches,
   };
 }
 
@@ -288,12 +344,17 @@ function computeTopicNovelty(text, existingEntries) {
   }
   
   // Count how many input words are NOT in existing topics
-  const novelWords = words.filter(w => !existingTopics.has(w));
+  // Filter out known jargon — new jargon terms shouldn't score as novel topics
+  const novelWords = words.filter(w => !existingTopics.has(w) && !KNOWN_JARGON.has(w));
   const novelRatio = words.length > 0 ? novelWords.length / words.length : 1.0;
+  
+  // Jargon penalty: if most "novel" words are just jargon, reduce score
+  const jargonFiltered = words.filter(w => !existingTopics.has(w) && KNOWN_JARGON.has(w));
   
   return {
     score: Math.min(1.0, novelRatio * 1.5), // scale up slightly (50% novel words = 0.75 score)
     novelWords: novelWords.slice(0, 5),
+    jargonFiltered: jargonFiltered.length,
     totalWords: words.length,
   };
 }
@@ -324,11 +385,25 @@ function computeCorrectionSignal(text) {
 }
 
 // ── Classification ──────────────────────────────────────────────────
-function classify(surpriseScore, maxSimilarity) {
+function classify(surpriseScore, maxSimilarity, text) {
+  // Check for time-sensitive evolution: "old approach" vs "new better approach"
+  // Looks like contradiction but is actually temporal evolution — don't reject
+  let evolutionMatches = 0;
+  for (const pattern of EVOLUTION_PATTERNS) {
+    if (pattern.test(text)) evolutionMatches++;
+  }
+  const isTemporalEvolution = evolutionMatches >= 2;
+
   if (maxSimilarity > THRESHOLDS.duplicate) {
+    if (isTemporalEvolution) {
+      return { action: 'merge_as_update', label: 'TEMPORAL_UPDATE', detail: 'Same topic but newer information. Merge as timestamped update — old approach → new approach.' };
+    }
     return { action: 'skip_or_merge', label: 'DUPLICATE', detail: 'Likely duplicate. Check if it adds new evidence — if yes, merge; if no, skip.' };
   }
   if (maxSimilarity > THRESHOLDS.evolution) {
+    if (isTemporalEvolution) {
+      return { action: 'merge_as_update', label: 'TEMPORAL_UPDATE', detail: 'Same idea with temporal evolution. Store update with timestamp, keep old for history.' };
+    }
     return { action: 'merge', label: 'EVOLUTION', detail: 'Same idea evolving. Merge into existing entry\'s evolution field with timestamp.' };
   }
   if (maxSimilarity > THRESHOLDS.related) {
@@ -374,7 +449,7 @@ async function computeSurpriseScore(inputText) {
     (correctionResult.score * WEIGHTS.correctionSignal);
   
   // 5. Classification
-  const classification = classify(surpriseScore, semanticResult.maxSimilarity);
+  const classification = classify(surpriseScore, semanticResult.maxSimilarity, inputText);
   
   return {
     score: Math.round(surpriseScore * 1000) / 1000,
@@ -390,6 +465,8 @@ async function computeSurpriseScore(inputText) {
         score: Math.round(contradictionResult.score * 1000) / 1000,
         weight: WEIGHTS.contradiction,
         patternMatches: contradictionResult.patternMatches,
+        negationFlipScore: contradictionResult.negationFlipScore,
+        negationMatches: contradictionResult.negationMatches,
       },
       topicNovelty: {
         score: Math.round(topicResult.score * 1000) / 1000,
