@@ -14,6 +14,7 @@ const { io } = require('socket.io-client');
 const fs = require('fs');
 const path = require('path');
 const net = require('net');
+const memoryLogger = require('./memory-logger');
 
 // ============== CONFIG ==============
 const RELAY_URL = process.env.A2A_RELAY_URL || 'https://a2a-bjs-internal-skill-production.up.railway.app';
@@ -270,6 +271,7 @@ function connect() {
 
   socket.on('message', (msg) => {
     addToInbox(msg);
+    memoryLogger.logReceived(msg);
     updateStatus({ messagesReceived: status.messagesReceived + 1 });
   });
 
@@ -369,13 +371,15 @@ function handleIpcCommand(cmd, client) {
       
     case 'send':
       if (socket && socket.connected) {
-        socket.emit('send', {
+        const sendPayload = {
           to: cmd.to,
           content: cmd.content,
           type: cmd.type || 'task',
           subject: cmd.subject || null,
           priority: cmd.priority || 'normal'
-        });
+        };
+        socket.emit('send', sendPayload);
+        memoryLogger.logSent(cmd.to, cmd.toName || cmd.to, cmd.content, sendPayload.type, sendPayload.subject, sendPayload.priority);
         client.write(JSON.stringify({ ok: true, queued: false }) + '\n');
       } else {
         client.write(JSON.stringify({ ok: false, error: 'Not connected' }) + '\n');
@@ -427,11 +431,17 @@ function main() {
     relayUrl: RELAY_URL
   });
   
+  // Initialize memory logger
+  memoryLogger.init();
+  
   // Connect to relay
   connect();
   
   // Start IPC server
   startIpcServer();
+  
+  // Clean up old threads daily
+  setInterval(() => memoryLogger.cleanupThreads(3), 24 * 60 * 60 * 1000);
   
   // Handle shutdown
   process.on('SIGINT', shutdown);
