@@ -102,6 +102,73 @@ Keep a running log at `escalations/YYYY-MM-DD.md`:
 | Escalations per agent per week | Watch for trends | Sudden spike = something wrong |
 | Repeat escalations (same issue) | 0 | If it happens twice, fix the root cause |
 
+## Writing Learnings to BJS Knowledge Base
+
+**After every resolved escalation**, evaluate whether the fix is reusable. If yes, write it to the `bjs_knowledge` table in Supabase so future field agents can self-serve instead of escalating.
+
+### When to Write
+
+| Write to KB? | Situation |
+|-------------|-----------|
+| ✅ **Yes** | You gave a field agent specific instructions that worked |
+| ✅ **Yes** | You found a workaround for a tool/skill issue |
+| ✅ **Yes** | You wrote a de-escalation script that resolved a customer situation |
+| ✅ **Yes** | You discovered a procedure that wasn't documented |
+| ❌ **No** | One-off issue specific to one customer (not generalizable) |
+| ❌ **No** | Issue requires Sage/founder intervention (not self-servable) |
+| ❌ **No** | Already exists in the knowledge base |
+
+### How to Write
+
+Use the `bjs-knowledge-write.cjs` tool (or direct Supabase API):
+
+```bash
+node rag/bjs-knowledge-write.cjs \
+  --title "How to handle customer requesting refund" \
+  --content "When a customer asks for a refund: 1) Acknowledge their frustration. 2) Ask what went wrong. 3) Offer to fix it first. 4) If they insist, route to Johan — agents cannot authorize refunds." \
+  --category "escalation" \
+  --tags "customer-angry,refund,routing" \
+  --created-by "Sam"
+```
+
+### Categories
+
+| Category | Use For |
+|----------|---------|
+| `procedure` | Step-by-step instructions for tasks |
+| `best-practice` | Lessons learned from real escalations |
+| `template` | Response templates that worked |
+| `skill-doc` | How to use a specific tool or skill |
+| `escalation` | When/how to escalate specific issue types |
+| `tool-guide` | Error fixes, workarounds, gotchas |
+
+### Entry Format
+
+Keep entries concise and actionable. Field agents will see these during live conversations — they need answers fast, not essays.
+
+```markdown
+**Title:** Clear, searchable description of the problem/solution
+**Content:** 
+1. What the problem looks like (symptoms)
+2. What to do (step-by-step)
+3. What NOT to do (common mistakes)
+4. When to escalate anyway
+**Tags:** Relevant keywords for semantic search
+```
+
+### The Loop This Closes
+
+```
+Field agent hits problem
+    → Escalates to Sam (CS)
+        → Sam resolves it
+            → Sam writes fix to bjs_knowledge
+                → Next field agent queries bjs_knowledge
+                    → Self-serves without escalating
+```
+
+**Goal:** Every escalation that happens twice is a failure. The first time is learning; the second time means we didn't capture the fix.
+
 ## Rules
 
 1. **Never ignore a 🔴 NOW.** Even if you're busy. Acknowledge within 5 minutes.
@@ -109,3 +176,4 @@ Keep a running log at `escalations/YYYY-MM-DD.md`:
 3. **Customer-wants-human is sacred.** Route to Johan. Don't try to fix it yourself.
 4. **Log everything.** If it's not logged, it didn't happen.
 5. **Spot patterns.** If 3 agents hit the same issue this week, it's not an agent problem — it's a system problem. Escalate to Sage.
+6. **Write reusable fixes to BJS Knowledge Base.** Every resolved escalation is a potential KB entry. If the fix could help another agent, write it.
