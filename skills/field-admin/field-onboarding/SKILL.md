@@ -20,7 +20,7 @@ Run this on the agent's first boot for a new client.
 
 ### ✅ Phase 0: Configuration
 - [ ] `config/field-admin.json` exists and all fields are filled
-- [ ] CS agent ID is set (currently Santos: `e7fabc18-75fa-4294-bd7d-9e5ed0dedacb`)
+- [ ] CS agent ID is set (currently Sam: `62bb0f39-2248-4b14-806d-1c498c654ee7`)
 - [ ] Client timezone is correct
 - [ ] Client language is set
 
@@ -41,7 +41,7 @@ Run this on the agent's first boot for a new client.
 
 ### ✅ Phase 3: HQ Connectivity
 - [ ] A2A daemon running and connected
-- [ ] Test message sent to CS agent (Santos) at HQ
+- [ ] Test message sent to CS agent (Sam) at HQ
 - [ ] Test message received back from CS agent (round-trip confirmed)
 - [ ] Escalation skill loaded and CS agent ID configured from `config/field-admin.json`
 - [ ] Nightly report cron job created using config values (see `CONFIG.md` for exact cron command)

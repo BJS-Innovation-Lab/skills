@@ -12,8 +12,8 @@ Set these in the field agent's workspace at `config/field-admin.json`:
   "client_timezone": "America/Mexico_City",
   "client_language": "es",
   "client_channel": "whatsapp",
-  "cs_agent_id": "e7fabc18-75fa-4294-bd7d-9e5ed0dedacb",
-  "cs_agent_name": "Santos",
+  "cs_agent_id": "62bb0f39-2248-4b14-806d-1c498c654ee7",
+  "cs_agent_name": "Sam",
   "agent_name": "Your agent's name",
   "nightly_report_hour": 23,
   "escalation_enabled": true
@@ -67,4 +67,4 @@ Run this ONCE during field-onboarding to create the nightly report cron:
 
 ## CS Agent ID
 
-**Current:** `e7fabc18-75fa-4294-bd7d-9e5ed0dedacb` (Santos — Client Success / Liaison)
+**Current:** `62bb0f39-2248-4b14-806d-1c498c654ee7` (Sam — Customer Service Agent at HQ)

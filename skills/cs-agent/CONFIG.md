@@ -8,8 +8,8 @@ Set these in the CS agent's workspace at `config/cs-agent.json`:
 
 ```json
 {
-  "cs_agent_name": "Santos",
-  "cs_agent_id": "e7fabc18-75fa-4294-bd7d-9e5ed0dedacb",
+  "cs_agent_name": "Sam",
+  "cs_agent_id": "62bb0f39-2248-4b14-806d-1c498c654ee7",
 
   "founders": {
     "bridget": {
@@ -44,10 +44,10 @@ Set these in the CS agent's workspace at `config/cs-agent.json`:
       "role": "Sales & Marketing",
       "escalate_for": ["marketing skills", "sales questions", "content strategy"]
     },
-    "sam": {
-      "id": "62bb0f39-2248-4b14-806d-1c498c654ee7",
-      "role": "Frontend Lead",
-      "escalate_for": ["UI issues", "dashboard", "webchat platform"]
+    "santos": {
+      "id": "e7fabc18-75fa-4294-bd7d-9e5ed0dedacb",
+      "role": "Field Agent (first deployment)",
+      "escalate_for": ["field agent issues", "client-side problems"]
     }
   },
 

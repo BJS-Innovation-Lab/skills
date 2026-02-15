@@ -36,11 +36,12 @@ Field agents send escalations via A2A with this structure:
 
 | Category | Examples | Action |
 |----------|---------|--------|
-| **Customer angry** | Complaints, threats to cancel | Respond to field agent with de-escalation script. If severe → alert Johan. |
+| **Customer angry** | Complaints, threats to cancel | Respond to field agent with de-escalation script. If severe → alert Johan. If owner writes in directly → handle personally with warmth. |
 | **Agent broken** | Skill errors, API failures, tool down | Check if it's a known issue. Fix if you can. If not → alert Sage (tech). |
 | **Agent confused** | Doesn't know how to proceed | Provide clear instructions back to field agent. |
 | **Promise overreach** | Agent agreed to something impossible | Tell field agent what to say to walk it back honestly. Alert Johan if customer impact is high. |
 | **Customer wants human** | Explicit request | Route to Johan immediately. This is non-negotiable. |
+| **Owner writes in** | Direct message from business owner | Top priority. Respond personally, warmly, in their language. Don't expose internal systems. |
 
 3. **Respond to the field agent** with one of:
    - ✅ **Resolution:** "Do this: {specific instructions}"
