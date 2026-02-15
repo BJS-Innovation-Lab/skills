@@ -33,11 +33,23 @@ sessions_spawn({
 })
 ```
 
+### 🔴 Disambiguation Rule (Prevent Scope Drift)
+
+Every query to a sub-agent MUST include context anchoring. Without it, the sub-agent may search external/public sources instead of your internal memory.
+
+**Always prefix queries with:**
+> "Search BJS LABS internal memory files and Supabase knowledge base (not external repos or public sources)."
+
+**Why:** In testing (Benchmark Test 10), a query for "A2A bugs" caused the sub-agent to search public A2A project repos instead of our internal daily logs. Adding "BJS internal" or "from our memory files" prevents this class of error.
+
+**Bad:** `"Find A2A bugs fixed today"`
+**Good:** `"Search our internal memory files for A2A bugs fixed today (BJS LABS, Feb 15)"`
+
 ### Query Templates
 
 **General memory search:**
 ```
-Search my memory files for information about [TOPIC].
+Search BJS LABS internal memory files for information about [TOPIC].
 
 Sources to check:
 - memory/*.md (daily logs)
@@ -56,7 +68,7 @@ If nothing found, say so. Don't guess.
 
 **A2A communication search:**
 ```
-Search A2A communication logs for messages about [TOPIC].
+Search BJS LABS internal A2A communication logs for messages about [TOPIC].
 
 Check these files:
 - memory/a2a-*.md (auto-logged A2A messages)
@@ -73,7 +85,7 @@ Return as a timeline with [date] Agent: summary format.
 
 **Learning system check:**
 ```
-Search the learning system for entries relevant to [TOPIC/TASK].
+Search BJS LABS internal learning system for entries relevant to [TOPIC/TASK].
 
 Check:
 - memory/learning/corrections/*.md — past mistakes relevant to this
@@ -103,9 +115,20 @@ Return a table:
 Format as markdown. Flag anyone inactive >24h.
 ```
 
+**Contradiction detection (freeform — Saber's method):**
+```
+Search BJS LABS internal memory files for conflicting information about [TOPIC].
+You decide which sources to check and in what order.
+Flag: timeline inconsistencies, conflicting statuses,
+"fixed" followed by "still broken", duplicate claims.
+Cross-reference timestamps across sources. Show your reasoning.
+```
+
+_Note: This template intentionally gives the sub-agent autonomy over search strategy. In testing (Benchmark Test 9), freeform contradiction detection outperformed template-driven approaches — the sub-agent independently decided to check external sources and do cross-temporal reasoning._
+
 **Pre-task context load:**
 ```
-I'm about to work on [TASK/CLIENT]. Load relevant context.
+I'm about to work on [TASK/CLIENT]. Load relevant context from BJS LABS internal files.
 
 Search all memory sources for:
 - Previous work on this task/client
@@ -138,7 +161,7 @@ Search Phase 3: Check learning entries for relevant corrections/insights
 
 **Query template for multi-hop:**
 ```
-I need deep context on [TOPIC]. This may require multi-hop reasoning.
+I need deep context on [TOPIC] from BJS LABS internal memory. This may require multi-hop reasoning.
 
 Phase 1 — Direct search:
 Search memory/*.md, memory/core/*.md, memory/working/*.md for [TOPIC].
@@ -185,7 +208,7 @@ Source B (A2A log): "Santos still waiting for org tokens"
 
 **Simple (check new info):**
 ```
-Check if [NEW INFORMATION] contradicts anything in my memory.
+Check if [NEW INFORMATION] contradicts anything in BJS LABS internal memory.
 
 Search all sources for claims about [TOPIC].
 Compare against: [NEW INFORMATION]
