@@ -43,6 +43,16 @@ fi
 # Ensure openclaw CLI is in PATH for system event triggers
 export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
+# Load Supabase credentials for fallback polling
+RAG_ENV="$HOME/.openclaw/workspace/rag/.env"
+if [[ -f "$RAG_ENV" ]]; then
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ "$line" =~ ^[[:space:]]*$ ]] && continue
+    export "$line" 2>/dev/null
+  done < "$RAG_ENV"
+fi
+
 nohup node a2a-daemon.js > "$DATA_DIR/daemon.out" 2>&1 &
 echo $! > "$PID_FILE"
 

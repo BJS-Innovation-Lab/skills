@@ -315,12 +315,79 @@ function connect() {
   });
 }
 
+// Track last polled timestamp for Supabase fallback
+let lastSupabasePoll = new Date().toISOString();
+const POLL_INTERVAL_MS = 60000; // Poll Supabase every 60s as fallback
+let pollCounter = 0;
+
+async function pollSupabaseForMissedMessages() {
+  if (!process.env.SUPABASE_URL && !process.env.A2A_SUPABASE_URL) return;
+  
+  const supabaseUrl = process.env.A2A_SUPABASE_URL || process.env.SUPABASE_URL || 'https://fcgiuzmmvcnovaciykbx.supabase.co';
+  const supabaseKey = process.env.A2A_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY;
+  
+  if (!supabaseKey) return;
+  
+  try {
+    const resp = await fetch(
+      `${supabaseUrl}/rest/v1/a2a_messages?to_agent_id=eq.${AGENT_ID}&created_at=gt.${lastSupabasePoll}&order=created_at.asc&limit=20`,
+      {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`
+        }
+      }
+    );
+    
+    if (!resp.ok) return;
+    
+    const messages = await resp.json();
+    if (!messages || messages.length === 0) return;
+    
+    // Check which messages we haven't seen yet (not in inbox)
+    const inboxIds = new Set(inbox.map(m => m.id));
+    const newMessages = messages.filter(m => !inboxIds.has(m.id));
+    
+    if (newMessages.length > 0) {
+      log(`📬 Supabase poll found ${newMessages.length} missed messages`);
+      for (const msg of newMessages) {
+        const formatted = {
+          id: msg.id,
+          from: msg.from_agent_id,
+          fromName: msg.payload?.fromName || msg.from_agent_id,
+          to: msg.to_agent_id,
+          content: msg.payload?.body || msg.payload?.message || msg.payload?.content || msg.payload,
+          type: msg.payload?.type || 'message',
+          subject: msg.payload?.subject || null,
+          priority: msg.payload?.priority || 'normal',
+          timestamp: msg.created_at
+        };
+        addToInbox(formatted);
+        memoryLogger.logReceived(formatted);
+        updateStatus({ messagesReceived: status.messagesReceived + 1 });
+      }
+    }
+    
+    // Update poll timestamp to latest message time
+    lastSupabasePoll = messages[messages.length - 1].created_at;
+  } catch (err) {
+    // Silent fail — this is a fallback, not critical path
+    log('⚠️ Supabase poll error (non-critical)', { error: err.message });
+  }
+}
+
 function startHeartbeat() {
   stopHeartbeat();
   heartbeatTimer = setInterval(() => {
     if (socket && socket.connected) {
       socket.emit('heartbeat', { agentId: AGENT_ID, timestamp: Date.now() });
       updateStatus({ lastHeartbeat: new Date().toISOString() });
+    }
+    
+    // Poll Supabase every ~60s as fallback (every 6th heartbeat if interval is 10s)
+    pollCounter++;
+    if (pollCounter % Math.ceil(POLL_INTERVAL_MS / HEARTBEAT_INTERVAL) === 0) {
+      pollSupabaseForMissedMessages();
     }
   }, HEARTBEAT_INTERVAL);
 }
