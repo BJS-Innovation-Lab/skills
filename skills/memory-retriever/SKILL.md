@@ -183,6 +183,7 @@ Source B (A2A log): "Santos still waiting for org tokens"
 
 ### Contradiction Detection
 
+**Simple (check new info):**
 ```
 Check if [NEW INFORMATION] contradicts anything in my memory.
 
@@ -194,6 +195,28 @@ Return:
 2. Contradicting sources (conflict with new info)
 3. Assessment: Is this an update, a correction, or a genuine conflict?
 ```
+
+**Open-Ended (autonomous search):**
+```
+Contradiction detection for [TOPIC]:
+
+Search all available sources for conflicting information.
+You decide which sources to check and in what order.
+
+Flag:
+- Timeline inconsistencies
+- Conflicting statuses ("working" vs "silently failing")
+- "Fixed" followed by "still broken"
+- Duplicate or conflicting claims
+- Version/date mismatches
+
+Cross-reference timestamps. Show your reasoning.
+```
+
+> **Key insight (Test Case 9):** The retriever performs *better* with open-ended prompts
+> than rigid templates. It autonomously checked GitHub issues, changelogs, and cross-temporal
+> memory files — sources not prescribed in the prompt. This suggests memory retrievers benefit
+> from autonomy in search strategy, not just synthesis. See `benchmark/test-case-9-contradiction-detection.md`.
 
 ### Temporal Awareness
 
