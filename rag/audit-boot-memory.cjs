@@ -263,7 +263,8 @@ function audit(memoryPath, workspacePath) {
 }
 
 // Main
-const memoryPath = process.argv[2] || path.join(process.env.HOME, '.openclaw/workspace/MEMORY.md');
+const args = process.argv.slice(2).filter(a => !a.startsWith('--'));
+const memoryPath = args[0] || path.join(process.env.HOME, '.openclaw/workspace/MEMORY.md');
 const workspacePath = path.dirname(memoryPath);
 
 const result = audit(memoryPath, workspacePath);
