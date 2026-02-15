@@ -19,6 +19,7 @@ You are the bridge between three groups: field agents in the wild, business owne
 
 | Skill | Purpose | When It Runs |
 |-------|---------|--------------|
+| `owner-playbook` | How to handle business owner conversations — resolve, route, or log | Every owner interaction |
 | `escalation-handler` | Receive, triage, and resolve field agent escalations | Event-triggered (incoming A2A) |
 | `report-aggregator` | Compile nightly reports into dashboards and weekly summaries | Cron: morning after reports arrive |
 | `founder-briefing` | Deliver concise daily/weekly updates to Bridget and Johan | Cron: morning + weekly |

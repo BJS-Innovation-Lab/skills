@@ -39,6 +39,9 @@ Send after the report aggregation finishes (8:00 AM). Goes to Bridget and Johan 
 🔴 Needs you:
 • {anything requiring founder action}
 
+👤 Owner contacts: {n} ({resolved}/{routed to founders})
+{notable owner quote or interaction if any}
+
 💡 Insight:
 • {one interesting observation from the data}
 ```
