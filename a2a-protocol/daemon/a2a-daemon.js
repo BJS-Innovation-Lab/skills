@@ -207,7 +207,9 @@ async function triggerOpenClawWake(message, attempt = 1) {
   const wakeMode = (message.priority === 'high' || message.priority === 'urgent') ? 'now' : 'next-heartbeat';
   
   const escapedText = wakeText.replace(/"/g, '\\"').replace(/\n/g, ' ');
-  const cmd = `openclaw system event --text "${escapedText}" --mode ${wakeMode} --json`;
+  // Use full path or PATH lookup — nohup strips PATH and `openclaw` won't be found
+  const openclawBin = process.env.OPENCLAW_BIN || '/opt/homebrew/bin/openclaw';
+  const cmd = `${openclawBin} system event --text "${escapedText}" --mode ${wakeMode} --json`;
   
   log('🔗 Triggering OpenClaw via system event...', { mode: wakeMode, attempt });
   

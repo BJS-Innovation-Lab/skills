@@ -40,6 +40,9 @@ if [[ -z "$TELEGRAM_BOT_TOKEN" ]]; then
   echo "ℹ️  Telegram not configured (optional - run setup.sh to configure)"
 fi
 
+# Ensure openclaw CLI is in PATH for system event triggers
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 nohup node a2a-daemon.js > "$DATA_DIR/daemon.out" 2>&1 &
 echo $! > "$PID_FILE"
 
