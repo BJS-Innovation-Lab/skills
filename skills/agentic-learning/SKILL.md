@@ -556,4 +556,82 @@ When a learning proves valuable enough to become a reusable skill, extract it:
 
 ---
 
+---
+
+## Automated Capture Tools
+
+Three scripts handle what agents forget to log manually:
+
+### 1. Git Commit Hook (`scripts/git-commit-hook.sh`)
+
+**What:** Auto-logs structured entries to daily memory after every git commit.
+
+**Install:**
+```bash
+ln -sf /path/to/skills/agentic-learning/scripts/git-commit-hook.sh /path/to/repo/.git/hooks/post-commit
+```
+
+**What it captures:**
+- Commit hash, message, files changed, diff stats
+- Classifies commits as fix/feature/refactor/docs
+- Flags fixes and refactors for learning extraction (writes to `memory/.pending-learn-extraction`)
+
+**Why:** Commits are proof of work. Without this, code fixes get lost in compaction.
+
+### 2. Session Capture (`scripts/session-capture.cjs`)
+
+**What:** Scans daily memory files and extracts corrections/insights into the learning system.
+
+**Run at session end (pre-compaction) or via heartbeat:**
+```bash
+node scripts/session-capture.cjs                    # Process today
+node scripts/session-capture.cjs --date 2026-02-15  # Specific date
+node scripts/session-capture.cjs --dry-run           # Preview only
+```
+
+**What it captures:**
+- Blocks with correction language ("was wrong", "turns out", "red herring")
+- Blocks with insight language ("realized", "key insight", "data point")
+- Problem → solution pairs
+- Git commit flags from the hook
+
+**What it skips:**
+- Pure activity (commits, pushes, config changes)
+- Already-captured entries (deduplicates against learning dirs)
+
+### 3. Periodic Insight Extractor (`scripts/extract-insights.cjs`)
+
+**What:** Heartbeat-triggered sweep that catches what the other tools miss.
+
+**Run during heartbeats:**
+```bash
+node scripts/extract-insights.cjs                    # Last 2 days
+node scripts/extract-insights.cjs --days 7           # Last week
+node scripts/extract-insights.cjs --with-surprise    # Run surprise scoring
+node scripts/extract-insights.cjs --dry-run           # Preview only
+```
+
+**What it does differently from session-capture:**
+- Scans multiple days (catches entries from sessions that didn't flush)
+- Tracks last extraction time (skips already-processed files)
+- Optionally runs surprise scoring to gate storage
+- Designed for periodic/background operation, not end-of-session
+
+### Integration with Heartbeat
+
+Add to `HEARTBEAT.md`:
+```markdown
+## Learning Extraction (every 4-6 hours)
+node ~/.openclaw/workspace/skills/agentic-learning/scripts/extract-insights.cjs --days 1
+```
+
+### Integration with Pre-Compaction
+
+When you receive a pre-compaction flush trigger:
+1. Write raw notes to `memory/YYYY-MM-DD.md` (as always)
+2. Run `node scripts/session-capture.cjs` to extract learnings
+3. This ensures insights survive compaction even if you forget to log them manually
+
+---
+
 *This skill was designed by Sybil, Saber, and Bridget on February 15, 2026. It replaces the self-improving-agent skill (v1) and integrates with the three-tier memory architecture.*
