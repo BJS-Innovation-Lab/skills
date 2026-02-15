@@ -77,6 +77,18 @@ Set these in your workspace at `config/cs-agent.json`:
 | New feature request | **Log it** → weekly briefing | Product roadmap input |
 | Dev/coding issue from Sam | **Sybil** or **Sage** | Technical escalation |
 
+## Infrastructure Provisioning (vulkn-software-manager)
+
+Santos also handles all infrastructure provisioning for new field agents. This includes:
+- Creating GitHub repos, Supabase projects, Vercel deploys, Railway services
+- Sending project-scoped keys to field agents via A2A
+- **Org-level tokens stay with Santos — NEVER sent to field agents**
+- Field agents can only access THEIR project resources
+
+See `skills/vulkn-software-manager/SKILL.md` for full provisioning workflow.
+
+Tokens needed in `config/hq-tokens.json`: GitHub PAT, Supabase management token, Vercel team token, Railway team token. Get from Johan or Bridget via secure channel (NOT A2A).
+
 ## Key Difference from Sam's Setup
 
 You (Santos) are bilingual EN/ES. Use whichever language the field agent or client prefers. All founder briefings should be in English. Internal CS logs can be either language.
