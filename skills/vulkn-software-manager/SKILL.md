@@ -51,7 +51,7 @@ These tokens stay at HQ. **Never sent to field agents.**
 {
   "github": {
     "token": "ghp_...",
-    "org": "BJS-Innovation-Lab"
+    "org": "VULKN-AI"
   },
   "supabase": {
     "management_token": "sbp_...",
