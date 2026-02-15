@@ -18,8 +18,16 @@ const memoryLogger = require('./memory-logger');
 
 // ============== CONFIG ==============
 const RELAY_URL = process.env.A2A_RELAY_URL || 'https://a2a-bjs-internal-skill-production.up.railway.app';
-const AGENT_ID = process.env.A2A_AGENT_ID || '62bb0f39-2248-4b14-806d-1c498c654ee7';
-const AGENT_NAME = process.env.A2A_AGENT_NAME || 'Sam';
+const AGENT_ID = process.env.A2A_AGENT_ID;
+const AGENT_NAME = process.env.A2A_AGENT_NAME;
+
+if (!AGENT_ID || !AGENT_NAME) {
+  console.error('❌ FATAL: A2A_AGENT_ID and A2A_AGENT_NAME must be set.');
+  console.error('   Set them in your daemon config or environment:');
+  console.error('   export A2A_AGENT_ID="your-agent-uuid"');
+  console.error('   export A2A_AGENT_NAME="YourName"');
+  process.exit(1);
+}
 const HEARTBEAT_INTERVAL = 30000; // 30 seconds
 const RECONNECT_DELAY = 5000; // 5 seconds
 
