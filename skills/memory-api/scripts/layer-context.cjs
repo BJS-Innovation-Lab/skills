@@ -11,27 +11,41 @@ const path = require('path');
 const WORKSPACE = process.env.WORKSPACE || path.join(require('os').homedir(), '.openclaw', 'workspace');
 
 // Context routing table — who gets what memory
+// GENERAL context loads for everyone (active goals, key refs, promoted learnings)
+// ROLE-SPECIFIC context adds on top
+const GENERAL_FILES = [
+  'memory/core/team.md',
+  'memory/core/clients.md',
+  'memory/core/promoted.md',
+];
+
 const CONTEXT_ROUTES = {
-  // Founders get team status, active goals, recent decisions
+  // Founders get everything — team status, active goals, working memory, decisions
   founders: {
-    files: ['memory/core/team.md', 'memory/core/clients.md'],
+    files: ['MEMORY.md'],
     workingDirs: ['memory/working/'],
     includeGoals: true,
     includeTeamStatus: true,
+    includeRecent: true,
+    recentChars: 600,
   },
-  // Agents get their relevant operational context
+  // Agents get operational context
   agents: {
-    files: ['memory/core/team.md'],
+    files: [],
     workingDirs: [],
     includeGoals: false,
     includeTeamStatus: true,
+    includeRecent: true,
+    recentChars: 400,
   },
-  // Unknown/default — minimal safe context
+  // Unknown/default — general context only
   default: {
     files: [],
     workingDirs: [],
     includeGoals: false,
     includeTeamStatus: false,
+    includeRecent: true,
+    recentChars: 300,
   }
 };
 
@@ -101,8 +115,30 @@ function extractContext({ who, channel, message } = {}) {
     parts.push(`## Session Context\nTalking to: ${identity.name} (${identity.role}) via ${channel || 'unknown'}`);
   }
   
-  // Load routed files
+  // GENERAL context — always loaded regardless of who's talking
+  for (const file of GENERAL_FILES) {
+    const content = loadFile(file, 400);
+    if (content) parts.push(content);
+  }
+  
+  // Active goals from MEMORY.md (general knowledge)
+  const memoryMd = loadFile('MEMORY.md', 2000);
+  if (memoryMd) {
+    // Extract ACTIVE GOALS and KEY REFS sections — these are general
+    const goalsMatch = memoryMd.match(/# ACTIVE GOALS([\s\S]*?)(?=\n# |$)/);
+    const refsMatch = memoryMd.match(/# KEY REFS([\s\S]*?)(?=\n# |$)/);
+    const statusMatch = memoryMd.match(/# TEAM STATUS([\s\S]*?)(?=\n# |$)/);
+    const promotedMatch = memoryMd.match(/# PROMOTED LEARNINGS([\s\S]*?)(?=\n# |$)/);
+    
+    if (goalsMatch) parts.push('# ACTIVE GOALS' + goalsMatch[1].trim());
+    if (refsMatch) parts.push('# KEY REFS' + refsMatch[1].trim());
+    if (statusMatch) parts.push('# TEAM STATUS' + statusMatch[1].trim());
+    if (promotedMatch) parts.push('# PROMOTED LEARNINGS' + promotedMatch[1].trim());
+  }
+  
+  // ROLE-SPECIFIC context
   for (const file of route.files) {
+    if (file === 'MEMORY.md') continue; // Already extracted sections above
     const content = loadFile(file, 400);
     if (content) parts.push(content);
   }
@@ -113,17 +149,12 @@ function extractContext({ who, channel, message } = {}) {
     if (working) parts.push('## Active Threads\n' + working);
   }
   
-  // Team status
-  if (route.includeTeamStatus) {
-    const team = loadFile('memory/core/team.md', 300);
-    if (team) parts.push(team);
-  }
-  
-  // Recent activity (always include some recency)
-  const recent = getRecentDaily(400);
+  // Recent activity — always include for recency
+  const recentChars = route.recentChars || 400;
+  const recent = getRecentDaily(recentChars);
   if (recent) parts.push('## Recent Activity\n' + recent);
   
-  // User preferences
+  // User preferences for founders
   if (identity?.role === 'founder') {
     const userMd = loadFile('USER.md', 300);
     if (userMd) parts.push(userMd);

@@ -55,25 +55,10 @@ Output ONLY the compressed memory. No explanations, no meta-commentary. Start wi
 async function compress({ rawMemory, agentName, talkingTo, channel, time, budget }) {
   loadEnv();
   
-  const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
-  if (!apiKey) {
-    // Try OpenClaw CLI for compression via sub-agent
-    try {
-      const { execSync } = require('child_process');
-      const truncPrompt = `Compress this to under ${budget || MAX_OUTPUT_CHARS} characters. Keep: names, IDs, dates, decisions. Drop: verbose explanations, completed tasks. Output ONLY the compressed text:\n\n${rawMemory.substring(0, 12000)}`;
-      const result = execSync(
-        `echo ${JSON.stringify(truncPrompt)} | openclaw ask --model sonnet --no-stream 2>/dev/null`,
-        { timeout: 30000, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
-      );
-      if (result && result.length > 100) {
-        const trimmed = result.substring(0, budget || MAX_OUTPUT_CHARS);
-        process.stderr.write(`[layer-compression] Used openclaw ask for compression\n`);
-        return trimmed;
-      }
-    } catch (e) {
-      // Silent fall through to smart truncation
-    }
-    
+  const anthropicKey = process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  
+  if (!anthropicKey && !geminiKey) {
     process.stderr.write('[layer-compression] No API key available, using smart truncation fallback\n');
     return smartTruncate(rawMemory, budget || MAX_OUTPUT_CHARS);
   }
@@ -86,28 +71,68 @@ async function compress({ rawMemory, agentName, talkingTo, channel, time, budget
     .replace('{time}', time || new Date().toISOString())
     .replace('{rawMemory}', rawMemory);
   
-  const resp = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
+  let resp;
+  let compressed;
   
-  if (!resp.ok) {
-    const err = await resp.text();
-    process.stderr.write(`[layer-compression] API error: ${resp.status} ${err.substring(0, 200)}\n`);
-    return smartTruncate(rawMemory, budget || MAX_OUTPUT_CHARS);
+  if (geminiKey) {
+    // Use Gemini Flash — fast and cheap for compression
+    process.stderr.write('[layer-compression] Using Gemini Flash for compression\n');
+    resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { maxOutputTokens: 2000 }
+        })
+      }
+    );
+    
+    if (!resp.ok) {
+      const err = await resp.text();
+      process.stderr.write(`[layer-compression] Gemini error: ${resp.status} ${err.substring(0, 200)}\n`);
+      if (anthropicKey) {
+        process.stderr.write('[layer-compression] Falling back to Anthropic...\n');
+      } else {
+        return smartTruncate(rawMemory, budget || MAX_OUTPUT_CHARS);
+      }
+    } else {
+      const data = await resp.json();
+      compressed = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    }
   }
   
-  const data = await resp.json();
-  let compressed = data.content?.[0]?.text || '';
+  // Anthropic fallback (or primary if no Gemini key)
+  if (!compressed && anthropicKey) {
+    process.stderr.write('[layer-compression] Using Anthropic Sonnet for compression\n');
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    
+    if (!resp.ok) {
+      const err = await resp.text();
+      process.stderr.write(`[layer-compression] Anthropic error: ${resp.status} ${err.substring(0, 200)}\n`);
+      return smartTruncate(rawMemory, budget || MAX_OUTPUT_CHARS);
+    }
+    
+    const data = await resp.json();
+    compressed = data.content?.[0]?.text || '';
+  }
+  
+  if (!compressed) {
+    return smartTruncate(rawMemory, budget || MAX_OUTPUT_CHARS);
+  }
   
   // Hard enforcement of char limit
   if (compressed.length > (budget || MAX_OUTPUT_CHARS)) {
