@@ -27,13 +27,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
+// https removed — embeddings now via gemini-embed.cjs
 
 // ── Config ──────────────────────────────────────────────────────────
 const WORKSPACE = process.env.WORKSPACE || '/Users/sybil/.openclaw/workspace';
 const LEARNING_DIR = path.join(WORKSPACE, 'memory/learning');
-const EMBEDDING_MODEL = 'text-embedding-3-small';
-const EMBEDDING_DIMS = 1536;
+const { getEmbedding, getEmbeddings, EMBEDDING_DIMS } = require('./gemini-embed.cjs');
 
 // Signal weights (must sum to 1.0)
 // Adjusted per Saber's review: correction signal bumped to 0.25 (strong language signal),
@@ -136,42 +135,7 @@ function loadEnv() {
   }
 }
 
-// ── Embedding API ───────────────────────────────────────────────────
-function getEmbedding(text) {
-  return new Promise((resolve, reject) => {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) return reject(new Error('OPENAI_API_KEY not set'));
-
-    const body = JSON.stringify({
-      model: EMBEDDING_MODEL,
-      input: text.slice(0, 8000), // limit input
-    });
-
-    const req = https.request({
-      hostname: 'api.openai.com',
-      path: '/v1/embeddings',
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(body),
-      },
-    }, (res) => {
-      let data = '';
-      res.on('data', c => data += c);
-      res.on('end', () => {
-        try {
-          const parsed = JSON.parse(data);
-          if (parsed.error) return reject(new Error(parsed.error.message));
-          resolve(parsed.data[0].embedding);
-        } catch (e) { reject(e); }
-      });
-    });
-    req.on('error', reject);
-    req.write(body);
-    req.end();
-  });
-}
+// ── Embedding API (Gemini — imported from gemini-embed.cjs at top) ──
 
 // ── Math Helpers ────────────────────────────────────────────────────
 function cosineSimilarity(a, b) {

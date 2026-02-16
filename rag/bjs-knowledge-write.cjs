@@ -72,57 +72,8 @@ function parseArgs() {
 
 // --- Embedding ---
 
-async function getEmbedding(text) {
-  if (!OPENAI_KEY) {
-    console.warn('Warning: No OPENAI_API_KEY — storing without embedding (search won\'t work)');
-    return null;
-  }
-  
-  // Gemini preferred, OpenAI fallback
-  const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  
-  if (GEMINI_KEY) {
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'models/gemini-embedding-001',
-          content: { parts: [{ text: text.slice(0, 8000) }] },
-          outputDimensionality: 1536
-        })
-      }
-    );
-    if (!resp.ok) {
-      const err = await resp.text();
-      throw new Error(`Gemini embedding failed: ${resp.status} ${err}`);
-    }
-    const data = await resp.json();
-    return data.embedding.values;
-  }
-  
-  // Fallback to OpenAI
-  const resp = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${OPENAI_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'text-embedding-3-small',
-      input: text.slice(0, 8000)
-    })
-  });
-  
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`OpenAI embedding failed: ${resp.status} ${err}`);
-  }
-  
-  const data = await resp.json();
-  return data.data[0].embedding;
-}
+// Embedding via shared Gemini helper
+const { getEmbedding } = require('./gemini-embed.cjs');
 
 // --- Supabase ---
 

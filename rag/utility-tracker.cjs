@@ -147,38 +147,14 @@ async function findRelatedChunks(outcome) {
   
   if (!searchText || searchText.length < 10) return [];
   
-  // Get embedding (Gemini preferred, OpenAI fallback)
-  const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  // Get embedding via shared Gemini helper
+  const { getEmbedding: embed } = require('./gemini-embed.cjs');
   let embedding;
-  
-  if (GEMINI_KEY) {
-    const resp = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'models/gemini-embedding-001',
-          content: { parts: [{ text: searchText.slice(0, 8000) }] },
-          outputDimensionality: 1536
-        })
-      }
-    );
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    embedding = data.embedding.values;
-  } else {
-    const resp = await fetch('https://api.openai.com/v1/embeddings', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${OPENAI_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ model: 'text-embedding-3-small', input: searchText })
-    });
-    if (!resp.ok) return [];
-    const data = await resp.json();
-    embedding = data.data[0].embedding;
+  try {
+    embedding = await embed(searchText);
+  } catch (e) {
+    console.warn('Embedding failed:', e.message);
+    return [];
   }
   
   // Search Supabase

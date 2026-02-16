@@ -89,25 +89,15 @@ function getAgentId() {
   return ID_MAP[agent.name] || null;
 }
 
+// Embedding via shared Gemini helper
+const { getEmbedding: geminiEmbed } = require('./gemini-embed.cjs');
 async function getEmbedding(text) {
-  const key = process.env.OPENAI_API_KEY;
-  if (!key) return null;
-  
-  const resp = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${key}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: 'text-embedding-ada-002',
-      input: text.substring(0, 8000)
-    })
-  });
-  
-  if (!resp.ok) return null;
-  const data = await resp.json();
-  return data.data?.[0]?.embedding;
+  try {
+    return await geminiEmbed(text);
+  } catch (e) {
+    console.warn('Embedding failed:', e.message);
+    return null;
+  }
 }
 
 async function writeReflection(reflection, category, context) {

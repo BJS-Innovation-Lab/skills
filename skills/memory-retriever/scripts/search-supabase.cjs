@@ -73,46 +73,8 @@ function parseArgs() {
   return opts;
 }
 
-// --- Embedding (Gemini preferred, OpenAI fallback) ---
-const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const EMBEDDING_DIMS = 1536;
-
-async function getEmbedding(text) {
-  if (GEMINI_KEY) return getGeminiEmbedding(text);
-  return getOpenAIEmbedding(text);
-}
-
-async function getGeminiEmbedding(text) {
-  const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'models/gemini-embedding-001',
-        content: { parts: [{ text: text.slice(0, 8000) }] },
-        outputDimensionality: EMBEDDING_DIMS
-      })
-    }
-  );
-  if (!resp.ok) throw new Error(`Gemini embedding failed: ${resp.status}`);
-  const data = await resp.json();
-  return data.embedding.values;
-}
-
-async function getOpenAIEmbedding(text) {
-  const resp = await fetch('https://api.openai.com/v1/embeddings', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${OPENAI_KEY}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ model: 'text-embedding-3-small', input: text.slice(0, 8000) })
-  });
-  if (!resp.ok) throw new Error(`OpenAI embedding failed: ${resp.status}`);
-  const data = await resp.json();
-  return data.data[0].embedding;
-}
+// --- Embedding (Gemini only, 768 dims) ---
+const { getEmbedding, EMBEDDING_DIMS } = require('../../../rag/gemini-embed.cjs');
 
 // --- Source 1: Local Files ---
 function searchLocalFiles(query, opts) {
