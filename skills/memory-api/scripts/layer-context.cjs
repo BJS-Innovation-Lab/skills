@@ -136,6 +136,61 @@ function extractContext({ who, channel, message } = {}) {
     if (promotedMatch) parts.push('# PROMOTED LEARNINGS' + promotedMatch[1].trim());
   }
   
+  // LEARNING CONTEXT — recent corrections and insights (don't repeat mistakes)
+  const correctionsDir = path.join(WORKSPACE, 'memory', 'learning', 'corrections');
+  const insightsDir = path.join(WORKSPACE, 'memory', 'learning', 'insights');
+  const learningParts = [];
+  
+  for (const dir of [correctionsDir, insightsDir]) {
+    if (!fs.existsSync(dir)) continue;
+    const files = fs.readdirSync(dir).filter(f => f.endsWith('.md')).sort().reverse();
+    for (const file of files.slice(0, 2)) { // Last 2 days
+      const content = fs.readFileSync(path.join(dir, file), 'utf-8');
+      // Extract just the key fields, not full YAML
+      const entries = content.match(/(?:corrected_to|insight):\s*"([^"]+)"/g) || [];
+      for (const entry of entries.slice(0, 3)) {
+        const val = entry.match(/:\s*"([^"]+)"/)?.[1];
+        if (val) learningParts.push(`- ${val.substring(0, 150)}`);
+      }
+    }
+  }
+  if (learningParts.length > 0) {
+    parts.push('## Recent Learnings\n' + learningParts.join('\n'));
+  }
+  
+  // A2A RECENT — last messages from each agent
+  const inboxPath = path.join(require('os').homedir(), '.openclaw', 'a2a', 'inbox.json');
+  if (fs.existsSync(inboxPath)) {
+    try {
+      const inbox = JSON.parse(fs.readFileSync(inboxPath, 'utf-8'));
+      const recent = inbox.slice(-10); // Last 10 messages
+      const byAgent = {};
+      for (const msg of recent) {
+        const from = msg.fromName || msg.from || 'unknown';
+        const content = typeof msg.content === 'object' 
+          ? (msg.content.message || msg.content.status || JSON.stringify(msg.content)).substring(0, 100)
+          : String(msg.content || '').substring(0, 100);
+        const subject = msg.subject || '';
+        byAgent[from] = `${subject ? subject + ': ' : ''}${content}`;
+      }
+      const a2aParts = Object.entries(byAgent).map(([from, msg]) => `- **${from}:** ${msg}`);
+      if (a2aParts.length > 0) {
+        parts.push('## Recent A2A Messages\n' + a2aParts.join('\n'));
+      }
+    } catch (e) { /* silent */ }
+  }
+  
+  // ACTIVE PROJECTS — scan for project directories
+  const projectsDir = path.join(WORKSPACE, 'projects');
+  if (fs.existsSync(projectsDir)) {
+    const projects = fs.readdirSync(projectsDir).filter(f => {
+      return fs.statSync(path.join(projectsDir, f)).isDirectory();
+    });
+    if (projects.length > 0) {
+      parts.push('## Active Projects\n' + projects.map(p => `- ${p}`).join('\n'));
+    }
+  }
+  
   // ROLE-SPECIFIC context
   for (const file of route.files) {
     if (file === 'MEMORY.md') continue; // Already extracted sections above
