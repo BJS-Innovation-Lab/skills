@@ -34,7 +34,7 @@ CREATE OR REPLACE FUNCTION search_documents(
   match_count int DEFAULT 10,
   filter jsonb DEFAULT '{}'::jsonb
 ) RETURNS TABLE (
-  id bigint,
+  id uuid,
   content text,
   metadata jsonb,
   similarity float
