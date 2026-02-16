@@ -94,6 +94,11 @@ function searchLocalFiles(query, opts) {
     path.join(memDir, 'learning/outcomes'),
   ];
   
+  // If client isolation active, add client-specific dir and filter out other clients
+  if (opts.clientId) {
+    searchPaths.push(path.join(memDir, 'clients', opts.clientId));
+  }
+  
   // Also search MEMORY.md at workspace root
   const memoryMd = path.join(WORKSPACE, 'MEMORY.md');
   if (fs.existsSync(memoryMd)) {
@@ -146,9 +151,20 @@ function searchLocalFiles(query, opts) {
     }
   }
   
+  // Client isolation: filter out other clients' files
+  const filtered = opts.clientId 
+    ? results.filter(r => {
+        const p = r.path.toLowerCase();
+        // Allow: non-client files (shared) + this client's files
+        // Block: other clients' files
+        const clientMatch = p.match(/clients\/([^/]+)\//);
+        return !clientMatch || clientMatch[1] === opts.clientId;
+      })
+    : results;
+  
   // Sort by relevance
-  results.sort((a, b) => b.relevance - a.relevance);
-  return results.slice(0, opts.limit);
+  filtered.sort((a, b) => b.relevance - a.relevance);
+  return filtered.slice(0, opts.limit);
 }
 
 function extractSnippet(content, terms, maxLen = 300) {
@@ -299,14 +315,44 @@ async function searchKB(query, embedding, opts) {
   }));
 }
 
+// --- Client Auto-Detection ---
+// If a .client-map.json exists, this agent serves multiple clients.
+// Auto-detect client from SESSION_KEY env or --client flag.
+// If map exists but no client can be determined, warn (search still runs but unfiltered).
+function autoDetectClient(opts) {
+  if (opts.clientId) return opts.clientId; // explicit --client wins
+  
+  const { getClientId, CLIENT_MAP } = require('../../../rag/client-router.cjs');
+  const hasClients = Object.keys(CLIENT_MAP).length > 0;
+  if (!hasClients) return null; // single-client agent, no filtering needed
+  
+  // Try SESSION_KEY env (set by OpenClaw at runtime)
+  const sessionKey = process.env.SESSION_KEY || process.env.OPENCLAW_SESSION_KEY || '';
+  const detected = getClientId(sessionKey);
+  
+  if (detected) {
+    console.error(`🔒 Client auto-detected: ${detected} (from session)`);
+    return detected;
+  }
+  
+  // Client map exists but we can't determine which client — warn loudly
+  console.error(`⚠️  WARNING: Client map exists (${Object.keys(CLIENT_MAP).length} clients) but no client detected.`);
+  console.error(`   Pass --client <name> or set SESSION_KEY to enable isolation.`);
+  console.error(`   Searching ALL client data (no isolation).`);
+  return null;
+}
+
 // --- Main ---
 async function main() {
   const opts = parseArgs();
   
   if (!opts.query) {
-    console.error('Usage: node search-supabase.cjs "your query" [--sources all|files|rag|kb] [--agent sybil] [--days 7] [--limit 10]');
+    console.error('Usage: node search-supabase.cjs "your query" [--sources all|files|rag|kb] [--agent sybil] [--days 7] [--limit 10] [--client name]');
     process.exit(1);
   }
+  
+  // Auto-detect client if map exists
+  opts.clientId = autoDetectClient(opts);
   
   const sources = opts.sources === 'all' ? ['files', 'rag', 'kb'] : opts.sources.split(',');
   const output = { query: opts.query, sources: {}, meta: { agent: opts.agent, days: opts.days, timestamp: new Date().toISOString() } };
