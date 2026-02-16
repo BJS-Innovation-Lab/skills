@@ -184,10 +184,46 @@ function extractSnippet(content, terms, maxLen = 300) {
   return `[line ${matches[0].lineNum}] ${matches[0].snippet}`;
 }
 
+// --- Two-Phase Retrieval ---
+// Phase 1: Broad semantic search (top 20)
+// Phase 2: Re-rank by utility_score + recency + tier priority
+//
+// Based on MemRL (arXiv 2601.03192) insight: similarity ≠ utility.
+// Memories that led to good outcomes get boosted; stale low-value ones get dampened.
+
+const TIER_WEIGHTS = { core: 0.15, working: 0.05, learning: 0.10, research: 0.0 };
+const RECENCY_HALF_LIFE_DAYS = 14; // after 14 days, recency bonus halves
+
+function computeFinalScore(result) {
+  const sim = result.similarity || 0;
+  const meta = result.metadata || {};
+  
+  // Utility signal from outcome feedback loop (range: -1.0 to 1.0)
+  const utility = (meta.utility_score || 0) * 0.20;
+  
+  // Tier bonus (core docs are more authoritative)
+  const tier = meta.tier || 'working';
+  const tierBonus = TIER_WEIGHTS[tier] || 0;
+  
+  // Recency bonus (exponential decay)
+  let recencyBonus = 0;
+  const syncedAt = meta.synced_at || result.created_at;
+  if (syncedAt) {
+    const ageMs = Date.now() - new Date(syncedAt).getTime();
+    const ageDays = ageMs / 86400000;
+    recencyBonus = 0.10 * Math.pow(0.5, ageDays / RECENCY_HALF_LIFE_DAYS);
+  }
+  
+  return sim + utility + tierBonus + recencyBonus;
+}
+
 // --- Source 2: Supabase RAG (Agent Documents) ---
 async function searchRAG(query, embedding, opts) {
   const agentId = AGENT_MAP[opts.agent] || opts.agent;
   const threshold = opts.threshold || 0.65;
+  
+  // Phase 1: Broad retrieval (fetch more than needed)
+  const broadCount = Math.max(opts.limit * 3, 20);
   
   const resp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/search_documents`, {
     method: 'POST',
@@ -198,7 +234,7 @@ async function searchRAG(query, embedding, opts) {
     },
     body: JSON.stringify({
       query_embedding: embedding,
-      match_count: opts.limit,
+      match_count: broadCount,
       filter_agent_id: agentId
     })
   });
@@ -209,14 +245,27 @@ async function searchRAG(query, embedding, opts) {
   }
   
   const data = await resp.json();
-  return data.map(d => ({
-    source: 'rag',
-    path: d.file_path,
-    title: d.title,
-    similarity: d.similarity,
-    snippet: d.content?.slice(0, 300),
-    docType: d.doc_type
-  }));
+  
+  // Phase 2: Re-rank with utility + recency + tier
+  const scored = data.map(d => {
+    const finalScore = computeFinalScore(d);
+    return {
+      source: 'rag',
+      path: d.file_path,
+      title: d.title,
+      similarity: d.similarity,
+      finalScore: Math.round(finalScore * 1000) / 1000,
+      utilityScore: d.metadata?.utility_score || 0,
+      tier: d.metadata?.tier || 'unknown',
+      snippet: d.content?.slice(0, 300),
+      docType: d.doc_type
+    };
+  });
+  
+  // Sort by final score (not raw similarity)
+  scored.sort((a, b) => b.finalScore - a.finalScore);
+  
+  return scored.slice(0, opts.limit);
 }
 
 // --- Source 3: BJS Knowledge Base ---
@@ -319,10 +368,13 @@ async function main() {
     }
     
     if (output.sources.rag?.length && !output.sources.rag[0]?.error) {
-      console.log(`🧠 RAG EMBEDDINGS (${output.sources.rag.length} results):`);
+      console.log(`🧠 RAG EMBEDDINGS (${output.sources.rag.length} results, two-phase ranked):`);
       for (const r of output.sources.rag) {
-        const pct = (r.similarity * 100).toFixed(0);
-        console.log(`  ${pct}% ${r.path} — ${r.title || ''}`);
+        const sim = (r.similarity * 100).toFixed(0);
+        const final = r.finalScore ? ` → ${(r.finalScore * 100).toFixed(0)}%` : '';
+        const util = r.utilityScore ? ` ⚡${r.utilityScore > 0 ? '+' : ''}${r.utilityScore}` : '';
+        const tier = r.tier ? ` [${r.tier}]` : '';
+        console.log(`  ${sim}%${final}${util}${tier} ${r.path} — ${r.title || ''}`);
         if (r.snippet) console.log(`      ${r.snippet.split('\n')[0].slice(0, 120)}`);
       }
       console.log();

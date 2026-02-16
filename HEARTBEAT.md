@@ -18,6 +18,9 @@ For any question requiring precision (commits, dates, who said what, action item
 - Use: node ~/.openclaw/workspace/skills/memory-retriever/scripts/search-supabase.cjs "query" --sources all
 - For auto-detection: node ~/.openclaw/workspace/skills/memory-retriever/scripts/auto-retrieve.cjs "message"
 
+## Utility Score Update (every 4-6 hours)
+node ~/.openclaw/workspace/rag/utility-tracker.cjs
+
 ## Auto-Promotion Check (Sundays)
 WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/skills/agentic-learning/scripts/auto-promote.cjs
 
