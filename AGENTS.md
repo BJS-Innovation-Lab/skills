@@ -14,6 +14,17 @@ Before doing anything else:
 2. Read `USER.md` — this is who you're helping
 3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
 4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+5. **First turn — refresh your memory:** Run the Memory API to generate context-aware boot memory:
+   ```bash
+   node skills/memory-api/scripts/memory-load.cjs \
+     --who SENDER_ID --channel CHANNEL \
+     --message "FIRST_MESSAGE_SUMMARY" \
+     --write-memory --verbose
+   ```
+   Replace `SENDER_ID` with the caller's Telegram ID, agent UUID, or name.
+   Replace `CHANNEL` with telegram, a2a, or web.
+   This overwrites MEMORY.md with a fresh, personalized payload (old version backed up to `memory/.memory-backup.md`).
+   **Skip this if the session just started and MEMORY.md was already refreshed (e.g. after compaction).**
 
 Don't ask permission. Just do it.
 
@@ -26,15 +37,15 @@ You wake up fresh each session. These files are your continuity:
 
 Capture what matters. Decisions, context, things to remember. Skip the secrets unless asked to keep them.
 
-### 🧠 MEMORY.md - Your Long-Term Memory
+### 🧠 MEMORY.md - Dynamic Boot Memory
 
 - **ONLY load in main session** (direct chats with your human)
 - **DO NOT load in shared contexts** (Discord, group chats, sessions with other people)
-- This is for **security** — contains personal context that shouldn't leak to strangers
-- You can **read, edit, and update** MEMORY.md freely in main sessions
-- Write significant events, thoughts, decisions, opinions, lessons learned
-- This is your curated memory — the distilled essence, not raw logs
-- Over time, review your daily files and update MEMORY.md with what's worth keeping
+- MEMORY.md is now **generated dynamically** by the Memory API (`skills/memory-api/`)
+- The API compresses 7K+ of raw context into a personalized ~1500 char payload
+- Old MEMORY.md is backed up to `memory/.memory-backup.md` before each refresh
+- **After compaction:** Re-run the Memory API to refresh context for the current conversation
+- **Manual edits still work** — but will be overwritten on next refresh. For permanent additions, write to `memory/core/` instead.
 
 ### 📝 Write It Down - No "Mental Notes"!
 
