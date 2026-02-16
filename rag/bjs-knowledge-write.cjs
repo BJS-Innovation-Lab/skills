@@ -78,6 +78,31 @@ async function getEmbedding(text) {
     return null;
   }
   
+  // Gemini preferred, OpenAI fallback
+  const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  
+  if (GEMINI_KEY) {
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'models/gemini-embedding-001',
+          content: { parts: [{ text: text.slice(0, 8000) }] },
+          outputDimensionality: 1536
+        })
+      }
+    );
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error(`Gemini embedding failed: ${resp.status} ${err}`);
+    }
+    const data = await resp.json();
+    return data.embedding.values;
+  }
+  
+  // Fallback to OpenAI
   const resp = await fetch('https://api.openai.com/v1/embeddings', {
     method: 'POST',
     headers: {

@@ -63,8 +63,12 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY;
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_KEY || !OPENAI_KEY) {
-  console.error('Missing env: SUPABASE_URL, SUPABASE_ANON_KEY, OPENAI_API_KEY');
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('Missing env: SUPABASE_URL, SUPABASE_ANON_KEY');
+  process.exit(1);
+}
+if (!OPENAI_KEY && !process.env.GEMINI_API_KEY && !process.env.GOOGLE_API_KEY) {
+  console.error('Missing embedding key: need GEMINI_API_KEY (preferred) or OPENAI_API_KEY');
   process.exit(1);
 }
 
@@ -177,9 +181,60 @@ function classifyFile(filePath) {
   return { tier: 'working', category: 'general', docType: 'note' };
 }
 
-// OpenAI Embeddings — batch for efficiency
+// Embedding provider — prefers Gemini, falls back to OpenAI
+const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+const EMBEDDING_PROVIDER = GEMINI_KEY ? 'gemini' : 'openai';
+const EMBEDDING_DIMS = 1536; // Match existing Supabase vectors
+
 async function getEmbeddings(texts) {
-  const batchSize = 20; // OpenAI allows up to 2048
+  if (EMBEDDING_PROVIDER === 'gemini') {
+    return getGeminiEmbeddings(texts);
+  }
+  return getOpenAIEmbeddings(texts);
+}
+
+// Gemini Embeddings (gemini-embedding-001) — batch via batchEmbedContents
+async function getGeminiEmbeddings(texts) {
+  const batchSize = 100; // Gemini supports large batches
+  const allEmbeddings = [];
+  
+  for (let i = 0; i < texts.length; i += batchSize) {
+    const batch = texts.slice(i, i + batchSize);
+    
+    const resp = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:batchEmbedContents?key=${GEMINI_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requests: batch.map(text => ({
+            model: 'models/gemini-embedding-001',
+            content: { parts: [{ text: text.slice(0, 8000) }] },
+            outputDimensionality: EMBEDDING_DIMS
+          }))
+        })
+      }
+    );
+    
+    if (!resp.ok) {
+      const err = await resp.text();
+      throw new Error(`Gemini embeddings failed: ${resp.status} ${err}`);
+    }
+    
+    const data = await resp.json();
+    allEmbeddings.push(...data.embeddings.map(e => e.values));
+    
+    if (i + batchSize < texts.length) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+  }
+  
+  return allEmbeddings;
+}
+
+// OpenAI Embeddings (text-embedding-3-small) — fallback
+async function getOpenAIEmbeddings(texts) {
+  const batchSize = 20;
   const allEmbeddings = [];
   
   for (let i = 0; i < texts.length; i += batchSize) {
@@ -205,7 +260,6 @@ async function getEmbeddings(texts) {
     const data = await resp.json();
     allEmbeddings.push(...data.data.map(d => d.embedding));
     
-    // Rate limiting
     if (i + batchSize < texts.length) {
       await new Promise(r => setTimeout(r, 200));
     }
