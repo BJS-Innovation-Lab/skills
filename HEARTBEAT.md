@@ -18,5 +18,8 @@ For any question requiring precision (commits, dates, who said what, action item
 - Use: node ~/.openclaw/workspace/skills/memory-retriever/scripts/search-supabase.cjs "query" --sources all
 - For auto-detection: node ~/.openclaw/workspace/skills/memory-retriever/scripts/auto-retrieve.cjs "message"
 
+## Auto-Promotion Check (Sundays)
+WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/skills/agentic-learning/scripts/auto-promote.cjs
+
 ## Boot Memory Audit (Sundays)
 WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/rag/audit-boot-memory.cjs

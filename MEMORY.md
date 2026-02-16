@@ -10,32 +10,32 @@ Bilingual: Spanish with Johan, English with Bridget.
 - Quality over speed — time is never an issue for AI agents.
 
 # ACTIVE GOALS
-- Prepare infra for first client (tonight)
-- Monitor field agents (Sam this week)
+- Populate BJS KB before first client deploy (organic from real problems)
+- Monitor field agents (Sam operational, needs first client)
 - Build KB entries from resolved escalations
 
 # A2A NETWORK
 - Relay: `https://a2a-bjs-internal-skill-production-f15e.up.railway.app`
 - Supabase: `https://fcgiuzmmvcnovaciykbx.supabase.co`
-- Anon Key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZjZ2l1em1tdmNub3ZhY2l5a2J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk5OTYyMDIsImV4cCI6MjA4NTU3MjIwMn0.zHgY_1UYiAfIkwhCfv8lmyytCSy_w_iU21rYRiSzi-Q`
 - Org ID: `6420346e-4e6a-47a8-b671-80beacd394b4`
 
-# RECENT LEARNING
-- GOG (Google Workspace CLI) configured for santos@vulkn-ai.com — Gmail, Calendar, Drive, Contacts, Docs, Sheets
-- Google Cloud project: hq-vulkn. Drive API needs enabling.
-- GOG gmail send needs PTY mode to work (hangs without it)
-- VULKN Control Financiero sheet: `1ezPe-4nAAfndJGnBS1Qfw0aXxTBUW1qgE3qd_fag-ns`
+# TEAM STATUS (Feb 15)
+- Santos 🟢 CS (7.5/8) | Sam 🟡 Field (7/7 memory, needs client) | Saber 🟢 Active | Sage 🔴 Down
+- Sam: direct founder Telegram access during setup phase
+- Documents table: composite key fixed `(file_path, agent_name)`
 
 # MEMORY SYSTEM
 Core: `memory/core/team.md`, clients.md
 Working: `memory/working/` — active escalations
-Learning: `memory/learning/index.md` (corrections, insights, outcomes)
-Daily: `memory/2026-02-15.md` (raw logs)
+Learning: `memory/learning/index.md`
+Daily: `memory/2026-02-15.md`
+Notion: Agentic Memory v2.0 (`3097a723-4ce4-8100-97dc-e1dbc22f68ad`)
 
-# STATUS
-Updated: 2026-02-15
-Role: Head of Operations / COO
-GitHub: santos-vulkn (org BJS-Innovation-Lab)
-Notion: configured (read-only, write needs Bridget or Johan approval)
-Infra tokens: skills/vulkn-software-manager/config/hq-tokens.json (GitHub ✅, Supabase ✅, Vercel ✅, Railway ✅)
-GitHub org: VULKN-AI | Supabase org: VULKN | Vercel team: BJS LABS
+# KEY REFS
+- Telegram: Bridget=5063274787, Johan=6151122745
+- GitHub: sybil-bjs / santos-vulkn (Vercel author)
+- Infra tokens: skills/vulkn-software-manager/config/hq-tokens.json
+- GOG: santos@vulkn-ai.com | Sheets: `1ezPe-4nAAfndJGnBS1Qfw0aXxTBUW1qgE3qd_fag-ns`
+
+# PROMOTED LEARNINGS
+- ✅ MEMORY.md has a 4166 char limit. Treat it as a curated index, not a knowledge dump. Details go in core/ files.
