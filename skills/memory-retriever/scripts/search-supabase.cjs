@@ -66,6 +66,7 @@ function parseArgs() {
       case '--days': opts.days = parseInt(args[++i]); break;
       case '--json': opts.json = true; break;
       case '--threshold': opts.threshold = parseFloat(args[++i]); break;
+      case '--client': opts.clientId = args[++i].toLowerCase(); break;
       default:
         if (!args[i].startsWith('--')) opts.query = args[i];
     }
@@ -232,7 +233,16 @@ async function searchRAG(query, embedding, opts) {
     return [{ source: 'rag', error: `RAG search failed: ${resp.status} ${err.slice(0, 200)}` }];
   }
   
-  const data = await resp.json();
+  let data = await resp.json();
+  
+  // Client isolation: if --client specified, filter to only that client's docs + shared (no client_id)
+  if (opts.clientId) {
+    data = data.filter(d => {
+      const docClient = d.metadata?.client_id;
+      // Include docs with no client_id (shared/agent-level) or matching client
+      return !docClient || docClient === opts.clientId;
+    });
+  }
   
   // Phase 2: Re-rank with utility + recency + tier
   const scored = data.map(d => {
@@ -246,7 +256,8 @@ async function searchRAG(query, embedding, opts) {
       utilityScore: d.metadata?.utility_score || 0,
       tier: d.metadata?.tier || 'unknown',
       snippet: d.content?.slice(0, 300),
-      docType: d.doc_type
+      docType: d.doc_type,
+      clientId: d.metadata?.client_id || null
     };
   });
   
@@ -302,7 +313,8 @@ async function main() {
   
   // Generate embedding once (reuse for RAG + KB)
   let embedding = null;
-  if ((sources.includes('rag') || sources.includes('kb')) && OPENAI_KEY && SUPABASE_URL) {
+  const hasEmbeddingKey = OPENAI_KEY || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if ((sources.includes('rag') || sources.includes('kb')) && hasEmbeddingKey && SUPABASE_URL) {
     try {
       embedding = await getEmbedding(opts.query);
     } catch (e) {
@@ -320,13 +332,13 @@ async function main() {
   if (sources.includes('rag') && embedding) {
     promises.push(searchRAG(opts.query, embedding, opts).then(r => output.sources.rag = r));
   } else if (sources.includes('rag') && !embedding) {
-    output.sources.rag = [{ source: 'rag', error: 'No embedding — OPENAI_API_KEY or SUPABASE_URL missing' }];
+    output.sources.rag = [{ source: 'rag', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
   }
   
   if (sources.includes('kb') && embedding) {
     promises.push(searchKB(opts.query, embedding, opts).then(r => output.sources.kb = r));
   } else if (sources.includes('kb') && !embedding) {
-    output.sources.kb = [{ source: 'kb', error: 'No embedding — OPENAI_API_KEY or SUPABASE_URL missing' }];
+    output.sources.kb = [{ source: 'kb', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
   }
   
   await Promise.all(promises);

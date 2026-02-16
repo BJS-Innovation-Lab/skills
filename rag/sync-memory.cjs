@@ -136,6 +136,14 @@ function chunkText(text, filePath) {
   return chunks;
 }
 
+// Extract client_id from file path (for multi-client agents)
+// Matches: clients/{name}/*, memory/clients/{name}/*
+function extractClientId(filePath) {
+  const p = filePath.toLowerCase();
+  const match = p.match(/(?:^|\/)clients\/([^/]+)\//);
+  return match ? match[1] : null;
+}
+
 // Detect tier and category from file path
 function classifyFile(filePath) {
   const p = filePath.toLowerCase();
@@ -326,7 +334,8 @@ async function syncAgent(agentName, config, state, fullSync) {
           chunk_index: chunk.index,
           chunk_total: chunk.total,
           hash,
-          synced_at: new Date().toISOString()
+          synced_at: new Date().toISOString(),
+          ...(extractClientId(relPath) && { client_id: extractClientId(relPath) })
         }
       });
     }
