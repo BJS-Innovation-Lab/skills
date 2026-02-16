@@ -38,6 +38,7 @@ RULES:
 7. Every line must earn its place — if removing it wouldn't hurt the agent, remove it
 8. Prefer specific facts over general descriptions
 9. Keep the agent's voice/personality markers if present
+10. PROTECTED: Lines under "Reflections" must be preserved VERBATIM — never summarize, rephrase, or compress them. These are the agent's soul. Compress everything else first.
 
 CONTEXT ABOUT THIS AGENT:
 - Name: {agentName}

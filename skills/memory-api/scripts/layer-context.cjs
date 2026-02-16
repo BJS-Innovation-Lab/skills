@@ -191,6 +191,25 @@ function extractContext({ who, channel, message } = {}) {
     }
   }
   
+  // REFLECTIONS — from the soul database (never compressed, pulled verbatim)
+  const reflectScript = path.join(WORKSPACE, 'rag', 'reflect.cjs');
+  if (fs.existsSync(reflectScript)) {
+    try {
+      const { execSync } = require('child_process');
+      const recent = execSync(
+        `cd ${WORKSPACE} && node rag/reflect.cjs --recent 3 2>/dev/null`,
+        { encoding: 'utf-8', timeout: 10000, stdio: ['pipe', 'pipe', 'pipe'] }
+      );
+      if (recent && recent.includes('"')) {
+        // Extract just the reflection texts
+        const reflections = recent.match(/"([^"]+)"/g)?.slice(0, 3)?.map(r => r.replace(/"/g, '')) || [];
+        if (reflections.length > 0) {
+          parts.push('## Reflections (preserve verbatim)\n' + reflections.map(r => `- ${r.substring(0, 200)}`).join('\n'));
+        }
+      }
+    } catch (e) { /* silent — reflections are optional */ }
+  }
+  
   // ROLE-SPECIFIC context
   for (const file of route.files) {
     if (file === 'MEMORY.md') continue; // Already extracted sections above
