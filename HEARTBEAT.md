@@ -1,5 +1,10 @@
 # HEARTBEAT.md
 
+## Boot Memory Freshness Check (every heartbeat)
+Run: node ~/.openclaw/workspace/rag/check-boot-freshness.cjs --hours 6
+If it outputs a warning, run the suggested memory-load.cjs command immediately.
+This is the first check — stale boot context degrades everything downstream.
+
 ## Learning Extraction (every 4-6 hours)
 WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/skills/agentic-learning/scripts/extract-insights.cjs --days 1
 
