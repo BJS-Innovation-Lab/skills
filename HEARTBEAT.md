@@ -21,8 +21,10 @@ For any question requiring precision (commits, dates, who said what, action item
 ## Utility Score Update (every 4-6 hours)
 node ~/.openclaw/workspace/rag/utility-tracker.cjs
 
-## Auto-Promotion Check (Sundays)
-WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/skills/agentic-learning/scripts/auto-promote.cjs
+## Outcome Check (every 4-6 hours, rotate with utility)
+Run: node ~/.openclaw/workspace/rag/outcome-prompts.cjs --heartbeat
+If a prompt is returned, evaluate the correction/insight and log an outcome entry to memory/learning/outcomes/.
 
-## Boot Memory Audit (Sundays)
-WORKSPACE=~/.openclaw/workspace node ~/.openclaw/workspace/rag/audit-boot-memory.cjs
+## Auto-Promotion Check → MOVED TO CRON (Sundays 10:30 AM ET)
+## Boot Memory Audit → MOVED TO CRON (Sundays 10:00 AM ET)
+## Thread Archival → MOVED TO CRON (Mondays 4:00 AM ET)
