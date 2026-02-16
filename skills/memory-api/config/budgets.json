@@ -1,0 +1,26 @@
+{
+  "totalBudget": 4166,
+  "safetyBuffer": 166,
+  "layers": {
+    "identity": {
+      "budget": 800,
+      "description": "Core identity, principles, role — always loaded",
+      "source": "SOUL.md + IDENTITY.md + memory/core/identity.md"
+    },
+    "context": {
+      "budget": 1400,
+      "description": "Dynamic context based on who, channel, time",
+      "source": "memory/core/ + memory/working/ + USER.md"
+    },
+    "relevance": {
+      "budget": 1400,
+      "description": "Smart search results from Supabase + local files",
+      "source": "Supabase RAG + KB + local file search"
+    },
+    "compression": {
+      "budget": 4000,
+      "description": "LLM compresses L1+L2+L3 output to fit total budget",
+      "model": "anthropic/claude-sonnet-4-20250514"
+    }
+  }
+}
