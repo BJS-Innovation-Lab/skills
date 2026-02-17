@@ -283,7 +283,8 @@ function computeFinalScore(result) {
   // 15% of results get a random bonus, giving lower-ranked entries a chance
   const explorationBonus = Math.random() < EXPLORATION_RATE ? 0.05 + Math.random() * 0.05 : 0;
   
-  return sim + utility + tierBonus + recencyBonus + noveltyBonus + explorationBonus;
+  const total = sim + utility + tierBonus + recencyBonus + noveltyBonus + explorationBonus;
+  return { total, _breakdown: { sim, utility, tierBonus, recencyBonus, noveltyBonus, explorationBonus } };
 }
 
 // --- Source 2: Supabase RAG (Agent Documents) ---
@@ -333,13 +334,14 @@ async function searchRAG(query, embedding, opts) {
   
   // Phase 2: Re-rank with utility + recency + tier
   const scored = data.map(d => {
-    const finalScore = computeFinalScore(d);
+    const { total: finalScore, _breakdown } = computeFinalScore(d);
     return {
       source: 'rag',
       path: d.file_path,
       title: d.title,
       similarity: d.similarity,
       finalScore: Math.round(finalScore * 1000) / 1000,
+      _breakdown,
       utilityScore: d.metadata?.utility_score || 0,
       tier: d.metadata?.tier || 'unknown',
       snippet: d.content?.slice(0, 300),
@@ -501,6 +503,15 @@ async function main() {
         const util = r.utilityScore ? ` ⚡${r.utilityScore > 0 ? '+' : ''}${r.utilityScore}` : '';
         const tier = r.tier ? ` [${r.tier}]` : '';
         console.log(`  ${sim}%${final}${util}${tier} ${r.path} — ${r.title || ''}`);
+        if (r._breakdown) {
+          const b = r._breakdown;
+          const parts = [];
+          if (b.recencyBonus > 0.001) parts.push(`recency:+${(b.recencyBonus*100).toFixed(1)}%`);
+          if (b.noveltyBonus > 0.001) parts.push(`novelty:+${(b.noveltyBonus*100).toFixed(1)}%`);
+          if (b.explorationBonus > 0.001) parts.push(`epsilon:+${(b.explorationBonus*100).toFixed(1)}%`);
+          if (b.utility !== 0) parts.push(`decay-util:${(b.utility*100).toFixed(1)}%`);
+          if (parts.length) console.log(`      [anti-bias: ${parts.join(', ')}]`);
+        }
         if (r.snippet) console.log(`      ${r.snippet.split('\n')[0].slice(0, 120)}`);
       }
       console.log();
