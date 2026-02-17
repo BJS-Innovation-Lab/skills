@@ -30,7 +30,7 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
 const AGENT_MAP = {
-  sam:    '62bb0f39-2248-4b14-806d-1c498c654ee7',
+  sam:    '62bb0f39-28f6-45a6-a3ae-cedbcbaf0bbe',
   saber:  '415a84a4-af9e-4c98-9d48-040834436e44',
   santos: 'e7fabc18-75fa-4294-bd7d-9e5ed0dedacb',
   sybil:  '5fae1839-ab85-412c-acc0-033cbbbbd15b',
@@ -57,26 +57,41 @@ function parseArgs() {
 
 // ============== SUPABASE FETCH ==============
 async function fetchAgentDocs(agentId, date) {
-  // Fetch all documents synced for this agent that match the date
-  // Uses the REST API to query the documents table directly
+  // Fetch documents synced on this date (by created_at) OR with date in filename
+  // Two queries: date in filename + created_at on this day
   const dateFilter = encodeURIComponent(`%${date}%`);
+  const dayStart = `${date}T00:00:00`;
+  const dayEnd = `${date}T23:59:59`;
   
-  const resp = await fetch(
+  // Query 1: file_path contains the date
+  const resp1 = await fetch(
     `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&file_path=like.${dateFilter}&select=file_path,title,content,metadata,created_at`,
-    {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-      }
-    }
+    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
   );
   
-  if (!resp.ok) {
-    console.error(`Supabase error: ${resp.status} ${await resp.text()}`);
+  // Query 2: created_at on this day (catches docs without date in filename)
+  const resp2 = await fetch(
+    `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&created_at=gte.${dayStart}&created_at=lte.${dayEnd}&select=file_path,title,content,metadata,created_at`,
+    { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+  );
+  
+  if (!resp1.ok && !resp2.ok) {
+    console.error(`Supabase error: ${resp1.status}`);
     return [];
   }
   
-  return resp.json();
+  const docs1 = resp1.ok ? await resp1.json() : [];
+  const docs2 = resp2.ok ? await resp2.json() : [];
+  
+  // Deduplicate by file_path
+  const seen = new Set();
+  const all = [];
+  for (const d of [...docs1, ...docs2]) {
+    const key = d.file_path + (d.content || '').slice(0, 50);
+    if (!seen.has(key)) { seen.add(key); all.push(d); }
+  }
+  
+  return all;
 }
 
 async function fetchClientDocs(agentId) {
@@ -364,8 +379,9 @@ async function main() {
   }
   
   // Analyze each doc
+  // Analyze all docs — client-tagged and general activity
   const analyses = docs
-    .filter(d => d.metadata?.client_id) // Only client docs
+    .filter(d => d.content && d.content.trim().length > 20) // Skip empty/tiny chunks
     .map(d => analyzeDoc(d.content || '', d.file_path || ''));
   
   console.error(`   Analyzed ${analyses.length} client documents`);

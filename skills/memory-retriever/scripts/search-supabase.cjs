@@ -49,7 +49,7 @@ const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.opencla
 const AGENT_MAP = {
   sybil:  '5fae1839-ab85-412c-acc0-033cbbbbd15b',
   saber:  '415a84a4-af9e-4c98-9d48-040834436e44',
-  sam:    '62bb0f39-2248-4b14-806d-1c498c654ee7',
+  sam:    '62bb0f39-28f6-45a6-a3ae-cedbcbaf0bbe',
   santos: 'e7fabc18-75fa-4294-bd7d-9e5ed0dedacb',
   sage:   'f6198962-313d-4a39-89eb-72755602d468'
 };
