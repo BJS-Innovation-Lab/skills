@@ -1,0 +1,14 @@
+{
+  "sensitivity": "strict",
+  "hq_alert_channel": "a2a",
+  "hq_agent_id": "5fae1839-ab85-412c-acc0-033cbbbbd15b",
+  "owner_ids": [],
+  "log_file": "memory/security/events.jsonl",
+  "actions": {
+    "SAFE": "allow",
+    "LOW": "log",
+    "MEDIUM": "warn",
+    "HIGH": "block",
+    "CRITICAL": "block_notify"
+  }
+}
