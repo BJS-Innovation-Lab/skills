@@ -67,10 +67,34 @@ async function sbFetch(endpoint, opts = {}) {
 }
 
 // ── Graph Class ─────────────────────────────────────────────────────
+// ── Scope Constants ─────────────────────────────────────────────────
+// One graph, scoped views. Per Bridget: cross-client insights require
+// a single graph — but field agents must not see other clients' data.
+const SCOPES = {
+  GLOBAL: 'global',           // shared knowledge (agent capabilities, team structure)
+  INTERNAL: 'internal',       // HQ-only (pricing, strategy, research)
+  client: (name) => `client:${name.toLowerCase()}`,  // client-specific data
+};
+
+const ACCESS_LEVELS = {
+  field: (clientScopes) => ['global', ...clientScopes],         // field agents: their clients + global
+  hq: () => null,                                                // HQ agents: everything (no filter)
+  founder: () => null,                                           // founders: everything
+};
+
 class Graph {
+  /**
+   * @param {object} opts
+   * @param {string} [opts.nodeTable] - Supabase table for nodes
+   * @param {string} [opts.edgeTable] - Supabase table for edges  
+   * @param {string} [opts.scope] - Default scope for new nodes ('global', 'internal', 'client:name')
+   * @param {string[]} [opts.visibleScopes] - Scopes this graph instance can read (null = all)
+   */
   constructor(opts = {}) {
     this.nodeTable = opts.nodeTable || 'kg_nodes';
     this.edgeTable = opts.edgeTable || 'kg_edges';
+    this.defaultScope = opts.scope || SCOPES.GLOBAL;
+    this.visibleScopes = opts.visibleScopes || null; // null = no filter (HQ/founder)
     if (!SUPABASE_URL || !SUPABASE_KEY) {
       throw new Error('Missing SUPABASE_URL or SUPABASE_KEY');
     }
@@ -100,10 +124,11 @@ class Graph {
       }
     }
     
+    const scope = properties._scope || this.defaultScope;
     const node = {
       id,
       node_type: type,
-      properties: { ...properties, _created: new Date().toISOString() },
+      properties: { ...properties, _scope: scope, _created: new Date().toISOString() },
     };
     
     const [result] = await sbFetch(this.nodeTable, {
@@ -124,11 +149,17 @@ class Graph {
 
   /**
    * Find nodes by type and optional property filters.
+   * Respects scope visibility — field agents only see their assigned clients + global.
    */
   async findNodes(type, filters = {}) {
     let query = `${this.nodeTable}?node_type=eq.${type}`;
     for (const [key, value] of Object.entries(filters)) {
       query += `&properties->>$.${key}=eq.${encodeURIComponent(value)}`;
+    }
+    // Apply scope filter if this graph instance has visibility restrictions
+    if (this.visibleScopes) {
+      const scopeFilter = this.visibleScopes.map(s => `properties->>_scope.eq.${s}`).join(',');
+      query += `&or=(${scopeFilter})`;
     }
     return sbFetch(query);
   }
@@ -405,4 +436,4 @@ class Graph {
   }
 }
 
-module.exports = { Graph };
+module.exports = { Graph, SCOPES, ACCESS_LEVELS };

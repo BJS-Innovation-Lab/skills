@@ -20,7 +20,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { Graph } = require('../lib/graph.cjs');
+const { Graph, SCOPES } = require('../lib/graph.cjs');
 
 const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw/workspace');
 
@@ -190,10 +190,14 @@ async function writeToGraph(graph, extraction, context, dryRun = false) {
   for (const entity of extraction.entities || []) {
     try {
       const nodeId = `${entity.type}-${entity.id}`;
+      // Scope: people and agents are global, everything else is client-scoped
+      const isGlobal = ['person', 'agent', 'founder'].includes(entity.type);
+      const scope = isGlobal ? SCOPES.GLOBAL : (context.client ? SCOPES.client(context.client) : SCOPES.GLOBAL);
       if (!dryRun) {
         await graph.addNode(entity.type, {
           name: entity.name,
           ...entity.properties,
+          _scope: scope,
           _extracted_from: context.source || 'unknown',
           _extracted_date: context.date || new Date().toISOString(),
         }, nodeId);
