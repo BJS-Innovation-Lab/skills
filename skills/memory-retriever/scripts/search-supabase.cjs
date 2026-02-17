@@ -67,6 +67,8 @@ function parseArgs() {
       case '--json': opts.json = true; break;
       case '--threshold': opts.threshold = parseFloat(args[++i]); break;
       case '--client': opts.clientId = args[++i].toLowerCase(); break;
+      case '--user': opts.userId = args[++i]; break;
+      case '--isolation': opts.isolation = args[++i]; break;
       default:
         if (!args[i].startsWith('--')) opts.query = args[i];
     }
@@ -89,14 +91,20 @@ function searchLocalFiles(query, opts) {
     memDir,
     path.join(memDir, 'core'),
     path.join(memDir, 'working'),
+    path.join(memDir, 'team'),  // team-shared memory (always included)
     path.join(memDir, 'learning/corrections'),
     path.join(memDir, 'learning/insights'),
     path.join(memDir, 'learning/outcomes'),
   ];
   
-  // If client isolation active, add client-specific dir and filter out other clients
+  // If client isolation active, add client-specific dirs
   if (opts.clientId) {
     searchPaths.push(path.join(memDir, 'clients', opts.clientId));
+    // Also add per-user dir if user-first or strict
+    if (opts.userId && opts.isolation !== 'shared') {
+      const userName = opts.userName ? opts.userName.toLowerCase().replace(/\s+/g, '-') : opts.userId;
+      searchPaths.push(path.join(memDir, 'clients', opts.clientId, userName));
+    }
   }
   
   // Also search MEMORY.md at workspace root
@@ -151,16 +159,38 @@ function searchLocalFiles(query, opts) {
     }
   }
   
-  // Client isolation: filter out other clients' files
-  const filtered = opts.clientId 
-    ? results.filter(r => {
+  // Client isolation: filter out other clients' files + apply user-aware ranking
+  let filtered = results;
+  
+  if (opts.clientId) {
+    filtered = results.filter(r => {
+      const p = r.path.toLowerCase();
+      const clientMatch = p.match(/clients\/([^/]+)\//);
+      if (!clientMatch) return true;  // shared/non-client files always visible
+      return clientMatch[1] === opts.clientId;  // only this client's files
+    });
+    
+    // User-aware ranking: boost current user's files
+    if (opts.userId && opts.isolation !== 'shared') {
+      const userName = opts.userName ? opts.userName.toLowerCase().replace(/\s+/g, '-') : opts.userId;
+      
+      filtered = filtered.map(r => {
         const p = r.path.toLowerCase();
-        // Allow: non-client files (shared) + this client's files
-        // Block: other clients' files
-        const clientMatch = p.match(/clients\/([^/]+)\//);
-        return !clientMatch || clientMatch[1] === opts.clientId;
-      })
-    : results;
+        const isUserFile = p.includes(`/${userName}/`) || p.includes(`/${opts.userId}/`);
+        
+        if (opts.isolation === 'strict' && !isUserFile && p.includes('clients/')) {
+          return null; // strict: block other users' files within same client
+        }
+        
+        // user-first: boost current user's files
+        if (isUserFile) {
+          r.relevance = Math.min(1.0, r.relevance + 0.25);
+          r.userMatch = true;
+        }
+        return r;
+      }).filter(Boolean);
+    }
+  }
   
   // Sort by relevance
   filtered.sort((a, b) => b.relevance - a.relevance);
@@ -251,12 +281,19 @@ async function searchRAG(query, embedding, opts) {
   
   let data = await resp.json();
   
-  // Client isolation: if --client specified, filter to only that client's docs + shared (no client_id)
+  // Client isolation: filter to this client's docs + shared (no client_id)
   if (opts.clientId) {
     data = data.filter(d => {
       const docClient = d.metadata?.client_id;
-      // Include docs with no client_id (shared/agent-level) or matching client
-      return !docClient || docClient === opts.clientId;
+      if (!docClient) return true; // shared/agent-level docs always visible
+      if (docClient !== opts.clientId) return false; // other clients blocked
+      
+      // User-level filtering within same client
+      if (opts.isolation === 'strict' && opts.userId) {
+        const docUser = d.metadata?.user_id;
+        return !docUser || docUser === opts.userId; // strict: only this user's docs
+      }
+      return true;
     });
   }
   
@@ -317,22 +354,31 @@ async function searchKB(query, embedding, opts) {
 
 // --- Client Auto-Detection ---
 // If a .client-map.json exists, this agent serves multiple clients.
-// Auto-detect client from SESSION_KEY env or --client flag.
+// Auto-detect client + user from SESSION_KEY env or --client flag.
 // If map exists but no client can be determined, warn (search still runs but unfiltered).
+// Returns { clientId, userId, userName, isolation } on opts.
 function autoDetectClient(opts) {
-  if (opts.clientId) return opts.clientId; // explicit --client wins
+  if (opts.clientId) {
+    opts.isolation = opts.isolation || 'shared';
+    return opts.clientId;
+  }
   
-  const { getClientId, CLIENT_MAP } = require('../../../rag/client-router.cjs');
+  const { getClientId, getUserContext, CLIENT_MAP } = require('../../../rag/client-router.cjs');
   const hasClients = Object.keys(CLIENT_MAP).length > 0;
   if (!hasClients) return null; // single-client agent, no filtering needed
   
   // Try SESSION_KEY env (set by OpenClaw at runtime)
   const sessionKey = process.env.SESSION_KEY || process.env.OPENCLAW_SESSION_KEY || '';
-  const detected = getClientId(sessionKey);
+  const ctx = getUserContext(sessionKey);
   
-  if (detected) {
-    console.error(`🔒 Client auto-detected: ${detected} (from session)`);
-    return detected;
+  if (ctx.clientId) {
+    opts.clientId = ctx.clientId;
+    opts.userId = ctx.userId;
+    opts.userName = ctx.userName;
+    opts.isolation = ctx.isolation;
+    const who = ctx.userName ? ` (user: ${ctx.userName})` : '';
+    console.error(`🔒 Client auto-detected: ${ctx.clientId}${who} [${ctx.isolation}]`);
+    return ctx.clientId;
   }
   
   // Client map exists but we can't determine which client — warn loudly

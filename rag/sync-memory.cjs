@@ -144,6 +144,29 @@ function extractClientId(filePath) {
   return match ? match[1] : null;
 }
 
+// Extract user_id from file path (for per-user isolation within a client)
+// Matches: clients/{clientName}/{userName}/*
+// Uses client-router to reverse-map userName → userId
+function extractUserId(filePath) {
+  const p = filePath.toLowerCase();
+  const match = p.match(/(?:^|\/)clients\/([^/]+)\/([^/]+)\//);
+  if (!match) return null;
+  const userName = match[2];
+  // If it looks like a date file directly under client dir, no user
+  if (/^\d{4}-\d{2}-\d{2}/.test(userName)) return null;
+  try {
+    const { CLIENT_CONFIG } = require('./client-router.cjs');
+    const clientConf = CLIENT_CONFIG[match[1]];
+    if (clientConf?.users) {
+      // Find userId by matching userName
+      for (const [uid, name] of Object.entries(clientConf.users)) {
+        if (name.toLowerCase().replace(/\s+/g, '-') === userName || uid === userName) return uid;
+      }
+    }
+  } catch {}
+  return userName; // fallback: use dir name as user identifier
+}
+
 // Detect tier and category from file path
 function classifyFile(filePath) {
   const p = filePath.toLowerCase();
@@ -335,7 +358,8 @@ async function syncAgent(agentName, config, state, fullSync) {
           chunk_total: chunk.total,
           hash,
           synced_at: new Date().toISOString(),
-          ...(extractClientId(relPath) && { client_id: extractClientId(relPath) })
+          ...(extractClientId(relPath) && { client_id: extractClientId(relPath) }),
+          ...(extractUserId(relPath) && { user_id: extractUserId(relPath) })
         }
       });
     }
