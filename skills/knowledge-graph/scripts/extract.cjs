@@ -27,6 +27,14 @@ const args = process.argv.slice(2);
 const getArg = (name) => { const i = args.indexOf(`--${name}`); return i >= 0 ? args[i + 1] : null; };
 const hasFlag = (name) => args.includes(`--${name}`);
 const AGENT_NAME = getArg('agent');
+const AGENT_UUIDS = {
+  sybil: '5fae1839-ab85-412c-acc0-033cbbbbd15b',
+  sam: '62bb0f39-28f6-45a6-a3ae-cedbcbaf0bbe',
+  saber: '415a84a4-af9e-4c98-9d48-040834436e44',
+  santos: 'e7fabc18-75fa-4294-bd7d-9e5ed0dedacb',
+  sage: 'f6198962-313d-4a39-89eb-72755602d468',
+};
+const AGENT_UUID = AGENT_UUIDS[(AGENT_NAME || '').toLowerCase()] || AGENT_NAME;
 const DAYS = parseInt(getArg('days') || '7');
 const FILE_PATH = getArg('file');
 const TENANT_ID = getArg('tenant-id');
@@ -277,7 +285,7 @@ async function main() {
       const relCount = (extraction.relationships || []).length;
       console.log(`   Extracted: ${entCount} entities, ${relCount} relationships`);
 
-      const result = await ingestResults(extraction, TENANT_ID, AGENT_NAME, batch);
+      const result = await ingestResults(extraction, TENANT_ID, AGENT_UUID, batch);
       totalEntities += result.entityIds.length;
       totalEdges += result.edgeIds.length;
 
