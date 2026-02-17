@@ -1,439 +1,263 @@
-#!/usr/bin/env node
 /**
  * VULKN Knowledge Graph — Core Library
- * 
- * Lightweight graph engine backed by Supabase (PostgreSQL).
- * No external graph DB needed. Owns the full lifecycle:
- *   addNode, addEdge, traverse, findPatterns, query
- * 
- * Tables required: kg_nodes, kg_edges (see migrations/)
+ * PostgreSQL-backed graph operations via Supabase
  * 
  * Usage:
- *   const { Graph } = require('./graph.cjs');
- *   const g = new Graph();  // reads env from rag/.env
- *   await g.addNode('agent', { name: 'Sam', emoji: '🛠️' });
- *   await g.addEdge(samId, clientId, 'SERVES', { start_date: '2026-02-01' });
- *   const results = await g.traverse(samId, 'SERVES', { depth: 2 });
+ *   const graph = require('./graph.cjs');
+ *   await graph.init();
+ *   const id = await graph.addEntity('Person', 'Javier Mitrani', { role: 'CEO' }, tenantId);
+ *   await graph.addEdge('WORKS_AT', personId, orgId, {}, { tenantId });
+ *   const results = await graph.traverse(startId, { maxDepth: 3, relationships: ['WORKS_AT'] });
  */
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 
-// ── Env ─────────────────────────────────────────────────────────────
-const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw/workspace');
-const ENV_PATHS = [
-  path.join(WORKSPACE, 'rag/.env'),
-  path.join(__dirname, '../../rag/.env'),
-];
-for (const envPath of ENV_PATHS) {
-  if (fs.existsSync(envPath)) {
-    for (const line of fs.readFileSync(envPath, 'utf-8').split('\n')) {
-      const match = line.match(/^([^#=]+)=(.+)$/);
-      if (match && !process.env[match[1].trim()]) {
-        process.env[match[1].trim()] = match[2].trim();
-      }
-    }
-    break;
-  }
-}
-
-const SUPABASE_URL = process.env.SUPABASE_URL;
+// --- Config ---
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fcgiuzmmvcnovaciykbx.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 
-// ── HTTP helpers ────────────────────────────────────────────────────
-async function sbFetch(endpoint, opts = {}) {
-  const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
-  const headers = {
-    'apikey': SUPABASE_KEY,
-    'Authorization': `Bearer ${SUPABASE_KEY}`,
-    'Content-Type': 'application/json',
-    'Prefer': opts.prefer || 'return=representation',
+let supabase;
+
+function init() {
+  if (!SUPABASE_KEY) throw new Error('SUPABASE_SERVICE_KEY or SUPABASE_ANON_KEY required');
+  supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  return supabase;
+}
+
+function getClient() {
+  if (!supabase) init();
+  return supabase;
+}
+
+// --- Entity Operations ---
+
+async function addEntity(entityType, name, properties = {}, tenantId = null, accessScope = 'tenant') {
+  const db = getClient();
+  const { data, error } = await db.from('kg_entities').insert({
+    entity_type: entityType,
+    name,
+    properties,
+    tenant_id: tenantId,
+    access_scope: accessScope,
+  }).select('id').single();
+  if (error) throw new Error(`addEntity failed: ${error.message}`);
+  return data.id;
+}
+
+async function getEntity(id) {
+  const db = getClient();
+  const { data, error } = await db.from('kg_entities').select('*').eq('id', id).single();
+  if (error) throw new Error(`getEntity failed: ${error.message}`);
+  return data;
+}
+
+async function findEntities(filters = {}) {
+  const db = getClient();
+  let q = db.from('kg_entities').select('*');
+  if (filters.entityType) q = q.eq('entity_type', filters.entityType);
+  if (filters.tenantId) q = q.eq('tenant_id', filters.tenantId);
+  if (filters.name) q = q.ilike('name', `%${filters.name}%`);
+  if (filters.limit) q = q.limit(filters.limit);
+  const { data, error } = await q;
+  if (error) throw new Error(`findEntities failed: ${error.message}`);
+  return data;
+}
+
+async function updateEntity(id, updates) {
+  const db = getClient();
+  const { error } = await db.from('kg_entities')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw new Error(`updateEntity failed: ${error.message}`);
+}
+
+async function resolveEntity(entityType, name, properties = {}, tenantId = null) {
+  // Find existing entity by type + name + tenant, or create new
+  const db = getClient();
+  let q = db.from('kg_entities').select('*')
+    .eq('entity_type', entityType)
+    .ilike('name', name);
+  if (tenantId) q = q.eq('tenant_id', tenantId);
+  else q = q.is('tenant_id', null);
+  
+  const { data } = await q.limit(1);
+  if (data && data.length > 0) {
+    // Merge properties
+    const existing = data[0];
+    const merged = { ...existing.properties, ...properties };
+    if (JSON.stringify(merged) !== JSON.stringify(existing.properties)) {
+      await updateEntity(existing.id, { properties: merged });
+    }
+    return { id: existing.id, created: false };
+  }
+  const id = await addEntity(entityType, name, properties, tenantId);
+  return { id, created: true };
+}
+
+// --- Edge Operations ---
+
+async function addEdge(relationship, sourceId, targetId, properties = {}, opts = {}) {
+  const db = getClient();
+  const { data, error } = await db.from('kg_edges').insert({
+    relationship,
+    source_id: sourceId,
+    target_id: targetId,
+    properties,
+    valid_from: opts.validFrom || new Date().toISOString(),
+    valid_to: opts.validTo || null,
+    confidence: opts.confidence ?? 1.0,
+    provenance: opts.provenance || null,
+    tenant_id: opts.tenantId || null,
+    access_scope: opts.accessScope || 'tenant',
+  }).select('id').single();
+  if (error) throw new Error(`addEdge failed: ${error.message}`);
+  return data.id;
+}
+
+async function findEdges(filters = {}) {
+  const db = getClient();
+  let q = db.from('kg_edges').select('*, source:kg_entities!source_id(*), target:kg_entities!target_id(*)');
+  if (filters.sourceId) q = q.eq('source_id', filters.sourceId);
+  if (filters.targetId) q = q.eq('target_id', filters.targetId);
+  if (filters.relationship) q = q.eq('relationship', filters.relationship);
+  if (filters.tenantId) q = q.eq('tenant_id', filters.tenantId);
+  if (filters.activeOnly !== false) q = q.is('invalidated_at', null);
+  if (filters.limit) q = q.limit(filters.limit);
+  const { data, error } = await q;
+  if (error) throw new Error(`findEdges failed: ${error.message}`);
+  return data;
+}
+
+async function invalidateEdge(id, reason) {
+  const db = getClient();
+  const { error } = await db.from('kg_edges').update({
+    invalidated_at: new Date().toISOString(),
+    properties: db.rpc ? undefined : undefined, // TODO: append reason to properties
+  }).eq('id', id);
+  if (error) throw new Error(`invalidateEdge failed: ${error.message}`);
+}
+
+// --- Graph Traversal ---
+
+async function traverse(startId, opts = {}) {
+  const maxDepth = opts.maxDepth || 3;
+  const relationships = opts.relationships; // null = all
+  const tenantId = opts.tenantId;
+  const direction = opts.direction || 'outgoing'; // 'outgoing', 'incoming', 'both'
+
+  const db = getClient();
+  
+  // Use recursive CTE via RPC or raw SQL
+  // For now, do iterative BFS in JS (works fine for depth ≤ 5)
+  const visited = new Set([startId]);
+  const results = [];
+  let frontier = [startId];
+
+  for (let depth = 1; depth <= maxDepth && frontier.length > 0; depth++) {
+    const nextFrontier = [];
+    
+    for (const nodeId of frontier) {
+      let q = db.from('kg_edges')
+        .select('*, source:kg_entities!source_id(id,entity_type,name,properties), target:kg_entities!target_id(id,entity_type,name,properties)')
+        .is('invalidated_at', null);
+
+      if (direction === 'outgoing') {
+        q = q.eq('source_id', nodeId);
+      } else if (direction === 'incoming') {
+        q = q.eq('target_id', nodeId);
+      } else {
+        q = q.or(`source_id.eq.${nodeId},target_id.eq.${nodeId}`);
+      }
+
+      if (relationships) q = q.in('relationship', relationships);
+      if (tenantId) q = q.or(`tenant_id.eq.${tenantId},tenant_id.is.null`);
+
+      const { data, error } = await q;
+      if (error) continue;
+
+      for (const edge of data || []) {
+        const neighborId = edge.source_id === nodeId ? edge.target_id : edge.source_id;
+        const neighbor = edge.source_id === nodeId ? edge.target : edge.source;
+        
+        results.push({
+          edge: { id: edge.id, relationship: edge.relationship, properties: edge.properties, confidence: edge.confidence },
+          node: neighbor,
+          depth,
+          from: nodeId,
+        });
+
+        if (!visited.has(neighborId)) {
+          visited.add(neighborId);
+          nextFrontier.push(neighborId);
+        }
+      }
+    }
+    frontier = nextFrontier;
+  }
+
+  return results;
+}
+
+// --- Episode Operations ---
+
+async function addEpisode(agentId, rawMessages, opts = {}) {
+  const db = getClient();
+  const { data, error } = await db.from('kg_episodes').insert({
+    agent_id: agentId,
+    client_id: opts.clientId || null,
+    conversation_id: opts.conversationId || null,
+    raw_messages: rawMessages,
+    extraction_version: opts.extractionVersion || 'v3',
+    extracted_entities: opts.entityIds || [],
+    extracted_edges: opts.edgeIds || [],
+    tenant_id: opts.tenantId || null,
+  }).select('id').single();
+  if (error) throw new Error(`addEpisode failed: ${error.message}`);
+  return data.id;
+}
+
+async function cleanupExpiredEpisodes() {
+  const db = getClient();
+  const { data, error } = await db.from('kg_episodes')
+    .delete()
+    .lt('expires_at', new Date().toISOString())
+    .select('id');
+  if (error) throw new Error(`cleanupExpiredEpisodes failed: ${error.message}`);
+  return (data || []).length;
+}
+
+// --- Utility ---
+
+async function stats(tenantId = null) {
+  const db = getClient();
+  let eq = tenantId ? { tenant_id: tenantId } : {};
+  
+  const [entities, edges, episodes] = await Promise.all([
+    db.from('kg_entities').select('entity_type', { count: 'exact', head: true }),
+    db.from('kg_edges').select('relationship', { count: 'exact', head: true }),
+    db.from('kg_episodes').select('id', { count: 'exact', head: true }),
+  ]);
+
+  return {
+    entities: entities.count || 0,
+    edges: edges.count || 0,
+    episodes: episodes.count || 0,
   };
-  
-  const resp = await fetch(url, {
-    method: opts.method || 'GET',
-    headers,
-    body: opts.body ? JSON.stringify(opts.body) : undefined,
-  });
-  
-  if (!resp.ok) {
-    const text = await resp.text();
-    throw new Error(`Supabase ${opts.method || 'GET'} ${endpoint}: ${resp.status} ${text}`);
-  }
-  
-  const text = await resp.text();
-  return text ? JSON.parse(text) : null;
 }
 
-// ── Graph Class ─────────────────────────────────────────────────────
-// ── Scope Constants ─────────────────────────────────────────────────
-// One graph, scoped views. Per Bridget: cross-client insights require
-// a single graph — but field agents must not see other clients' data.
-const SCOPES = {
-  GLOBAL: 'global',           // shared knowledge (agent capabilities, team structure)
-  INTERNAL: 'internal',       // HQ-only (pricing, strategy, research)
-  client: (name) => `client:${name.toLowerCase()}`,  // client-specific data
+module.exports = {
+  init,
+  getClient,
+  addEntity,
+  getEntity,
+  findEntities,
+  updateEntity,
+  resolveEntity,
+  addEdge,
+  findEdges,
+  invalidateEdge,
+  traverse,
+  addEpisode,
+  cleanupExpiredEpisodes,
+  stats,
 };
-
-const ACCESS_LEVELS = {
-  field: (clientScopes) => ['global', ...clientScopes],         // field agents: their clients + global
-  hq: () => null,                                                // HQ agents: everything (no filter)
-  founder: () => null,                                           // founders: everything
-};
-
-class Graph {
-  /**
-   * @param {object} opts
-   * @param {string} [opts.nodeTable] - Supabase table for nodes
-   * @param {string} [opts.edgeTable] - Supabase table for edges  
-   * @param {string} [opts.scope] - Default scope for new nodes ('global', 'internal', 'client:name')
-   * @param {string[]} [opts.visibleScopes] - Scopes this graph instance can read (null = all)
-   */
-  constructor(opts = {}) {
-    this.nodeTable = opts.nodeTable || 'kg_nodes';
-    this.edgeTable = opts.edgeTable || 'kg_edges';
-    this.defaultScope = opts.scope || SCOPES.GLOBAL;
-    this.visibleScopes = opts.visibleScopes || null; // null = no filter (HQ/founder)
-    if (!SUPABASE_URL || !SUPABASE_KEY) {
-      throw new Error('Missing SUPABASE_URL or SUPABASE_KEY');
-    }
-  }
-
-  // ── Nodes ───────────────────────────────────────────────────────
-  
-  /**
-   * Add a node to the graph.
-   * @param {string} type - Node type (agent, client, person, conversation, etc.)
-   * @param {object} properties - Node properties
-   * @param {string} [externalId] - Optional stable ID for dedup (e.g. telegram user ID)
-   * @returns {object} Created node
-   */
-  async addNode(type, properties, externalId = null) {
-    const id = externalId || crypto.randomUUID();
-    
-    // Upsert: if externalId exists, merge properties
-    if (externalId) {
-      const existing = await this.getNode(externalId);
-      if (existing) {
-        return this.updateNode(externalId, { 
-          ...existing.properties, 
-          ...properties,
-          _updated: new Date().toISOString()
-        });
-      }
-    }
-    
-    const scope = properties._scope || this.defaultScope;
-    const node = {
-      id,
-      node_type: type,
-      properties: { ...properties, _scope: scope, _created: new Date().toISOString() },
-    };
-    
-    const [result] = await sbFetch(this.nodeTable, {
-      method: 'POST',
-      body: node,
-    });
-    
-    return result;
-  }
-
-  /**
-   * Get a node by ID.
-   */
-  async getNode(id) {
-    const results = await sbFetch(`${this.nodeTable}?id=eq.${id}`);
-    return results[0] || null;
-  }
-
-  /**
-   * Find nodes by type and optional property filters.
-   * Respects scope visibility — field agents only see their assigned clients + global.
-   */
-  async findNodes(type, filters = {}) {
-    let query = `${this.nodeTable}?node_type=eq.${type}`;
-    for (const [key, value] of Object.entries(filters)) {
-      query += `&properties->>$.${key}=eq.${encodeURIComponent(value)}`;
-    }
-    // Apply scope filter if this graph instance has visibility restrictions
-    if (this.visibleScopes) {
-      const scopeFilter = this.visibleScopes.map(s => `properties->>_scope.eq.${s}`).join(',');
-      query += `&or=(${scopeFilter})`;
-    }
-    return sbFetch(query);
-  }
-
-  /**
-   * Find a node by type and a specific property value.
-   */
-  async findNode(type, propKey, propValue) {
-    const results = await sbFetch(
-      `${this.nodeTable}?node_type=eq.${type}&properties->>$.${propKey}=eq.${encodeURIComponent(propValue)}`
-    );
-    return results[0] || null;
-  }
-
-  /**
-   * Update a node's properties (merge).
-   */
-  async updateNode(id, properties) {
-    const [result] = await sbFetch(`${this.nodeTable}?id=eq.${id}`, {
-      method: 'PATCH',
-      body: { properties },
-    });
-    return result;
-  }
-
-  /**
-   * Delete a node and all its edges.
-   */
-  async deleteNode(id) {
-    await sbFetch(`${this.edgeTable}?or=(from_node.eq.${id},to_node.eq.${id})`, {
-      method: 'DELETE',
-      prefer: 'return=minimal',
-    });
-    await sbFetch(`${this.nodeTable}?id=eq.${id}`, {
-      method: 'DELETE',
-      prefer: 'return=minimal',
-    });
-  }
-
-  // ── Edges ───────────────────────────────────────────────────────
-
-  /**
-   * Add an edge between two nodes.
-   * @param {string} fromNode - Source node ID
-   * @param {string} toNode - Target node ID
-   * @param {string} type - Relationship type (SERVES, WORKS_FOR, LED_TO, etc.)
-   * @param {object} [properties] - Edge properties
-   * @returns {object} Created edge
-   */
-  async addEdge(fromNode, toNode, type, properties = {}) {
-    // Dedup: don't create duplicate edges
-    const existing = await sbFetch(
-      `${this.edgeTable}?from_node=eq.${fromNode}&to_node=eq.${toNode}&edge_type=eq.${type}&limit=1`
-    );
-    if (existing.length > 0) {
-      // Merge properties
-      return this.updateEdge(existing[0].id, { 
-        ...existing[0].properties, 
-        ...properties,
-        _updated: new Date().toISOString()
-      });
-    }
-
-    const edge = {
-      id: crypto.randomUUID(),
-      from_node: fromNode,
-      to_node: toNode,
-      edge_type: type,
-      properties: { ...properties, _created: new Date().toISOString() },
-    };
-    
-    const [result] = await sbFetch(this.edgeTable, {
-      method: 'POST',
-      body: edge,
-    });
-    
-    return result;
-  }
-
-  /**
-   * Get edges from a node, optionally filtered by type.
-   */
-  async getEdgesFrom(nodeId, edgeType = null) {
-    let query = `${this.edgeTable}?from_node=eq.${nodeId}`;
-    if (edgeType) query += `&edge_type=eq.${edgeType}`;
-    return sbFetch(query);
-  }
-
-  /**
-   * Get edges to a node, optionally filtered by type.
-   */
-  async getEdgesTo(nodeId, edgeType = null) {
-    let query = `${this.edgeTable}?to_node=eq.${nodeId}`;
-    if (edgeType) query += `&edge_type=eq.${edgeType}`;
-    return sbFetch(query);
-  }
-
-  /**
-   * Update an edge's properties.
-   */
-  async updateEdge(id, properties) {
-    const [result] = await sbFetch(`${this.edgeTable}?id=eq.${id}`, {
-      method: 'PATCH',
-      body: { properties },
-    });
-    return result;
-  }
-
-  // ── Traversal ─────────────────────────────────────────────────
-
-  /**
-   * Traverse the graph from a starting node.
-   * Returns all connected nodes up to `depth` hops.
-   * 
-   * @param {string} startId - Starting node ID
-   * @param {object} opts - { depth: 2, edgeTypes: ['SERVES', 'WORKS_FOR'], direction: 'out'|'in'|'both' }
-   * @returns {object} { nodes: [...], edges: [...], paths: [...] }
-   */
-  async traverse(startId, opts = {}) {
-    const depth = opts.depth || 2;
-    const direction = opts.direction || 'both';
-    const edgeTypes = opts.edgeTypes || null;
-
-    const visited = new Set();
-    const allNodes = [];
-    const allEdges = [];
-    const paths = [];
-
-    async function visit(nodeId, currentDepth, path) {
-      if (currentDepth > depth || visited.has(nodeId)) return;
-      visited.add(nodeId);
-
-      const node = await this.getNode(nodeId);
-      if (node) allNodes.push(node);
-
-      if (currentDepth >= depth) return;
-
-      // Get outgoing edges
-      if (direction === 'out' || direction === 'both') {
-        let edges = await this.getEdgesFrom(nodeId);
-        if (edgeTypes) edges = edges.filter(e => edgeTypes.includes(e.edge_type));
-        for (const edge of edges) {
-          allEdges.push(edge);
-          const newPath = [...path, { edge, direction: 'out' }];
-          paths.push(newPath);
-          await visit.call(this, edge.to_node, currentDepth + 1, newPath);
-        }
-      }
-
-      // Get incoming edges
-      if (direction === 'in' || direction === 'both') {
-        let edges = await this.getEdgesTo(nodeId);
-        if (edgeTypes) edges = edges.filter(e => edgeTypes.includes(e.edge_type));
-        for (const edge of edges) {
-          allEdges.push(edge);
-          const newPath = [...path, { edge, direction: 'in' }];
-          paths.push(newPath);
-          await visit.call(this, edge.from_node, currentDepth + 1, newPath);
-        }
-      }
-    }
-
-    await visit.call(this, startId, 0, []);
-
-    return {
-      nodes: allNodes,
-      edges: [...new Map(allEdges.map(e => [e.id, e])).values()], // dedup
-      paths,
-    };
-  }
-
-  // ── Pattern Detection ─────────────────────────────────────────
-
-  /**
-   * Find nodes connected through a specific relationship chain.
-   * Example: findChain(['agent', 'SERVES', 'client', 'EMPLOYS', 'person'])
-   * 
-   * @param {string[]} chain - Alternating [nodeType, edgeType, nodeType, ...]
-   * @returns {object[]} Array of matching paths
-   */
-  async findChain(chain) {
-    if (chain.length < 3 || chain.length % 2 === 0) {
-      throw new Error('Chain must be [nodeType, edgeType, nodeType, ...]');
-    }
-
-    // Start with all nodes of the first type
-    const startNodes = await this.findNodes(chain[0]);
-    const results = [];
-
-    for (const startNode of startNodes) {
-      const paths = await this._followChain(startNode, chain.slice(1), [startNode]);
-      results.push(...paths);
-    }
-
-    return results;
-  }
-
-  async _followChain(currentNode, remainingChain, currentPath) {
-    if (remainingChain.length === 0) return [currentPath];
-
-    const [edgeType, targetType, ...rest] = remainingChain;
-    const edges = await this.getEdgesFrom(currentNode.id, edgeType);
-    const results = [];
-
-    for (const edge of edges) {
-      const targetNode = await this.getNode(edge.to_node);
-      if (targetNode && targetNode.node_type === targetType) {
-        const newPath = [...currentPath, edge, targetNode];
-        const subResults = await this._followChain(targetNode, rest, newPath);
-        results.push(...subResults);
-      }
-    }
-
-    return results;
-  }
-
-  /**
-   * Find patterns: nodes of a given type that share a relationship pattern.
-   * Example: "Find all clients that EXHIBITS the same pattern"
-   */
-  async findSharedPatterns(nodeType, edgeType, minCount = 2) {
-    // Get all edges of this type
-    const allEdges = await sbFetch(`${this.edgeTable}?edge_type=eq.${edgeType}`);
-    
-    // Group by target
-    const targetGroups = {};
-    for (const edge of allEdges) {
-      if (!targetGroups[edge.to_node]) targetGroups[edge.to_node] = [];
-      targetGroups[edge.to_node].push(edge.from_node);
-    }
-
-    // Find targets shared by >= minCount sources
-    const shared = [];
-    for (const [targetId, sourceIds] of Object.entries(targetGroups)) {
-      if (sourceIds.length >= minCount) {
-        const target = await this.getNode(targetId);
-        const sources = await Promise.all(sourceIds.map(id => this.getNode(id)));
-        shared.push({ 
-          sharedNode: target, 
-          connectedNodes: sources.filter(Boolean),
-          count: sourceIds.length 
-        });
-      }
-    }
-
-    return shared;
-  }
-
-  // ── Stats ─────────────────────────────────────────────────────
-
-  /**
-   * Get graph statistics.
-   */
-  async stats() {
-    const nodes = await sbFetch(`${this.nodeTable}?select=node_type`);
-    const edges = await sbFetch(`${this.edgeTable}?select=edge_type`);
-
-    const nodesByType = {};
-    for (const n of nodes) {
-      nodesByType[n.node_type] = (nodesByType[n.node_type] || 0) + 1;
-    }
-
-    const edgesByType = {};
-    for (const e of edges) {
-      edgesByType[e.edge_type] = (edgesByType[e.edge_type] || 0) + 1;
-    }
-
-    return {
-      totalNodes: nodes.length,
-      totalEdges: edges.length,
-      nodesByType,
-      edgesByType,
-    };
-  }
-}
-
-module.exports = { Graph, SCOPES, ACCESS_LEVELS };
