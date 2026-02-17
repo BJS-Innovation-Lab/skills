@@ -12,6 +12,12 @@ rag/.last-index
 node_modules/
 venv/
 
+# Per-agent identity (NEVER share via repo — causes identity contamination)
+IDENTITY.md
+USER.md
+MEMORY.md
+memory/.memory-backup.md
+
 # OS
 .DS_Store
 
