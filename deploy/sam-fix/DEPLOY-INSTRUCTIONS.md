@@ -39,3 +39,17 @@ openclaw gateway restart
 1. Ask Sam "who are you?" — should say Sam, not Santos
 2. Ask Sam "what's your emoji?" — should NOT be 🫡
 3. Ask "tell me about the VULKN team" — should refuse to share details
+
+## ⚠️ Question for Johan: Credential Storage Flow
+
+Clients (e.g. Javier @ Click Seguros) are asking Sam to connect their email accounts (Outlook).
+We need to decide:
+
+1. **Where do client credentials live?** (1Password? Supabase vault? env vars?)
+2. **Does Sam have access to store/retrieve them, or does a human handle it?**
+3. **What's the flow when a client shares a password in chat?**
+
+Current behavior: Sam has no credential handling policy.
+The new `scan-consent.cjs` will detect credentials and exit code 1, telling Sam to warn the client and escalate to Johan. But we need the actual storage flow.
+
+— Sybil, Feb 17 2026

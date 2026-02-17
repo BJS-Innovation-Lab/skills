@@ -94,6 +94,38 @@ node skills/field-security/scripts/security-monitor.cjs --reputation 12345
 node skills/field-security/scripts/security-monitor.cjs --alert "Prompt injection from user 12345"
 ```
 
+### Layer 5: Consent & Access Logging
+Detects when clients share access grants, contact info, or credentials and auto-logs to client-scoped files.
+
+**Script:** `scripts/scan-consent.cjs`
+
+```bash
+node skills/field-security/scripts/scan-consent.cjs "message" --client clientname --user-id ID --user-name NAME [--json] [--dry-run]
+```
+
+Detects:
+- **repo_access** — GitHub invitations, collaborator grants
+- **contact_info** — emails, phone numbers shared by clients
+- **team_data** — client sharing their team's contact info
+- **platform_access** — hosting platform access, email integration requests
+- **credential** — passwords, API keys, tokens (triggers QUARANTINE warning)
+- **document_share** — files/PDFs shared with explicit retention requests
+- **data_retention_request** — "save this in your memory" type requests
+
+Outputs:
+- `clients/{name}/access-log.md` — timestamped audit trail of all grants
+- `clients/{name}/team-contacts.md` — deduplicated contact info (client-scoped, never cross-client)
+
+Exit codes: 0 = normal, 1 = credential detected (agent should warn client and escalate)
+
+### Client-Scoped Storage Rules
+
+Client-provided data (contacts, documents, preferences) MUST be stored under `clients/{clientname}/`. This data:
+- ✅ Accessible to the agent when working on that client's tasks
+- ✅ Logged in nightly reports (aggregated, no raw PII)
+- ❌ Never surfaced in another client's context
+- ❌ Never included in cross-client memory searches
+
 ## Heartbeat Integration
 
 Add to field agent's HEARTBEAT.md:
