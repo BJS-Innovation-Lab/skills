@@ -634,4 +634,56 @@ When you receive a pre-compaction flush trigger:
 
 ---
 
-*This skill was designed by Sybil, Saber, and Bridget on February 15, 2026. It replaces the self-improving-agent skill (v1) and integrates with the three-tier memory architecture.*
+---
+
+## Utility-Weighted Retrieval (Anti-Bias)
+
+Added Feb 17, 2026 — based on MemRL (arXiv 2601.03192) and Bridget's observation that pure utility scoring creates exploitation bias.
+
+### The Problem
+Utility scoring without safeguards means the same high-scoring entries dominate retrieval forever. New learnings never surface, never get tested, never get scored. The agent calcifies.
+
+### The Fix: Four Anti-Bias Mechanisms
+
+| Mechanism | What It Does | Parameter |
+|-----------|-------------|-----------|
+| **Utility Decay** | Old utility scores fade unless reinforced by new outcomes | 30-day half-life |
+| **Novelty Bonus** | New/untested entries get a temporary boost | +0.08 for first 7 days |
+| **Exploration (ε-greedy)** | 15% of results get a random boost | ε = 0.15 |
+| **Signal Counting** | Track how many times an entry has been evaluated | `utility_signals` in metadata |
+
+### How It Works at Retrieval Time
+
+```
+final_score = similarity (base)
+            + utility_score × decay_factor × 0.20    (exploitation)
+            + tier_bonus                                (authority)
+            + recency_bonus                             (freshness)
+            + novelty_bonus                             (exploration: untested entries)
+            + exploration_bonus                         (ε-greedy randomness)
+```
+
+### Why Each Mechanism Matters
+
+**Decay** — A lesson that scored well 3 months ago might not be relevant anymore. Decay forces the system to keep validating. If the lesson is still good, new outcomes will keep its score fresh.
+
+**Novelty Bonus** — When an agent logs a new correction, it should get a chance to be *tried* before the system decides it's low-utility. 7-day window with linear decay.
+
+**Exploration** — Even with decay and novelty, the system could still settle into local optima. ε-greedy ensures 15% of retrievals include a "wild card" — an entry that wouldn't normally rank high but might surprise.
+
+**Signal Counting** — Entries with 0 signals are "untested" and get novelty bonus. Entries with many signals have reliable utility scores. This naturally balances explore vs exploit.
+
+### Files Modified
+
+| File | What Changed |
+|------|-------------|
+| `skills/memory-retriever/scripts/search-supabase.cjs` | `computeFinalScore()` — added decay, novelty, exploration |
+| `rag/utility-tracker.cjs` | Documentation + `utility_signals` counter |
+
+### Future: Knowledge Graph Integration
+
+These utility scores will feed into the planned Knowledge Graph (see `research/kg-ontology-v1.md`). Graph edges will carry utility weights, enabling multi-hop reasoning like: "this type of client problem → was solved by this approach → which had high utility score → apply to new similar client."
+
+---
+
+*This skill was designed by Sybil, Saber, and Bridget on February 15, 2026. Utility scoring and anti-bias mechanisms added February 17, 2026, following Bridget's review. It replaces the self-improving-agent skill (v1) and integrates with the three-tier memory architecture.*

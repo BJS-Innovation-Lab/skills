@@ -229,12 +229,28 @@ function extractSnippet(content, terms, maxLen = 300) {
 const TIER_WEIGHTS = { core: 0.15, working: 0.05, learning: 0.10, research: 0.0 };
 const RECENCY_HALF_LIFE_DAYS = 14; // after 14 days, recency bonus halves
 
+// Anti-bias parameters (per Bridget's feedback: utility scoring without these
+// creates exploitation bias — same high-scoring entries dominate forever)
+const UTILITY_DECAY_HALF_LIFE_DAYS = 30;  // utility scores decay over 30 days
+const NOVELTY_BONUS = 0.08;               // new entries get a boost for first 7 days
+const NOVELTY_WINDOW_DAYS = 7;            // how long the novelty bonus lasts
+const EXPLORATION_RATE = 0.15;            // 15% of results get random boost (epsilon-greedy)
+
 function computeFinalScore(result) {
   const sim = result.similarity || 0;
   const meta = result.metadata || {};
   
   // Utility signal from outcome feedback loop (range: -1.0 to 1.0)
-  const utility = (meta.utility_score || 0) * 0.20;
+  // With time decay: old utility scores fade unless reinforced by new outcomes
+  let rawUtility = meta.utility_score || 0;
+  const utilityUpdated = meta.utility_updated;
+  if (rawUtility !== 0 && utilityUpdated) {
+    const utilityAgeMs = Date.now() - new Date(utilityUpdated).getTime();
+    const utilityAgeDays = utilityAgeMs / 86400000;
+    const decayFactor = Math.pow(0.5, utilityAgeDays / UTILITY_DECAY_HALF_LIFE_DAYS);
+    rawUtility *= decayFactor;
+  }
+  const utility = rawUtility * 0.20;
   
   // Tier bonus (core docs are more authoritative)
   const tier = meta.tier || 'working';
@@ -249,7 +265,25 @@ function computeFinalScore(result) {
     recencyBonus = 0.10 * Math.pow(0.5, ageDays / RECENCY_HALF_LIFE_DAYS);
   }
   
-  return sim + utility + tierBonus + recencyBonus;
+  // Novelty bonus: new entries that haven't been tested yet get a temporary boost
+  // This ensures fresh learnings get a chance to prove themselves before utility scoring
+  // kicks in. Entries with 0 utility signals are "untested" — give them exploration room.
+  let noveltyBonus = 0;
+  const utilitySignals = meta.utility_signals || 0;
+  if (utilitySignals === 0 && syncedAt) {
+    const ageMs = Date.now() - new Date(syncedAt).getTime();
+    const ageDays = ageMs / 86400000;
+    if (ageDays <= NOVELTY_WINDOW_DAYS) {
+      // Linear decay over the novelty window
+      noveltyBonus = NOVELTY_BONUS * (1 - ageDays / NOVELTY_WINDOW_DAYS);
+    }
+  }
+  
+  // Exploration: epsilon-greedy random boost prevents over-exploitation
+  // 15% of results get a random bonus, giving lower-ranked entries a chance
+  const explorationBonus = Math.random() < EXPLORATION_RATE ? 0.05 + Math.random() * 0.05 : 0;
+  
+  return sim + utility + tierBonus + recencyBonus + noveltyBonus + explorationBonus;
 }
 
 // --- Source 2: Supabase RAG (Agent Documents) ---

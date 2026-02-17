@@ -23,6 +23,12 @@
  * utility_score range: [-1.0, 1.0], default 0.0
  * Capped to prevent runaway scores.
  * 
+ * Anti-bias mechanisms (added per Bridget's feedback):
+ *   - Scores decay with 30-day half-life at retrieval time (search-supabase.cjs)
+ *   - New/untested entries get novelty bonus for 7 days
+ *   - 15% epsilon-greedy exploration at retrieval time
+ *   - utility_signals tracks how many times an entry has been scored
+ * 
  * Env: SUPABASE_URL, SUPABASE_ANON_KEY, OPENAI_API_KEY
  */
 
