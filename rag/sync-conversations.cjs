@@ -113,30 +113,48 @@ function parseSession(filePath, clientMap) {
     let entry;
     try { entry = JSON.parse(line); } catch { continue; }
 
-    // Skip system/internal messages
-    if (!entry.role && !entry.type) continue;
-
-    const role = entry.role || entry.type || '';
     const ts = entry.timestamp || entry.ts || entry.created_at;
     if (!ts) continue;
 
+    // OpenClaw v3 format: type="message" with message.role inside
+    // Also support legacy flat format (role at top level)
+    let role, content, meta;
+
+    if (entry.type === 'message' && entry.message) {
+      role = entry.message.role;
+      content = entry.message.content;
+      meta = entry.message.metadata || entry.metadata;
+    } else if (entry.role) {
+      role = entry.role;
+      content = entry.content;
+      meta = entry.metadata;
+    } else {
+      continue; // skip non-message entries (session, model_change, thinking, etc.)
+    }
+
     // Update user context from metadata
-    if (entry.metadata || entry.meta) {
-      const resolved = resolveUser(entry, clientMap);
+    if (meta) {
+      const resolved = resolveUser({ metadata: meta }, clientMap);
       if (resolved.userName !== 'unknown') currentUser = resolved;
     }
 
+    // Extract text from content (can be string or array of blocks)
+    function extractText(c) {
+      if (typeof c === 'string') return c;
+      if (Array.isArray(c)) return c.filter(b => b.type === 'text').map(b => b.text || '').join('\n');
+      return JSON.stringify(c);
+    }
+
     if (role === 'user') {
-      // User message
-      const text = typeof entry.content === 'string' ? entry.content : 
-                   Array.isArray(entry.content) ? entry.content.map(c => c.text || '').join('\n') :
-                   JSON.stringify(entry.content);
+      const text = extractText(content);
       
       if (!text || text.length < 2) continue;
       
       // Skip heartbeats and system events
       if (text.includes('HEARTBEAT') || text.includes('Read HEARTBEAT.md')) continue;
       if (text.startsWith('[') && text.includes('cron job')) continue;
+      // Skip cron scheduled reminders
+      if (text.includes('scheduled reminder has been triggered')) continue;
 
       messages.push({
         session_id: sessionId,
@@ -144,16 +162,14 @@ function parseSession(filePath, clientMap) {
         user_id: currentUser.userId,
         user_name: currentUser.userName,
         direction: 'in',
-        message: text.slice(0, 10000), // cap at 10k chars
+        message: text.slice(0, 10000),
         message_type: 'text',
         timestamp: ts,
-        metadata: { chat_label: (entry.metadata || entry.meta || {}).conversation_label || '' },
+        metadata: { chat_label: (meta || {}).conversation_label || '' },
       });
 
     } else if (role === 'assistant') {
-      const text = typeof entry.content === 'string' ? entry.content :
-                   Array.isArray(entry.content) ? entry.content.map(c => c.text || '').join('\n') :
-                   JSON.stringify(entry.content);
+      const text = extractText(content);
 
       if (!text || text.length < 2) continue;
       if (text === 'HEARTBEAT_OK' || text === 'NO_REPLY') continue;
@@ -170,20 +186,9 @@ function parseSession(filePath, clientMap) {
         metadata: {},
       });
 
-    } else if (role === 'tool_use' || role === 'tool_result') {
-      // Log tool usage as metadata (not full content)
-      const toolName = entry.name || entry.tool || 'unknown';
-      messages.push({
-        session_id: sessionId,
-        client_id: currentUser.clientId,
-        user_id: currentUser.userId,
-        user_name: currentUser.userName,
-        direction: 'out',
-        message: `[Tool: ${toolName}]`,
-        message_type: 'tool_call',
-        timestamp: ts,
-        metadata: { tool: toolName },
-      });
+    } else if (role === 'toolResult' || role === 'tool_result') {
+      // Skip tool results — too verbose
+      continue;
     }
   }
 
