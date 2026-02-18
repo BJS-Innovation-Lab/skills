@@ -12,7 +12,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const WORKSPACE = process.env.WORKSPACE || '/Users/sybil/.openclaw/workspace';
+const WORKSPACE = process.env.WORKSPACE || require('path').resolve(__dirname, '..');
 const OUTPUT = path.join(WORKSPACE, 'memory', 'team-highlights.md');
 
 // Load env

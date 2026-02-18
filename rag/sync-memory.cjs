@@ -18,30 +18,48 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// Config
-const WORKSPACE = process.env.WORKSPACE || '/Users/sybil/.openclaw/workspace';
+// Config — auto-detect workspace and agent
+const WORKSPACE = process.env.WORKSPACE || path.resolve(__dirname, '..');
 const STATE_FILE = path.join(__dirname, '.sync-state.json');
 const CHUNK_SIZE = 1500; // chars per chunk for embedding
 const CHUNK_OVERLAP = 200;
 
-// Agent workspaces to sync (add more agents as they come online)
+// Auto-detect agent from IDENTITY.md or hostname
+function detectAgent() {
+  try {
+    const idFile = path.join(WORKSPACE, 'IDENTITY.md');
+    if (fs.existsSync(idFile)) {
+      const content = fs.readFileSync(idFile, 'utf-8');
+      const nameMatch = content.match(/\*\*Name:\*\*\s*(\w+)/i) || content.match(/^#.*?(\w+)/m);
+      if (nameMatch) return nameMatch[1].toLowerCase();
+    }
+  } catch {}
+  return require('os').hostname().split('.')[0].toLowerCase();
+}
+
+// Agent UUID lookup
+const AGENT_UUIDS = {
+  sybil: '5fae1839-ab85-412c-acc0-033cbbbbd15b',
+  sam: '62bb0f39-28f6-45a6-a3ae-cedbcbaf0bbe',
+  saber: '415a84a4-af9e-4c98-9d48-040834436e44',
+  santos: 'e7fabc18-75fa-4294-bd7d-9e5ed0dedacb',
+  sage: 'f6198962-313d-4a39-89eb-72755602d468',
+};
+
+// Default paths to sync (works for any agent)
+const DEFAULT_PATHS = [
+  'MEMORY.md', 'SOUL.md', 'USER.md', 'IDENTITY.md',
+  'AGENTS.md', 'PENDING.md', 'TOOLS.md',
+  'memory/', 'research/', 'projects/', 'clients/',
+];
+
+// Build agent config dynamically
+const detectedName = detectAgent();
 const AGENT_CONFIGS = {
-  sybil: {
-    id: '5fae1839-ab85-412c-acc0-033cbbbbd15b',
+  [detectedName]: {
+    id: AGENT_UUIDS[detectedName] || detectedName,
     workspace: WORKSPACE,
-    paths: [
-      'MEMORY.md',
-      'SOUL.md',
-      'USER.md',
-      'IDENTITY.md',
-      'AGENTS.md',
-      'PENDING.md',
-      'TOOLS.md',
-      'memory/',
-      'research/ai-team-dynamics/',
-      'projects/',
-      'clients/',
-    ]
+    paths: DEFAULT_PATHS,
   }
 };
 

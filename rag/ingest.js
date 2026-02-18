@@ -19,7 +19,7 @@ import { glob } from 'glob';
 import crypto from 'crypto';
 
 // Config
-const WORKSPACE = process.env.WORKSPACE || '/Users/sybil/.openclaw/workspace';
+const WORKSPACE = process.env.WORKSPACE || require('path').resolve(__dirname, '..');
 const AGENT_ID = '5fae1839-ab85-412c-acc0-033cbbbbd15b';
 const AGENT_NAME = 'Sybil';
 const MAX_CONTENT_LENGTH = 8000; // Token-safe limit

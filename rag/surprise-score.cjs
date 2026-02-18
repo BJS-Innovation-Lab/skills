@@ -30,7 +30,7 @@ const path = require('path');
 // https removed — embeddings now via gemini-embed.cjs
 
 // ── Config ──────────────────────────────────────────────────────────
-const WORKSPACE = process.env.WORKSPACE || '/Users/sybil/.openclaw/workspace';
+const WORKSPACE = process.env.WORKSPACE || require('path').resolve(__dirname, '..');
 const LEARNING_DIR = path.join(WORKSPACE, 'memory/learning');
 const { getEmbedding, getEmbeddings, EMBEDDING_DIMS } = require('./gemini-embed.cjs');
 
