@@ -21,8 +21,17 @@
 // ============================================================
 // TEAM CONFIGURATION — Update when team changes
 // ============================================================
+// Auto-detect agent name from IDENTITY.md
+let _detectedAgent = 'unknown';
+try {
+  const _ws = process.env.WORKSPACE || require('path').join(process.env.HOME, '.openclaw', 'workspace');
+  const _id = require('fs').readFileSync(require('path').join(_ws, 'IDENTITY.md'), 'utf-8');
+  const _m = _id.match(/\*\*Name:\*\*\s*(.+)/i);
+  if (_m) _detectedAgent = _m[1].trim().toLowerCase();
+} catch {}
+
 const DEFAULT_CONFIG = {
-  agentName: 'sybil',
+  agentName: _detectedAgent,
   
   // All agent names (triggers shared search when mentioned)
   teamNames: ['sybil', 'sybi', 'saber', 'sage', 'sam', 'santos'],

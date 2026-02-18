@@ -57,7 +57,15 @@ const AGENT_MAP = {
 // --- Args ---
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts = { sources: 'all', limit: 10, agent: 'sybil', days: 7 };
+  // Auto-detect agent from IDENTITY.md instead of hardcoding
+  const WS = process.env.WORKSPACE || require('path').join(process.env.HOME, '.openclaw', 'workspace');
+  let defaultAgent = 'unknown';
+  try {
+    const id = require('fs').readFileSync(require('path').join(WS, 'IDENTITY.md'), 'utf-8');
+    const m = id.match(/\*\*Name:\*\*\s*(.+)/i);
+    if (m) defaultAgent = m[1].trim().toLowerCase();
+  } catch {}
+  const opts = { sources: 'all', limit: 10, agent: defaultAgent, days: 7 };
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--sources': opts.sources = args[++i]; break;

@@ -29,7 +29,14 @@ const SEARCH = path.join(WORKSPACE, 'skills/memory-retriever/scripts/search-supa
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts = { force: false, agent: 'sybil', days: 7, limit: 10 };
+  // Auto-detect agent from IDENTITY.md instead of hardcoding
+  let defaultAgent = 'unknown';
+  try {
+    const id = require('fs').readFileSync(path.join(WORKSPACE, 'IDENTITY.md'), 'utf-8');
+    const m = id.match(/\*\*Name:\*\*\s*(.+)/i);
+    if (m) defaultAgent = m[1].trim().toLowerCase();
+  } catch {}
+  const opts = { force: false, agent: defaultAgent, days: 7, limit: 10 };
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--force': opts.force = true; break;
