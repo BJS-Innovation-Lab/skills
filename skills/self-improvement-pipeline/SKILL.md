@@ -142,6 +142,14 @@ buttons: [[{text: "✅ Approve All", callback_data: "approve_all_improvements"},
 
 **Key:** Each fix (Tier 1 and Tier 2) includes a "Recommend for all agents?" flag. This helps founders quickly spot fixes worth rolling out team-wide vs. fixes that are agent-specific.
 
+### Write to Notion
+
+After sending the Telegram message, also write the full report to Notion for persistent tracking:
+- **Notion page:** Self-Improvement Pipeline — Nightly Agent Review (`30b7a723-4ce4-8136-9665-d99c809bf239`)
+- Append a new **toggle heading** block for each nightly report: `{agent_name} — {YYYY-MM-DD}`
+- Inside the toggle: full report content (Tier 1 fixes, Tier 2 proposals, coherence results, patterns)
+- This creates a searchable history of all improvements across all agents
+
 ### Step 5: Coherence Check
 
 After implementing Tier 1 fixes:
