@@ -90,12 +90,18 @@
 
 ### 4. Memory Contamination (Cross-Agent Bleed)
 **What:** Agent's memory files contain another agent's reflections, procedures, team perspective.
-**How it happened:** When identity was wrong, memory-api generated boot memory with wrong context. core/ files written from wrong agent's perspective.
-**Fix:** Manual decontamination — rebuilt MEMORY.md, team.md, reflections.md, procedures.md, resources.md from actual conversation data.
+**How it happened:** Multiple vectors:
+1. **Hardcoded defaults in shared scripts** (ROOT CAUSE, Feb 2026): `search-supabase.cjs`, `auto-retrieve.cjs`, and `smart-trigger.cjs` all had `agent: 'sybil'` hardcoded as the default. Any agent running these without `--agent <name>` got Sybil's 628 document chunks from Supabase. Those got absorbed into MEMORY.md/reflections as if they were the agent's own. Hit Santos AND Sam.
+2. When identity was wrong, memory-api generated boot memory with wrong context.
+3. core/ files written from wrong agent's perspective.
+**Fix (Feb 18 2026, commit 2cd5471):** All three scripts now auto-detect agent name from `IDENTITY.md` instead of hardcoding. Manual decontamination for affected agents (rebuilt MEMORY.md, core/ files).
 **Prevention:**
+- **NEVER hardcode an agent name as default in shared scripts** — always read from IDENTITY.md
+- IDENTITY.md must be filled in IMMEDIATELY at deploy (blank = broken)
 - Verify identity BEFORE running memory-load.cjs
 - core/ files should reference "me" correctly (check team.md for "— me" marker)
 - After any identity fix, ALWAYS rebuild memory files
+- Agent must run `sync-memory.cjs` early so their OWN docs exist in Supabase
 
 ### 5. Shared Supabase Key Exposure
 **What:** Field agent has BJS shared Supabase service key, could access other agents' data.
