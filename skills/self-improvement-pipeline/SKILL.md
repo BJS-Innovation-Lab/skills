@@ -1,268 +1,270 @@
 ---
 name: self-improvement-pipeline
-description: "Automated nightly self-improvement cycle for field agents. Agent reviews own transcripts, identifies mistakes, implements fixes, and reports changes to HQ for founder review."
-version: 1.0.0
-author: Sybil (BJS Labs)
+description: "Nightly self-improvement pipeline for field agents. Agent reviews transcripts, identifies mistakes, auto-applies safe fixes, and sends proposals for risky changes to founders for approval. One job, no morning phase needed."
 metadata:
   category: operations
-  tags: [self-improvement, field-agent, automation, learning]
+  tags: [self-improvement, pipeline, field-agent, nightly, automation]
   openclaw:
     emoji: "🔧"
 ---
 
 # Self-Improvement Pipeline
 
-> **Agents know their own mistakes better than anyone. Let them fix themselves — with human oversight.**
+> **Fix what's safe. Propose what's not. Founders approve before morning.**
 
 ## Overview
 
-A nightly automated cycle where each field agent:
-1. Reviews their own transcripts from the day
-2. Identifies mistakes, pain points, and missed opportunities
-3. Creates an improvement plan with concrete fixes
-4. Implements fixes overnight (skills, memory, workflows)
-5. Runs a coherence check to verify fixes don't introduce drift
-6. Sends a structured morning report to HQ showing exactly what changed
+A single nightly job where each field agent:
+1. Reviews the day's transcripts and identifies mistakes
+2. **Auto-applies safe fixes** (additive knowledge, memory, checklists)
+3. **Sends proposals** for risky fixes to founders for approval
+4. Founders check off approvals whenever they see them (night or morning)
+5. Agent implements approved changes on next run
 
-Founders review reports each morning and decide what to roll out across all agents.
+No morning report phase needed — everything happens in one pass.
 
-## Pipeline Flow
+## Two-Tier Fix System
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   NIGHTLY (11 PM)                   │
-│                                                     │
-│  1. Review today's transcript                       │
-│  2. Identify issues (categorize by type)            │
-│  3. Draft improvement plan                          │
-│  4. Implement fixes (update skills/memory/workflow) │
-│  5. Run coherence check against brand profile       │
-│  6. Commit changes to git                           │
-│                                                     │
-├─────────────────────────────────────────────────────┤
-│                   MORNING (7 AM)                    │
-│                                                     │
-│  7. Generate improvement report                     │
-│  8. Send report to HQ via A2A                       │
-│  9. HQ aggregates → founder morning briefing        │
-│                                                     │
-└─────────────────────────────────────────────────────┘
-```
+### Tier 1: Auto-Apply (No Approval Needed)
 
-## Issue Categories
+These are **additive, low-risk** changes that can't break anything:
 
-When reviewing transcripts, classify each issue:
+| Fix Type | Example |
+|----------|---------|
+| Add knowledge to memory | Fill a pricing gap in `memory/core/products.md` |
+| Add checklist items to HEARTBEAT.md | "Check voice.md before composing" |
+| Update TOOLS.md notes | Correct a tool usage pattern |
+| Add entries to knowledge base | New FAQ answer in `clients/{name}/kb/` |
+| Log corrections/insights | Via agentic-learning system |
 
-| Category | Description | Example |
-|----------|-------------|---------|
-| `tone_miss` | Voice/tone didn't match brand profile | Too formal when brand is casual |
-| `knowledge_gap` | Didn't know something they should | Couldn't answer basic product question |
-| `workflow_fail` | Process broke or was skipped | Forgot to check calendar before booking |
-| `tool_error` | Tool/skill used incorrectly | Wrong API call, bad parameters |
-| `missed_opportunity` | Could have helped more but didn't | User hinted at need, agent didn't follow up |
-| `hallucination` | Stated something incorrect | Wrong price, wrong feature, made-up info |
-| `boundary_violation` | Overstepped or understepped | Promised something without owner approval |
+**Rule: If it only ADDS information and doesn't change behavior logic, auto-apply it.**
 
-## Fix Types
+### Tier 2: Propose-and-Wait (Needs Founder Approval)
 
-Each issue maps to one or more fix types:
+These change **how the agent behaves** and need a human check:
 
-| Fix Type | What Changes | Files Affected |
-|----------|-------------|----------------|
-| `memory_update` | Add knowledge to prevent gap | `memory/`, `MEMORY.md` |
-| `skill_update` | Improve a skill's instructions | `skills/*/SKILL.md` |
-| `workflow_update` | Add/modify a process | `AGENTS.md`, skill configs |
-| `soul_update` | Adjust behavioral guidelines | `SOUL.md` (requires founder approval) |
-| `tool_config` | Fix tool usage patterns | `TOOLS.md`, skill configs |
-| `knowledge_base` | Add product/service info | `clients/*/kb/` |
+| Fix Type | Example |
+|----------|---------|
+| Skill logic changes | Modifying workflow steps in a SKILL.md |
+| SOUL.md updates | Adjusting personality or behavioral rules |
+| Brand profile changes | Updating voice dimensions or tone |
+| AGENTS.md workflow changes | Changing when/how the agent does things |
+| Shared skill modifications | Anything other agents also use |
+| Deleting or replacing content | Removing existing rules or procedures |
 
-## Nightly Review Process (Cron: 11 PM agent timezone)
+**Rule: If it changes behavior, the agent proposes — founders decide.**
 
-### Step 1: Transcript Review
+---
 
-Read today's session transcripts and identify issues:
+## Nightly Job Process
 
-```markdown
-## Issues Found — {YYYY-MM-DD}
+### Step 1: Review Transcripts
 
-### Issue 1
-- **Category:** tone_miss
-- **Transcript excerpt:** "Dear valued customer, we appreciate your inquiry..."
-- **What went wrong:** Used corporate language when brand voice is casual/friendly
-- **Root cause:** Brand voice dimensions not loaded in this session
-- **Severity:** medium
+Read these for today's activity:
+- `memory/YYYY-MM-DD.md` — daily activity log
+- `memory/learning/corrections/` — corrections received today
+- `memory/learning/insights/` — insights logged today
+- Session transcripts (via `sessions_history` if available)
 
-### Issue 2
-- **Category:** knowledge_gap
-- **Transcript excerpt:** "I'm not sure about the pricing for that service..."
-- **What went wrong:** Couldn't answer pricing question — info exists in KB but wasn't referenced
-- **Root cause:** KB file not checked before responding
-- **Severity:** high
-```
+### Step 2: Identify Issues
 
-### Step 2: Improvement Plan
+Look for:
 
-For each issue, create a concrete fix:
+| Category | Signal |
+|----------|--------|
+| **Mistakes** | User corrections, failed tasks, wrong outputs |
+| **Missed Knowledge** | Had the info but didn't use it |
+| **Capability Gaps** | Requests the agent couldn't handle |
+| **Drift** | Behavior diverging from SOUL.md or brand profile |
+| **Process Failures** | Workflows that broke or were skipped |
+
+For each issue, identify root cause:
+- Knowledge gap → Tier 1 fix (add to memory)
+- Skill/workflow bug → Tier 2 fix (propose change)
+- Missing procedure → Tier 2 fix (propose new workflow)
+- Behavioral drift → Tier 2 fix (propose SOUL.md update)
+- Config issue → Tier 1 or 2 depending on scope
+
+### Step 3: Apply Tier 1 Fixes
+
+Implement all safe, additive fixes immediately:
+- Git commit each change: `[self-improvement] <description>`
+- Log in `memory/improvement-logs/YYYY-MM-DD.md`
+
+### Step 4: Send Tier 2 Proposals to Founders
+
+Send a single message to founders with all proposals. Format:
 
 ```markdown
-## Improvement Plan
+🔧 **Nightly Improvement — {agent_name} ({date})**
 
-### Fix 1 → tone_miss
-- **Fix type:** memory_update
-- **Action:** Add brand voice reminder to HEARTBEAT.md check
-- **File:** HEARTBEAT.md
-- **Change:** Add "Voice check: Re-read clients/{name}/voice.md every 3 hours"
-- **Expected outcome:** Consistent voice across all sessions
+**Auto-applied:** {n} safe fixes ✅
+**Needs your approval:** {n} proposals 👇
 
-### Fix 2 → knowledge_gap
-- **Fix type:** workflow_update
-- **Action:** Add KB lookup step before answering product questions
-- **File:** AGENTS.md
-- **Change:** Add rule "Always check clients/{name}/kb/ before answering product/pricing questions"
-- **Expected outcome:** Accurate answers on first response
+---
+
+### Proposal 1: {Short description}
+- **What went wrong:** {1-2 sentences}
+- **Proposed change:** {file} — {what to change}
+- **Current:** {what it says now}
+- **Proposed:** {what it should say}
+- **Why:** {reasoning}
+→ Reply ✅ to approve, ❌ to reject
+
+### Proposal 2: {Short description}
+...
+
+---
+
+**Auto-applied fixes (FYI):**
+1. Added product pricing to memory/core/products.md
+2. Added voice check reminder to HEARTBEAT.md
+3. ...
+
+**Coherence check:** ✅ All changes align with brand profile
 ```
 
-### Step 3: Implement Fixes
+Use inline buttons if the platform supports them:
+```
+buttons: [[{text: "✅ Approve All", callback_data: "approve_all_improvements"}, {text: "📋 Review Details", callback_data: "review_improvements"}]]
+```
 
-Execute each fix. Rules:
-- **DO:** Update memory files, skill instructions, workflow configs, KB entries
-- **DO:** Add items to HEARTBEAT.md for recurring checks
-- **DO:** Update TOOLS.md with corrected tool usage
-- **DON'T:** Modify SOUL.md without founder approval (propose the change in the report instead)
-- **DON'T:** Delete existing skills or configs
-- **DON'T:** Change anything that affects other agents (your workspace only)
+### Step 5: Coherence Check
 
-### Step 4: Coherence Check
+After implementing Tier 1 fixes:
+1. Re-read SOUL.md — do changes align with identity?
+2. Re-read brand profile — do changes maintain voice?
+3. Check for contradictions with existing rules
+4. If regression detected → revert and move to Tier 2 proposal
 
-After implementing fixes, run the coherence check skill:
-- Compare updated files against brand profile
-- Verify voice dimensions still match
-- Confirm no contradictions between new rules and existing ones
-- If drift detected → revert the problematic fix and note it in the report
-
-### Step 5: Commit
+### Step 6: Commit & Log
 
 ```bash
 git add -A
-git commit -m "self-improvement: {date} — {n} fixes applied"
+git commit -m "[self-improvement] {date} — {n} auto-fixes, {n} proposals sent"
 ```
 
-## Morning Report (Cron: 7 AM agent timezone)
-
-### Report Format
-
-```markdown
-# 🔧 Self-Improvement Report: {agent_name}
-**Date:** {YYYY-MM-DD}
-**Client:** {client_name}
-**Issues Found:** {n}
-**Fixes Applied:** {n}
-**Fixes Deferred:** {n} (need founder approval)
+Write full log to `memory/improvement-logs/YYYY-MM-DD.md` using the template.
 
 ---
 
-## ✅ Fixes Applied
+## Handling Founder Responses
 
-### 1. {Short description}
-- **Category:** {category}
-- **What happened:** {1-2 sentence description of the mistake}
-- **What I changed:** {exact file and change}
-- **Why this fixes it:** {reasoning}
+When a founder approves a proposal:
+1. Implement the change
+2. Run coherence check
+3. Git commit with `[self-improvement] approved: <description>`
+4. Confirm to founder: "✅ Implemented: {description}"
 
-### 2. {Short description}
-...
+When a founder rejects:
+1. Log the rejection and reason in improvement log
+2. Don't implement — mark as closed
+3. Confirm: "Got it, won't make that change."
 
-## ⏳ Proposed Changes (Need Approval)
+Unchecked proposals after 48 hours → remind founders once, then archive.
 
-### 1. {Short description}
-- **Category:** {category}
-- **Proposed change to:** SOUL.md / shared skill / brand profile
-- **Current:** {what it says now}
-- **Proposed:** {what it should say}
-- **Reasoning:** {why}
-
-## 🔄 Coherence Check Result
-- **Status:** ✅ Pass / ⚠️ Warning / ❌ Drift detected
-- **Details:** {any notes}
-
-## 📊 Improvement Trends
-- **This week's issues:** {n} (↑/↓ from last week)
-- **Top category:** {most common issue type}
-- **Fix success rate:** {fixes that resolved the issue vs recurring}
-```
-
-### Send to HQ
-
-Send the morning report via A2A to Santos (CS agent) for aggregation into the founder morning briefing.
+---
 
 ## Cron Setup
 
-Add these two cron jobs during field-onboarding:
+One cron job per field agent, added during onboarding:
 
-### Nightly Review (11 PM agent timezone)
-```
-name: "Self-Improvement — Nightly Review"
-schedule: { kind: "cron", expr: "0 23 * * *", tz: "{agent_timezone}" }
-sessionTarget: "isolated"
-payload:
-  kind: "agentTurn"
-  message: |
-    Run the self-improvement pipeline nightly review.
-    1. Read today's session transcripts
-    2. Identify issues using the categories in skills/self-improvement-pipeline/SKILL.md
-    3. Create improvement plan
-    4. Implement fixes
-    5. Run coherence check
-    6. Commit changes
-    Save the improvement plan to memory/{date}-improvements.md
-```
-
-### Morning Report (7 AM agent timezone)
-```
-name: "Self-Improvement — Morning Report"
-schedule: { kind: "cron", expr: "0 7 * * *", tz: "{agent_timezone}" }
-sessionTarget: "isolated"
-payload:
-  kind: "agentTurn"
-  message: |
-    Generate the self-improvement morning report.
-    1. Read memory/{yesterday}-improvements.md
-    2. Format as the morning report per skills/self-improvement-pipeline/SKILL.md
-    3. Send via A2A to Santos for the founder briefing
+```bash
+openclaw cron add \
+  --cron "0 23 * * *" \
+  --tz "{agent_timezone}" \
+  --session isolated \
+  --name "Self-Improvement: Nightly Review" \
+  --message "Run self-improvement pipeline:
+1. Read today's memory/YYYY-MM-DD.md and memory/learning/ entries
+2. Review session transcripts for mistakes, corrections, missed opportunities
+3. For each issue: classify as Tier 1 (safe/additive) or Tier 2 (behavioral change)
+4. Auto-apply all Tier 1 fixes, git commit each one
+5. Send Tier 2 proposals to founders with reasoning
+6. Run coherence check on all Tier 1 changes
+7. Write improvement log to memory/improvement-logs/YYYY-MM-DD.md
+8. Do NOT publish to ClawHub. Push to our git repos only.
+Follow skills/self-improvement-pipeline/SKILL.md strictly."
 ```
 
-## Founder Rollout Process
-
-When founders identify a fix that should go to all agents:
-
-1. **Approve the fix** in the morning briefing
-2. **Santos pushes the skill/config update** to the shared git repo
-3. **Each agent pulls** on next session start or heartbeat
-4. **Coherence check runs** on each agent to verify compatibility
-
-## Metrics to Track
-
-Over time, track in `memory/improvement-stats.json`:
-```json
-{
-  "weekOf": "2026-02-17",
-  "issuesFound": 12,
-  "fixesApplied": 10,
-  "fixesDeferred": 2,
-  "fixesReverted": 1,
-  "topCategory": "knowledge_gap",
-  "coherenceScore": 0.92,
-  "recurringIssues": ["pricing_questions", "tone_in_complaints"]
-}
-```
-
-## Integration Points
-
-- **Nightly Report** (`field-admin/nightly-report`): Improvement report supplements the activity report
-- **Agentic Learning** (`agentic-learning`): Issues that meet stakes-gating threshold get logged as corrections/insights
-- **Coherence Check** (`field-admin/coherence-check`): Runs after every improvement cycle
-- **Field Report** (`field-report`): Morning report feeds into the Santos → Founders pipeline
+No morning cron needed — founders see proposals whenever they check messages.
 
 ---
 
-_Agents that fix themselves get better every day. Agents that wait to be fixed stay the same._
+## Improvement Log Format
+
+Write to `memory/improvement-logs/YYYY-MM-DD.md`:
+
+```markdown
+# Improvement Log — YYYY-MM-DD
+
+## Issues Found: {n}
+
+### 1. {Short description}
+- **What happened:** {description}
+- **Root cause:** knowledge-gap | skill-bug | missing-procedure | drift | config | capability-gap
+- **Evidence:** {quote or reference}
+
+## Tier 1 Fixes Applied: {n}
+
+### 1. {Short description}
+- **File changed:** {path}
+- **What changed:** {description}
+- **Git commit:** {hash}
+
+## Tier 2 Proposals Sent: {n}
+
+### 1. {Short description}
+- **Proposed change to:** {file}
+- **Status:** pending | approved | rejected
+- **Founder response:** {when received}
+
+## Coherence Check
+- **Identity alignment:** ✅/❌
+- **Brand voice:** ✅/❌
+- **Regressions:** none | {list}
+```
+
+---
+
+## Integration
+
+| System | Connection |
+|--------|-----------|
+| **agentic-learning** | Reads corrections/insights as input |
+| **nightly-report** | Runs AFTER nightly-report — uses it as input |
+| **coherence-check** | Validates all changes post-fix |
+| **field-report** | Improvement data flows into Santos pipeline |
+
+### Recommended Cron Order
+```
+10:00 PM — nightly-report (compile day's activity)
+11:00 PM — self-improvement (review + fix + proposals)
+```
+
+---
+
+## Rules
+
+1. **Run every night.** Even if nothing went wrong.
+2. **Be honest.** Don't hide mistakes.
+3. **Tier 1 = additive only.** If in doubt, make it Tier 2.
+4. **Always coherence-check.** Never ship without verifying.
+5. **No ClawHub.** Git repos only.
+6. **Git commit everything.** Founders must see exact diffs.
+7. **Silence is scary.** Always send something, even "no issues found today."
+
+---
+
+## File Structure
+
+```
+memory/improvement-logs/
+└── YYYY-MM-DD.md              # Nightly improvement logs
+
+skills/self-improvement-pipeline/
+├── SKILL.md                   # This file
+└── templates/
+    ├── improvement-log.md     # Template for nightly logs
+    └── morning-report.md      # Template for proposals message
+```
