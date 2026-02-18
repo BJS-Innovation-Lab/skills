@@ -93,41 +93,54 @@ Implement all safe, additive fixes immediately:
 
 ### Step 4: Send Tier 2 Proposals to Founders
 
-Send a single message to founders with all proposals. Format:
+Send a **full nightly report** to founders covering BOTH tiers — so founders can review everything and decide what to roll out to other agents.
 
 ```markdown
-🔧 **Nightly Improvement — {agent_name} ({date})**
+🔧 **Nightly Improvement Report — {agent_name} ({date})**
 
-**Auto-applied:** {n} safe fixes ✅
-**Needs your approval:** {n} proposals 👇
+**Issues found:** {n} | **Auto-applied:** {n} ✅ | **Needs approval:** {n} ⏳
 
 ---
 
-### Proposal 1: {Short description}
+## ✅ Tier 1 — Auto-Applied (Safe Fixes)
+
+### 1. {Short description}
+- **What went wrong:** {1-2 sentences}
+- **Fix applied:** {file} — {what changed}
+- **Git commit:** {hash}
+- **🚀 Recommend for all agents?** Yes / No — {why}
+
+### 2. {Short description}
+...
+
+## ⏳ Tier 2 — Proposals (Needs Your Approval)
+
+### 1. {Short description}
 - **What went wrong:** {1-2 sentences}
 - **Proposed change:** {file} — {what to change}
 - **Current:** {what it says now}
 - **Proposed:** {what it should say}
 - **Why:** {reasoning}
-→ Reply ✅ to approve, ❌ to reject
+- **🚀 Recommend for all agents?** Yes / No — {why}
 
-### Proposal 2: {Short description}
+### 2. {Short description}
 ...
 
----
+## 🔄 Coherence Check
+- **Identity alignment:** ✅/❌
+- **Brand voice:** ✅/❌
+- **Regressions:** None / {details}
 
-**Auto-applied fixes (FYI):**
-1. Added product pricing to memory/core/products.md
-2. Added voice check reminder to HEARTBEAT.md
-3. ...
-
-**Coherence check:** ✅ All changes align with brand profile
+## 📊 Patterns
+{Recurring issues, or "No patterns yet — first day of tracking"}
 ```
 
-Use inline buttons if the platform supports them:
+Use inline buttons for Tier 2 approvals:
 ```
-buttons: [[{text: "✅ Approve All", callback_data: "approve_all_improvements"}, {text: "📋 Review Details", callback_data: "review_improvements"}]]
+buttons: [[{text: "✅ Approve All", callback_data: "approve_all_improvements"}, {text: "❌ Review First", callback_data: "review_improvements"}]]
 ```
+
+**Key:** Each fix (Tier 1 and Tier 2) includes a "Recommend for all agents?" flag. This helps founders quickly spot fixes worth rolling out team-wide vs. fixes that are agent-specific.
 
 ### Step 5: Coherence Check
 
