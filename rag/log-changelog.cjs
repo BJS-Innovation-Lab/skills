@@ -41,7 +41,7 @@ try {
 
 // Parse args
 const args = process.argv.slice(2);
-let change = '', category = 'Ops', status = '✅ Deployed', commit = '', repo = 'workspace', date = new Date().toISOString().slice(0, 10);
+let change = '', category = 'Ops', status = '✅ Deployed', commit = '', repo = 'workspace', date = new Date().toISOString().slice(0, 10), docs = '';
 
 for (let i = 0; i < args.length; i++) {
   switch (args[i]) {
@@ -51,13 +51,14 @@ for (let i = 0; i < args.length; i++) {
     case '--repo': repo = args[++i]; break;
     case '--date': date = args[++i]; break;
     case '--agent': agentName = args[++i]; break;
+    case '--docs': docs = args[++i]; break;
     default:
       if (!args[i].startsWith('--')) change = args[i];
   }
 }
 
 if (!change) {
-  console.error('Usage: node log-changelog.cjs "description" [--category Ops] [--commit abc123] [--repo skills]');
+  console.error('Usage: node log-changelog.cjs "description" [--category Ops] [--commit abc123] [--repo skills] [--docs https://notion.so/...]');
   process.exit(1);
 }
 
@@ -71,6 +72,7 @@ const body = JSON.stringify({
     Status: { select: { name: status } },
     Commit: { rich_text: commit ? [{ text: { content: commit } }] : [] },
     Repo: { select: { name: repo } },
+    Docs: docs ? { url: docs } : { url: null },
   }
 });
 
