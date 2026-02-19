@@ -138,6 +138,46 @@ function parseSession(filePath, clientMap) {
       if (resolved.userName !== 'unknown') currentUser = resolved;
     }
 
+    // Also try to extract sender from inline "Conversation info" blocks
+    if (role === 'user') {
+      const textStr = typeof content === 'string' ? content : 
+        Array.isArray(content) ? content.filter(b => b.type === 'text').map(b => b.text || '').join('\n') : '';
+      
+      // Parse OpenClaw inbound metadata: "Conversation info (untrusted metadata):\n```json\n{...}\n```"
+      const inboundMatch = textStr.match(/Conversation info[^{]*\{([^}]+)\}/s);
+      if (inboundMatch) {
+        try {
+          const inbound = JSON.parse('{' + inboundMatch[1] + '}');
+          const senderId = inbound.sender_id || inbound.sender || '';
+          const senderName = inbound.sender_name || inbound.sender_username || '';
+          const chatId = inbound.chat_id || '';
+          
+          if (senderId || senderName) {
+            // Check client map first
+            const mapKey = senderId || senderName;
+            if (clientMap[mapKey]) {
+              currentUser = {
+                clientId: clientMap[mapKey].client || clientMap[mapKey].clientId || mapKey,
+                userName: clientMap[mapKey].name || clientMap[mapKey].userName || senderName || senderId,
+                userId: senderId || 'unknown',
+              };
+            } else {
+              currentUser = {
+                clientId: chatId || 'unknown',
+                userName: senderName || senderId,
+                userId: senderId || 'unknown',
+              };
+            }
+          }
+        } catch {}
+      }
+      
+      // Also check for "[System Message]" prefix — these are from cron/system, not clients
+      if (textStr.startsWith('[System Message]') || textStr.startsWith('[cron:')) {
+        currentUser = { clientId: 'system', userName: 'system', userId: 'system' };
+      }
+    }
+
     // Extract text from content (can be string or array of blocks)
     function extractText(c) {
       if (typeof c === 'string') return c;
