@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BJS LABS — A2A Task Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; }
+  h1 { color: #58a6ff; margin-bottom: 4px; font-size: 1.5em; }
+  .subtitle { color: #8b949e; margin-bottom: 20px; font-size: 0.9em; }
+  .refresh-info { color: #8b949e; font-size: 0.8em; float: right; margin-top: -40px; }
+  .stats { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .stat { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 12px 16px; min-width: 120px; }
+  .stat .num { font-size: 1.8em; font-weight: bold; }
+  .stat .label { color: #8b949e; font-size: 0.8em; }
+  .stat.overdue .num { color: #f85149; }
+  .stat.open .num { color: #d29922; }
+  .stat.done .num { color: #3fb950; }
+  .stat.total .num { color: #58a6ff; }
+  .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid #30363d; }
+  .tab { padding: 8px 16px; cursor: pointer; color: #8b949e; border-bottom: 2px solid transparent; }
+  .tab.active { color: #58a6ff; border-bottom: 2px solid #58a6ff; }
+  .tab:hover { color: #c9d1d9; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; padding: 8px 12px; color: #8b949e; font-size: 0.8em; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #30363d; }
+  td { padding: 10px 12px; border-bottom: 1px solid #21262d; font-size: 0.9em; vertical-align: top; }
+  tr:hover { background: #161b22; }
+  .status { padding: 2px 8px; border-radius: 12px; font-size: 0.8em; font-weight: 600; display: inline-block; }
+  .status.sent { background: #30363d; color: #8b949e; }
+  .status.delivered { background: #1f2937; color: #60a5fa; }
+  .status.acknowledged { background: #1c2333; color: #a78bfa; }
+  .status.completed { background: #0d2818; color: #3fb950; }
+  .status.failed { background: #2d1215; color: #f85149; }
+  .status.expired { background: #2d2215; color: #d29922; }
+  .priority.urgent { color: #f85149; font-weight: bold; }
+  .agent { font-weight: 600; }
+  .agent.sybil { color: #a78bfa; }
+  .agent.sam { color: #58a6ff; }
+  .agent.santos { color: #3fb950; }
+  .agent.saber { color: #f0883e; }
+  .agent.vulkimi { color: #d29922; }
+  .msg { max-width: 400px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg:hover { white-space: normal; overflow: visible; }
+  .age { color: #8b949e; }
+  .age.overdue { color: #f85149; font-weight: bold; }
+  .broadcast { margin-bottom: 20px; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; }
+  .broadcast h3 { color: #58a6ff; margin-bottom: 8px; }
+  .progress { background: #30363d; border-radius: 4px; height: 8px; margin: 8px 0; }
+  .progress-bar { background: #3fb950; height: 8px; border-radius: 4px; transition: width 0.3s; }
+  .empty { text-align: center; padding: 40px; color: #8b949e; }
+  .btn { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85em; }
+  .btn:hover { background: #30363d; }
+  .config { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+  .config input { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 10px; border-radius: 4px; width: 100%; margin: 4px 0 8px; }
+  .config label { color: #8b949e; font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<h1>🔗 A2A Task Dashboard</h1>
+<p class="subtitle">BJS LABS — Real-time agent task tracking</p>
+<div class="refresh-info" id="refreshInfo">Loading...</div>
+
+<div class="config" id="configPanel">
+  <label>Supabase URL:</label>
+  <input id="sbUrl" placeholder="https://xxx.supabase.co">
+  <label>Supabase Anon Key:</label>
+  <input id="sbKey" type="password" placeholder="eyJ...">
+  <button class="btn" onclick="saveConfig()">Save & Connect</button>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="open" onclick="switchTab('open')">Open Tasks</div>
+  <div class="tab" data-tab="broadcasts" onclick="switchTab('broadcasts')">Broadcasts</div>
+  <div class="tab" data-tab="all" onclick="switchTab('all')">All (24h)</div>
+  <div class="tab" data-tab="agents" onclick="switchTab('agents')">By Agent</div>
+  <button class="btn" style="margin-left:auto" onclick="toggleConfig()">⚙️</button>
+  <button class="btn" onclick="refresh()">🔄</button>
+</div>
+
+<div id="content"></div>
+
+<script>
+const DEFAULT_URL = 'https://fcgiuzmmvcnovaciykbx.supabase.co';
+let SB_URL = localStorage.getItem('sb_url') || DEFAULT_URL;
+let SB_KEY = localStorage.getItem('sb_key') || '';
+let currentTab = 'open';
+let allTasks = [];
+
+function toggleConfig() {
+  const p = document.getElementById('configPanel');
+  p.style.display = p.style.display === 'none' ? 'block' : 'none';
+  document.getElementById('sbUrl').value = SB_URL;
+  document.getElementById('sbKey').value = SB_KEY;
+}
+
+function saveConfig() {
+  SB_URL = document.getElementById('sbUrl').value;
+  SB_KEY = document.getElementById('sbKey').value;
+  localStorage.setItem('sb_url', SB_URL);
+  localStorage.setItem('sb_key', SB_KEY);
+  document.getElementById('configPanel').style.display = 'none';
+  refresh();
+}
+
+async function query(endpoint) {
+  const resp = await fetch(`${SB_URL}/rest/v1/${endpoint}`, {
+    headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+  });
+  if (!resp.ok) throw new Error(`${resp.status}`);
+  return resp.json();
+}
+
+function formatAge(ts) {
+  const ms = Date.now() - new Date(ts).getTime();
+  const h = ms / 3600000;
+  if (h < 1) return `${Math.round(h * 60)}m`;
+  if (h < 24) return `${(h).toFixed(1)}h`;
+  return `${Math.round(h / 24)}d`;
+}
+
+function isOverdue(task) {
+  const age = (Date.now() - new Date(task.created_at).getTime()) / 3600000;
+  return age > task.timeout_hours && !['completed', 'failed'].includes(task.status);
+}
+
+function renderStats() {
+  const nonBroadcast = allTasks.filter(t => t.to_agent !== 'broadcast');
+  const open = nonBroadcast.filter(t => !['completed', 'failed'].includes(t.status));
+  const overdue = open.filter(isOverdue);
+  const completed = nonBroadcast.filter(t => t.status === 'completed');
+  
+  document.getElementById('stats').innerHTML = `
+    <div class="stat total"><div class="num">${nonBroadcast.length}</div><div class="label">Total (24h)</div></div>
+    <div class="stat open"><div class="num">${open.length}</div><div class="label">Open</div></div>
+    <div class="stat overdue"><div class="num">${overdue.length}</div><div class="label">Overdue</div></div>
+    <div class="stat done"><div class="num">${completed.length}</div><div class="label">Completed</div></div>
+  `;
+}
+
+function taskRow(t) {
+  const overdue = isOverdue(t);
+  return `<tr>
+    <td><span class="status ${t.status}">${t.status}</span></td>
+    <td><span class="agent ${t.to_agent}">${t.to_agent}</span></td>
+    <td class="msg" title="${(t.message || '').replace(/"/g, '&quot;')}">${t.subject || t.message?.slice(0, 80) || ''}</td>
+    <td><span class="agent ${t.from_agent}">${t.from_agent}</span></td>
+    <td><span class="age ${overdue ? 'overdue' : ''}">${formatAge(t.created_at)}${overdue ? ' ⚠️' : ''}</span></td>
+    <td class="${t.priority === 'urgent' ? 'priority urgent' : ''}">${t.priority || 'normal'}</td>
+    <td>${t.completion_summary || '—'}</td>
+  </tr>`;
+}
+
+function tableWrap(rows) {
+  if (!rows) return '<div class="empty">No tasks found</div>';
+  return `<table>
+    <tr><th>Status</th><th>To</th><th>Subject</th><th>From</th><th>Age</th><th>Priority</th><th>Summary</th></tr>
+    ${rows}
+  </table>`;
+}
+
+function renderOpen() {
+  const tasks = allTasks.filter(t => t.to_agent !== 'broadcast' && !['completed', 'failed'].includes(t.status));
+  if (!tasks.length) { document.getElementById('content').innerHTML = '<div class="empty">✅ No open tasks!</div>'; return; }
+  tasks.sort((a, b) => isOverdue(b) - isOverdue(a) || new Date(a.created_at) - new Date(b.created_at));
+  document.getElementById('content').innerHTML = tableWrap(tasks.map(taskRow).join(''));
+}
+
+function renderBroadcasts() {
+  const broadcasts = allTasks.filter(t => t.to_agent === 'broadcast');
+  if (!broadcasts.length) { document.getElementById('content').innerHTML = '<div class="empty">No broadcasts</div>'; return; }
+  
+  let html = '';
+  for (const b of broadcasts) {
+    const children = allTasks.filter(t => t.parent_task_id === b.task_id);
+    const completed = children.filter(t => t.status === 'completed').length;
+    const pct = children.length ? Math.round(completed / children.length * 100) : 0;
+    
+    html += `<div class="broadcast">
+      <h3>📡 ${b.task_id}</h3>
+      <div style="color:#8b949e;margin-bottom:8px">${b.subject || b.message?.slice(0, 100) || ''}</div>
+      <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+      <div style="font-size:0.9em">${completed}/${children.length} completed</div>
+      ${tableWrap(children.map(taskRow).join(''))}
+    </div>`;
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderAll() {
+  const tasks = allTasks.filter(t => t.to_agent !== 'broadcast');
+  tasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  document.getElementById('content').innerHTML = tableWrap(tasks.map(taskRow).join(''));
+}
+
+function renderAgents() {
+  const byAgent = {};
+  for (const t of allTasks.filter(t => t.to_agent !== 'broadcast')) {
+    if (!byAgent[t.to_agent]) byAgent[t.to_agent] = [];
+    byAgent[t.to_agent].push(t);
+  }
+  let html = '';
+  for (const [agent, tasks] of Object.entries(byAgent).sort()) {
+    const open = tasks.filter(t => !['completed', 'failed'].includes(t.status)).length;
+    const overdue = tasks.filter(isOverdue).length;
+    html += `<h3 style="margin:16px 0 8px"><span class="agent ${agent}">${agent}</span> — ${open} open${overdue ? `, <span style="color:#f85149">${overdue} overdue</span>` : ''}</h3>`;
+    html += tableWrap(tasks.map(taskRow).join(''));
+  }
+  document.getElementById('content').innerHTML = html || '<div class="empty">No tasks</div>';
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  render();
+}
+
+function render() {
+  switch (currentTab) {
+    case 'open': renderOpen(); break;
+    case 'broadcasts': renderBroadcasts(); break;
+    case 'all': renderAll(); break;
+    case 'agents': renderAgents(); break;
+  }
+}
+
+async function refresh() {
+  try {
+    const since = new Date(Date.now() - 86400000).toISOString();
+    allTasks = await query(`agent_tasks?created_at=gte.${since}&order=created_at.desc&limit=100`);
+    renderStats();
+    render();
+    document.getElementById('refreshInfo').textContent = `Last refresh: ${new Date().toLocaleTimeString()} · ${allTasks.length} tasks · Auto-refresh 30s`;
+  } catch (e) {
+    document.getElementById('content').innerHTML = `<div class="empty">⚠️ Connection failed: ${e.message}<br><br>Click ⚙️ to configure Supabase credentials</div>`;
+    document.getElementById('refreshInfo').textContent = 'Disconnected';
+  }
+}
+
+// Auto-refresh every 30s
+if (!SB_KEY) { toggleConfig(); } else { refresh(); }
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
