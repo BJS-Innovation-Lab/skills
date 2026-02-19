@@ -32,7 +32,7 @@ const path = require('path');
 // ── Config ──────────────────────────────────────────────────────────
 const WORKSPACE = process.env.WORKSPACE || require('path').resolve(__dirname, '..');
 const LEARNING_DIR = path.join(WORKSPACE, 'memory/learning');
-const { getEmbedding, getEmbeddings, EMBEDDING_DIMS } = require('./gemini-embed.cjs');
+const { getEmbedding, getEmbeddings, EMBEDDING_DIMS, EMBEDDING_MODEL } = require('./gemini-embed.cjs');
 
 // Signal weights (must sum to 1.0)
 // Adjusted per Saber's review: correction signal bumped to 0.25 (strong language signal),
