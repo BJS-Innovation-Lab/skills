@@ -56,6 +56,24 @@ function parseArgs() {
 }
 
 // ============== SUPABASE FETCH ==============
+// Patterns that indicate content ingestion (NOT conversations)
+const INGESTION_PATTERNS = [
+  /landing-page/i,
+  /brand-voice/i,
+  /customers\.md/i,
+  /story\.md/i,
+  /voice\.md/i,
+  /profile\.md/i,
+  /learnings\.md/i,
+  /^\[?\d+\]?$/,  // Chunk indicators like "[1" or "1]"
+  /\[\d+$/,       // Ends with chunk number like "customers.md [1"
+];
+
+function isIngestedContent(filePath, title) {
+  const combined = `${filePath || ''} ${title || ''}`;
+  return INGESTION_PATTERNS.some(p => p.test(combined));
+}
+
 async function fetchAgentDocs(agentId, date) {
   // Fetch documents synced on this date (by created_at) OR with date in filename
   // Two queries: date in filename + created_at on this day
@@ -65,13 +83,13 @@ async function fetchAgentDocs(agentId, date) {
   
   // Query 1: file_path contains the date
   const resp1 = await fetch(
-    `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&file_path=like.${dateFilter}&select=file_path,title,content,metadata,created_at`,
+    `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&file_path=like.${dateFilter}&select=file_path,title,content,metadata,created_at,doc_type`,
     { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
   );
   
   // Query 2: created_at on this day (catches docs without date in filename)
   const resp2 = await fetch(
-    `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&created_at=gte.${dayStart}&created_at=lte.${dayEnd}&select=file_path,title,content,metadata,created_at`,
+    `${SUPABASE_URL}/rest/v1/documents?agent_id=eq.${agentId}&created_at=gte.${dayStart}&created_at=lte.${dayEnd}&select=file_path,title,content,metadata,created_at,doc_type`,
     { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
   );
   
@@ -91,7 +109,23 @@ async function fetchAgentDocs(agentId, date) {
     if (!seen.has(key)) { seen.add(key); all.push(d); }
   }
   
-  return all;
+  // CRITICAL FIX: Filter out ingested content (landing pages, brand docs, etc.)
+  // Only keep actual conversation/memory logs
+  const filtered = all.filter(d => {
+    // Skip if doc_type indicates ingestion
+    if (d.doc_type === 'ingested' || d.doc_type === 'content' || d.doc_type === 'asset') {
+      return false;
+    }
+    // Skip if file path matches ingestion patterns
+    if (isIngestedContent(d.file_path, d.title)) {
+      return false;
+    }
+    return true;
+  });
+  
+  console.error(`📊 Filtered ${all.length - filtered.length} ingested docs, keeping ${filtered.length} conversation logs`);
+  
+  return filtered;
 }
 
 async function fetchClientDocs(agentId) {
