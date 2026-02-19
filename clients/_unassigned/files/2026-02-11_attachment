@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VULKN - Tu Aliado en Transformación Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FDF8F3;
+            --cream-dark: #F5EDE4;
+            --warm-white: #FFFCF9;
+            --terracotta: #C4704B;
+            --terracotta-dark: #A85A3A;
+            --amber: #D4A259;
+            --gold: #C9A227;
+            --earth: #8B7355;
+            --forest: #4A5D4A;
+            --charcoal: #2D2D2D;
+            --text: #3D3D3D;
+            --text-light: #6B6B6B;
+            --text-muted: #8B8B8B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 600;
+        }
+
+        section {
+            padding: 100px 40px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 60%;
+            height: 140%;
+            background: linear-gradient(180deg, rgba(196, 112, 75, 0.08) 0%, rgba(212, 162, 89, 0.05) 100%);
+            border-radius: 50%;
+            transform: rotate(-15deg);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--warm-white);
+            border: 1px solid rgba(196, 112, 75, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: var(--terracotta);
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            color: var(--charcoal);
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+        }
+
+        .hero h1 span {
+            color: var(--terracotta);
+        }
+
+        .hero-subtitle {
+            font-size: 1.35rem;
+            color: var(--text-light);
+            max-width: 550px;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--terracotta);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(196, 112, 75, 0.25);
+        }
+
+        .hero-cta:hover {
+            background: var(--terracotta-dark);
+            transform: translateY(-2px);
+        }
+
+        .hero-stat {
+            margin-top: 4rem;
+            padding: 1.5rem 2rem;
+            background: var(--warm-white);
+            border-left: 4px solid var(--terracotta);
+            border-radius: 0 8px 8px 0;
+            max-width: 500px;
+        }
+
+        .hero-stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--terracotta);
+            font-weight: 600;
+        }
+
+        .hero-stat-text {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: rgba(196, 112, 75, 0.1);
+            color: var(--terracotta);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.75rem;
+            color: var(--charcoal);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* Problem Section */
+        .problem {
+            background: var(--warm-white);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .problem-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .problem-card {
+            background: var(--cream);
+            border: 1px solid rgba(139, 115, 85, 0.15);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .problem-card:hover {
+            border-color: var(--terracotta);
+            box-shadow: 0 8px 30px rgba(196, 112, 75, 0.1);
+        }
+
+        .problem-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(196, 112, 75, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .problem-card h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--charcoal);
+        }
+
+        .problem-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Promise Section */
+        .promise {
+            background: var(--charcoal);
+            color: white;
+            text-align: center;
+            padding: 120px 40px;
+        }
+
+        .promise-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .promise h2 {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .promise h2 span {
+            color: var(--amber);
+        }
+
+        .promise p {
+            font-size: 1.25rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Philosophy / Pillars */
+        .philosophy {
+            background: var(--cream);
+        }
+
+        .pillars {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .pillars {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pillar {
+            background: var(--warm-white);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .pillar-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--terracotta);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pillar-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .pillar h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--charcoal);
+        }
+
+        .pillar p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Architecture / Three Layers */
+        .architecture {
+            background: var(--warm-white);
+        }
+
+        .layers-container {
+            background: var(--cream);
+            border: 1px solid rgba(139, 115, 85, 0.15);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        .layer-company {
+            background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .layer-company h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .layer-company p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .layer-connector {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--terracotta);
+            margin: 1rem 0;
+        }
+
+        .layer-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .layer-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .layer-box {
+            background: var(--warm-white);
+            border: 2px solid rgba(196, 112, 75, 0.2);
+            border-radius: 12px;
+            padding: 1.75rem;
+            text-align: center;
+        }
+
+        .layer-box h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--terracotta);
+            margin-bottom: 0.5rem;
+        }
+
+        .layer-box p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .layer-bridge {
+            font-size: 1.5rem;
+            color: var(--terracotta);
+        }
+
+        .ml-engine {
+            background: linear-gradient(135deg, rgba(212, 162, 89, 0.15) 0%, rgba(196, 112, 75, 0.1) 100%);
+            border: 1px solid rgba(212, 162, 89, 0.3);
+            border-radius: 50px;
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .ml-engine span {
+            font-size: 1.5rem;
+        }
+
+        .ml-engine p {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Capabilities */
+        .capabilities {
+            background: var(--cream);
+        }
+
+        .capability-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .capability-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .capability {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--warm-white);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .capability:hover {
+            border-color: var(--terracotta);
+            box-shadow: 0 4px 20px rgba(196, 112, 75, 0.08);
+        }
+
+        .capability-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(196, 112, 75, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .capability h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+            color: var(--charcoal);
+        }
+
+        .capability p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Difference */
+        .difference {
+            background: var(--warm-white);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .compare-card {
+            border-radius: 16px;
+            padding: 2.5rem;
+        }
+
+        .compare-card.them {
+            background: var(--cream);
+            border: 1px solid rgba(139, 115, 85, 0.15);
+        }
+
+        .compare-card.us {
+            background: linear-gradient(135deg, var(--terracotta) 0%, var(--terracotta-dark) 100%);
+            color: white;
+        }
+
+        .compare-card h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .compare-card.us h3 {
+            color: white;
+        }
+
+        .compare-card ul {
+            list-style: none;
+        }
+
+        .compare-card li {
+            padding: 0.6rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .compare-card.them li {
+            color: var(--text-light);
+        }
+
+        .compare-card.us li {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .compare-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .compare-card.them .compare-icon {
+            background: rgba(200, 100, 100, 0.15);
+            color: #C86464;
+        }
+
+        .compare-card.us .compare-icon {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* Process */
+        .process {
+            background: var(--cream);
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--terracotta);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 auto 1.25rem;
+        }
+
+        .step h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--charcoal);
+        }
+
+        .step p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: rgba(196, 112, 75, 0.1);
+            color: var(--terracotta);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Team */
+        .team {
+            background: var(--warm-white);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .team-member {
+            background: var(--cream);
+            border: 1px solid rgba(139, 115, 85, 0.1);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--terracotta) 0%, var(--amber) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.25rem;
+        }
+
+        .team-member h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+            color: var(--charcoal);
+        }
+
+        .team-member .role {
+            color: var(--terracotta);
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+        }
+
+        .team-member p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--charcoal) 0%, #1a1a1a 100%);
+            color: white;
+            text-align: center;
+            padding: 100px 40px;
+        }
+
+        .cta h2 {
+            font-size: 2.75rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .cta h2 span {
+            color: var(--amber);
+        }
+
+        .cta > p {
+            font-size: 1.15rem;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 2.5rem;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--terracotta);
+            color: white;
+            padding: 18px 36px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(196, 112, 75, 0.35);
+        }
+
+        .cta-button:hover {
+            background: var(--terracotta-dark);
+            transform: translateY(-2px);
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        .cta-feature span {
+            color: var(--amber);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--cream);
+            padding: 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(139, 115, 85, 0.1);
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--terracotta);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-tagline {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .footer-contact {
+            color: var(--terracotta);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    🔥 VULKN — Transformación Digital
+                </div>
+                <h1>Nosotros construimos.<br><span>Tú lideras.</span></h1>
+                <p class="hero-subtitle">Potenciamos a tu equipo con el poder de 100 — sin reemplazar a nadie. Transformación digital que respeta lo que funciona.</p>
+                <a href="#contacto" class="hero-cta">
+                    Agenda una llamada →
+                </a>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">43%</div>
+                    <div class="hero-stat-text">más rentabilidad en empresas digitalmente maduras — Deloitte</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem -->
+    <section class="problem">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">El Reto</span>
+                <h2 class="section-title">El mundo cambia rápido</h2>
+                <p class="section-subtitle">Las empresas temen quedarse atrás. Pero la solución no es reemplazar a tu gente.</p>
+            </div>
+
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">🏝️</div>
+                    <h3>Información en silos</h3>
+                    <p>Ventas no habla con operaciones. Datos valiosos atrapados en departamentos separados.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">⏰</div>
+                    <h3>Tiempo en lo repetitivo</h3>
+                    <p>Tu equipo pasa horas en tareas mecánicas en lugar de usar su verdadero talento.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">📉</div>
+                    <h3>Oportunidades invisibles</h3>
+                    <p>Sin visibilidad completa del negocio, se escapan ventas y crecen las ineficiencias.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">😰</div>
+                    <h3>La competencia avanza</h3>
+                    <p>Otros se digitalizan. ¿Cómo mantenerse relevante sin destruir lo que ya funciona?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promise -->
+    <section class="promise">
+        <div class="promise-content">
+            <h2>Un vendedor con el <span>poder de 100</span>.<br>Sin contratar a 99 más.</h2>
+            <p>No reducimos tu equipo. Lo convertimos en superhumanos.</p>
+        </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Nuestra Filosofía</span>
+                <h2 class="section-title">Humanos primero. Siempre.</h2>
+                <p class="section-subtitle">Cada decisión que toman nuestros agentes se basa en tres pilares fundamentales.</p>
+            </div>
+
+            <div class="pillars">
+                <div class="pillar">
+                    <div class="pillar-number">1</div>
+                    <div class="pillar-icon">💚</div>
+                    <h3>Vitalidad</h3>
+                    <p>La felicidad de tu equipo. Eliminamos lo robótico para que se enfoquen en lo que aman hacer.</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-number">2</div>
+                    <div class="pillar-icon">🌱</div>
+                    <h3>Longevidad</h3>
+                    <p>Sustentabilidad del negocio. Construimos para durar 10 años, no parches temporales.</p>
+                </div>
+                <div class="pillar">
+                    <div class="pillar-number">3</div>
+                    <div class="pillar-icon">💰</div>
+                    <h3>Recursos</h3>
+                    <p>Rentabilidad como combustible para crecer. Encontramos fugas y oportunidades ocultas.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section class="architecture">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">La Arquitectura</span>
+                <h2 class="section-title">El sistema nervioso de tu empresa</h2>
+                <p class="section-subtitle">VULKN conecta tres capas para crear una inteligencia colectiva.</p>
+            </div>
+
+            <div class="layers-container">
+                <div class="layer-company">
+                    <h3>🏢 CAPA EMPRESA</h3>
+                    <p>La inteligencia emergente — donde viven los Tres Pilares y nace la visión estratégica.</p>
+                </div>
+
+                <div class="layer-connector">↕</div>
+
+                <div class="layer-row">
+                    <div class="layer-box">
+                        <h4>👥 CAPA HUMANA</h4>
+                        <p>Tu equipo como red viva. Conocimientos, relaciones y decisiones conectadas.</p>
+                    </div>
+                    <div class="layer-bridge">←→</div>
+                    <div class="layer-box">
+                        <h4>📊 CAPA DATOS</h4>
+                        <p>Toda tu información sincronizada. Datos dormidos, activados.</p>
+                    </div>
+                </div>
+
+                <div class="layer-connector">↕</div>
+
+                <div class="ml-engine">
+                    <span>🧠</span>
+                    <p>Motor de Análisis — Aprende contigo y guía la mejora continua</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Capabilities -->
+    <section class="capabilities">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Qué Hacemos</span>
+                <h2 class="section-title">Herramientas que trabajan para ti</h2>
+                <p class="section-subtitle">No vendemos software genérico. Forjamos soluciones a tu medida.</p>
+            </div>
+
+            <div class="capability-grid">
+                <div class="capability">
+                    <div class="capability-icon">🔧</div>
+                    <div>
+                        <h4>Construimos a la medida</h4>
+                        <p>Creamos exactamente lo que tu operación necesita, no lo que hay en el mercado.</p>
+                    </div>
+                </div>
+                <div class="capability">
+                    <div class="capability-icon">🔗</div>
+                    <div>
+                        <h4>Eliminamos silos</h4>
+                        <p>Conectamos ventas, compras, cobranza y operaciones en una vista unificada.</p>
+                    </div>
+                </div>
+                <div class="capability">
+                    <div class="capability-icon">🤖</div>
+                    <div>
+                        <h4>Automatizamos lo mecánico</h4>
+                        <p>Las tareas repetitivas las hacemos nosotros. Tu equipo decide, no ejecuta.</p>
+                    </div>
+                </div>
+                <div class="capability">
+                    <div class="capability-icon">📊</div>
+                    <div>
+                        <h4>Análisis predictivo 24/7</h4>
+                        <p>Monitoreamos la salud del negocio y alertamos antes de que haya problemas.</p>
+                    </div>
+                </div>
+                <div class="capability">
+                    <div class="capability-icon">🎓</div>
+                    <div>
+                        <h4>Enseñamos, no solo hacemos</h4>
+                        <p>Cada herramienta viene con capacitación. Elevamos la madurez de tu equipo.</p>
+                    </div>
+                </div>
+                <div class="capability">
+                    <div class="capability-icon">💡</div>
+                    <div>
+                        <h4>Inspiramos posibilidades</h4>
+                        <p>Con cada solución, mostramos qué más es posible. Tu imaginación es el límite.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Difference -->
+    <section class="difference">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">La Diferencia</span>
+                <h2 class="section-title">No somos como los demás</h2>
+                <p class="section-subtitle">Otros prometen reemplazar a tu gente. Nosotros prometemos potenciarla.</p>
+            </div>
+
+            <div class="comparison">
+                <div class="compare-card them">
+                    <h3>El enfoque tradicional</h3>
+                    <ul>
+                        <li><span class="compare-icon">✕</span> Reemplazar empleados con IA</li>
+                        <li><span class="compare-icon">✕</span> Más software = más dashboards</li>
+                        <li><span class="compare-icon">✕</span> Soluciones genéricas que no encajan</li>
+                        <li><span class="compare-icon">✕</span> Automatizar sin enseñar</li>
+                        <li><span class="compare-icon">✕</span> Optimizar solo por costo</li>
+                    </ul>
+                </div>
+                <div class="compare-card us">
+                    <h3>El enfoque VULKN</h3>
+                    <ul>
+                        <li><span class="compare-icon">✓</span> Potenciar a cada persona 100x</li>
+                        <li><span class="compare-icon">✓</span> Un centro de control unificado</li>
+                        <li><span class="compare-icon">✓</span> Herramientas hechas para TI</li>
+                        <li><span class="compare-icon">✓</span> Enseñar y elevar capacidades</li>
+                        <li><span class="compare-icon">✓</span> Equilibrar felicidad + rentabilidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="process">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">El Proceso</span>
+                <h2 class="section-title">Simple y sin fricciones</h2>
+                <p class="section-subtitle">De la primera llamada a resultados tangibles en semanas.</p>
+            </div>
+
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Diagnóstico</h4>
+                    <p>Entendemos tu operación, metas y cultura.</p>
+                    <span class="step-badge">1 llamada</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Diseño</h4>
+                    <p>Creamos el plan con quick wins inmediatos.</p>
+                    <span class="step-badge">1 semana</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Construcción</h4>
+                    <p>Forjamos las herramientas y conectamos sistemas.</p>
+                    <span class="step-badge">2-4 semanas</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Evolución</h4>
+                    <p>Crecemos contigo. Nuevas posibilidades.</p>
+                    <span class="step-badge">Continuo</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">El Equipo</span>
+                <h2 class="section-title">Quiénes somos</h2>
+                <p class="section-subtitle">Obsesionados con hacer que la tecnología trabaje para las personas.</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-avatar">👨‍💻</div>
+                    <h4>Johan</h4>
+                    <p class="role">Co-fundador</p>
+                    <p>Arquitecto de sistemas con experiencia en transformación digital.</p>
+                </div>
+                <div class="team-member">
+                    <div class="team-avatar">👩‍💼</div>
+                    <h4>Bridget</h4>
+                    <p class="role">Co-fundadora</p>
+                    <p>Especialista en datos y estrategia para potenciar equipos humanos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="contacto">
+        <div class="container">
+            <h2>¿Listo para <span>transformar</span> tu equipo?</h2>
+            <p>Agenda una llamada y diseñemos juntos el futuro de tu empresa.</p>
+
+            <a href="mailto:hola@vulkn.ai" class="cta-button">
+                📞 Agendar diagnóstico
+            </a>
+
+            <div class="cta-features">
+                <div class="cta-feature"><span>✓</span> Diagnóstico sin costo</div>
+                <div class="cta-feature"><span>✓</span> Propuesta en 48h</div>
+                <div class="cta-feature"><span>✓</span> Resultados en semanas</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">🔥 VULKN</div>
+        <p class="footer-tagline">Nosotros construimos. Tú lideras.</p>
+        <p class="footer-contact">hola@vulkn.ai</p>
+    </footer>
+</body>
+</html>

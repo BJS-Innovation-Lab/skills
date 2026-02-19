@@ -299,8 +299,17 @@ async function main() {
       const messages = parseSession(file.path, clientMap);
       if (messages.length === 0) continue;
 
-      const uploaded = await uploadBatch(messages, agentInfo);
-      totalMessages += messages.length;
+      // Skip messages we already synced (by count offset)
+      const prev = state.syncedSessions[file.name];
+      const newMessages = prev && prev.count ? messages.slice(prev.count) : messages;
+      if (newMessages.length === 0) {
+        console.error(`   ${file.name}: ${messages.length} messages (0 new, skipping)`);
+        state.syncedSessions[file.name] = { mtime: file.mtime, count: messages.length, syncedAt: new Date().toISOString() };
+        continue;
+      }
+
+      const uploaded = await uploadBatch(newMessages, agentInfo);
+      totalMessages += newMessages.length;
       totalUploaded += uploaded;
 
       state.syncedSessions[file.name] = { mtime: file.mtime, count: messages.length, syncedAt: new Date().toISOString() };

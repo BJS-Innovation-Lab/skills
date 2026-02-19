@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VULKN - Inteligencia Digital para tu Empresa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --indigo-50: #EEF2FF;
+            --indigo-100: #E0E7FF;
+            --indigo-500: #6366F1;
+            --indigo-600: #4F46E5;
+            --indigo-700: #4338CA;
+            --violet-500: #8B5CF6;
+            --orange-500: #F97316;
+            --green-500: #22C55E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--white);
+            color: var(--gray-800);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        section {
+            padding: 100px 24px;
+        }
+
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-100);
+            padding: 16px 24px;
+            z-index: 100;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .nav-cta {
+            background: var(--gray-900);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .nav-cta:hover {
+            background: var(--gray-700);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(180deg, var(--white) 0%, var(--gray-50) 100%);
+            padding-top: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: radial-gradient(ellipse at 70% 30%, rgba(99, 102, 241, 0.08) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--indigo-50);
+            border: 1px solid var(--indigo-100);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--indigo-600);
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 3.75rem;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gray-900);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--gray-700);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray-700);
+            padding: 14px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 1px solid var(--gray-200);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+
+        /* Trust Logos */
+        .trust-section {
+            padding: 60px 24px;
+            background: var(--white);
+            border-top: 1px solid var(--gray-100);
+        }
+
+        .trust-section p {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 24px;
+        }
+
+        .trust-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 48px;
+            flex-wrap: wrap;
+        }
+
+        .trust-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            color: var(--gray-300);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--gray-900);
+            padding: 48px 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .stat-item p {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: var(--indigo-50);
+            color: var(--indigo-600);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Features Grid */
+        .features {
+            background: var(--gray-50);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--indigo-200);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.08);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--indigo-50) 0%, var(--indigo-100) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--gray-500);
+            font-size: 0.95rem;
+        }
+
+        /* Three Layers */
+        .layers {
+            background: var(--white);
+        }
+
+        .layers-visual {
+            background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+            border-radius: 24px;
+            padding: 48px;
+            color: white;
+        }
+
+        .layer-top {
+            background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .layer-top h3 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+
+        .layer-top p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .layer-arrow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--gray-500);
+            margin: 16px 0;
+        }
+
+        .layer-middle {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 24px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .layer-middle {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        .layer-box {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .layer-box h4 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--indigo-300);
+        }
+
+        .layer-box p {
+            font-size: 0.9rem;
+            color: var(--gray-400);
+        }
+
+        .layer-connector {
+            color: var(--gray-500);
+            font-size: 1.5rem;
+        }
+
+        .layer-bottom {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .layer-bottom span {
+            font-size: 1.25rem;
+        }
+
+        .layer-bottom p {
+            color: var(--gray-300);
+            font-weight: 500;
+        }
+
+        /* How It Works */
+        .process {
+            background: var(--gray-50);
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .process-steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 56px;
+            height: 56px;
+            background: var(--gray-900);
+            color: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 auto 20px;
+        }
+
+        .step h4 {
+            font-size: 1.1rem;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .step p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: var(--indigo-50);
+            color: var(--indigo-600);
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Comparison */
+        .comparison {
+            background: var(--white);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .compare-card {
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .compare-card.others {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+        }
+
+        .compare-card.vulkn {
+            background: var(--gray-900);
+            color: white;
+        }
+
+        .compare-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+        }
+
+        .compare-card.vulkn h3 {
+            color: white;
+        }
+
+        .compare-list {
+            list-style: none;
+        }
+
+        .compare-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(128,128,128,0.1);
+            font-size: 0.95rem;
+        }
+
+        .compare-list li:last-child {
+            border-bottom: none;
+        }
+
+        .compare-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .compare-card.others .compare-icon {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+
+        .compare-card.vulkn .compare-icon {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22C55E;
+        }
+
+        .compare-card.others li {
+            color: var(--gray-600);
+        }
+
+        .compare-card.vulkn li {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Team */
+        .team {
+            background: var(--gray-50);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 600px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .team-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .team-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .team-avatar.johan {
+            background: linear-gradient(135deg, #92400E 0%, #B45309 100%);
+        }
+
+        .team-avatar.bridget {
+            background: linear-gradient(135deg, var(--indigo-500) 0%, var(--violet-500) 100%);
+        }
+
+        .team-card h4 {
+            font-size: 1.25rem;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .team-card .role {
+            color: var(--indigo-500);
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .team-card p {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--gray-900) 0%, #0F172A 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+        }
+
+        .cta .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            font-size: 2.75rem;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .cta h2 span {
+            background: linear-gradient(135deg, var(--indigo-400) 0%, var(--violet-400) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta > .container > p {
+            color: var(--gray-400);
+            font-size: 1.15rem;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            color: var(--gray-900);
+            padding: 18px 36px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.15);
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .cta-feature span {
+            color: var(--green-500);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--gray-900);
+            padding: 40px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .footer-tagline {
+            color: var(--gray-500);
+            margin-bottom: 16px;
+        }
+
+        .footer-contact {
+            color: var(--indigo-400);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">
+                <div class="logo-icon">🔥</div>
+                VULKN
+            </div>
+            <a href="#contacto" class="nav-cta">Agenda una llamada</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    ✨ Transformación Digital Inteligente
+                </div>
+                <h1>Cada persona en tu equipo con el <span>poder de 100</span></h1>
+                <p class="hero-subtitle">El sistema nervioso digital que conecta tu empresa, amplifica a tu equipo y desbloquea crecimiento sin límites.</p>
+                <div class="hero-ctas">
+                    <a href="#contacto" class="btn-primary">
+                        Comenzar ahora →
+                    </a>
+                    <a href="#como" class="btn-secondary">
+                        Ver cómo funciona
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Logos -->
+    <section class="trust-section">
+        <div class="container">
+            <p>Empresas que confían en nosotros</p>
+            <div class="trust-logos">
+                <span class="trust-logo">Constructora Alfa</span>
+                <span class="trust-logo">Grupo Desarrollo</span>
+                <span class="trust-logo">Inmobiliaria Central</span>
+                <span class="trust-logo">Proyectos MX</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>43%</h3>
+                    <p>Más rentabilidad en empresas digitalmente maduras</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100x</h3>
+                    <p>El poder que damos a cada miembro de tu equipo</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Monitoreo y análisis continuo de tu operación</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="como">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Capacidades</span>
+                <h2 class="section-title">Todo lo que necesitas para crecer</h2>
+                <p class="section-subtitle">Herramientas construidas a tu medida, no software genérico.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Herramientas a medida</h3>
+                    <p>Construimos exactamente lo que tu operación necesita, integrado a tus sistemas existentes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Conexión total</h3>
+                    <p>Eliminamos silos. Ventas, operaciones, cobranza y compras en una sola vista inteligente.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Automatización inteligente</h3>
+                    <p>Las tareas mecánicas las hacemos nosotros. Tu equipo se enfoca en decisiones estratégicas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Análisis predictivo</h3>
+                    <p>Monitoreamos la salud de tu negocio 24/7 y alertamos antes de que haya problemas.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Capacitación continua</h3>
+                    <p>Enseñamos, no solo automatizamos. Elevamos la madurez digital de todo tu equipo.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Nuevas posibilidades</h3>
+                    <p>Con cada solución, mostramos qué más es posible. Tu imaginación es el límite.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Three Layers -->
+    <section class="layers">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Arquitectura</span>
+                <h2 class="section-title">El sistema nervioso de tu empresa</h2>
+                <p class="section-subtitle">Tres capas que se conectan para crear inteligencia colectiva.</p>
+            </div>
+
+            <div class="layers-visual">
+                <div class="layer-top">
+                    <h3>🏢 CAPA EMPRESA</h3>
+                    <p>La inteligencia emergente — donde nace la visión estratégica y viven los objetivos.</p>
+                </div>
+
+                <div class="layer-arrow">↕</div>
+
+                <div class="layer-middle">
+                    <div class="layer-box">
+                        <h4>👥 CAPA HUMANA</h4>
+                        <p>Tu equipo como red viva. Conocimientos, relaciones y decisiones conectadas.</p>
+                    </div>
+                    <div class="layer-connector">←→</div>
+                    <div class="layer-box">
+                        <h4>📊 CAPA DATOS</h4>
+                        <p>Toda tu información sincronizada. Datos dormidos, activados.</p>
+                    </div>
+                </div>
+
+                <div class="layer-arrow">↕</div>
+
+                <div class="layer-bottom">
+                    <span>🧠</span>
+                    <p>Motor de Análisis — Aprende contigo y guía la mejora continua</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="process">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Proceso</span>
+                <h2 class="section-title">Simple y sin fricciones</h2>
+                <p class="section-subtitle">De la primera llamada a resultados tangibles en semanas.</p>
+            </div>
+
+            <div class="process-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h4>Diagnóstico</h4>
+                    <p>Entendemos tu operación, metas y cultura.</p>
+                    <span class="step-badge">1 llamada</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h4>Diseño</h4>
+                    <p>Creamos el plan con quick wins inmediatos.</p>
+                    <span class="step-badge">1 semana</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h4>Construcción</h4>
+                    <p>Forjamos las herramientas y conectamos sistemas.</p>
+                    <span class="step-badge">2-4 semanas</span>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h4>Evolución</h4>
+                    <p>Crecemos contigo. Nuevas posibilidades.</p>
+                    <span class="step-badge">Continuo</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison -->
+    <section class="comparison">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">La Diferencia</span>
+                <h2 class="section-title">No somos como los demás</h2>
+                <p class="section-subtitle">Un enfoque diferente para resultados diferentes.</p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="compare-card others">
+                    <h3>Enfoque tradicional</h3>
+                    <ul class="compare-list">
+                        <li><span class="compare-icon">✕</span> Reemplazar empleados con IA</li>
+                        <li><span class="compare-icon">✕</span> Más software = más dashboards</li>
+                        <li><span class="compare-icon">✕</span> Soluciones genéricas</li>
+                        <li><span class="compare-icon">✕</span> Automatizar sin enseñar</li>
+                        <li><span class="compare-icon">✕</span> Optimizar solo por costo</li>
+                    </ul>
+                </div>
+                <div class="compare-card vulkn">
+                    <h3>Enfoque VULKN</h3>
+                    <ul class="compare-list">
+                        <li><span class="compare-icon">✓</span> Potenciar a cada persona 100x</li>
+                        <li><span class="compare-icon">✓</span> Un centro de control unificado</li>
+                        <li><span class="compare-icon">✓</span> Herramientas hechas para TI</li>
+                        <li><span class="compare-icon">✓</span> Enseñar y elevar capacidades</li>
+                        <li><span class="compare-icon">✓</span> Equilibrar felicidad + rentabilidad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Equipo</span>
+                <h2 class="section-title">Quiénes somos</h2>
+                <p class="section-subtitle">Obsesionados con hacer que la tecnología trabaje para las personas.</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar johan">🧑‍💻</div>
+                    <h4>Johan</h4>
+                    <p class="role">Co-fundador</p>
+                    <p>Arquitecto de sistemas con experiencia en transformación digital.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar bridget">👩‍💼</div>
+                    <h4>Bridget</h4>
+                    <p class="role">Co-fundadora</p>
+                    <p>Especialista en datos y estrategia para potenciar equipos humanos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="contacto">
+        <div class="container">
+            <h2>¿Listo para <span>transformar</span> tu equipo?</h2>
+            <p>Agenda una llamada y diseñemos juntos el futuro de tu empresa.</p>
+
+            <a href="mailto:hola@vulkn.ai" class="cta-button">
+                📞 Agendar diagnóstico gratuito
+            </a>
+
+            <div class="cta-features">
+                <div class="cta-feature"><span>✓</span> Diagnóstico sin costo</div>
+                <div class="cta-feature"><span>✓</span> Propuesta en 48h</div>
+                <div class="cta-feature"><span>✓</span> Resultados en semanas</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            🔥 VULKN
+        </div>
+        <p class="footer-tagline">Nosotros construimos. Tú lideras.</p>
+        <p class="footer-contact">hola@vulkn.ai</p>
+    </footer>
+</body>
+</html>

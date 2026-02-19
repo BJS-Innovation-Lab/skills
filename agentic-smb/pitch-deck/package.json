@@ -1,0 +1,8 @@
+{
+  "name": "vulkn-pitch-deck-v2",
+  "version": "1.0.0",
+  "description": "VULKN Pitch Deck - Human-First Messaging",
+  "scripts": {
+    "start": "npx serve ."
+  }
+}

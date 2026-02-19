@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VULKN - El Sistema Nervioso de tu Empresa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FFFDF9;
+            --cream-warm: #FFF8F0;
+            --sand: #F5F0E8;
+            --sand-dark: #E8E0D4;
+            --teal: #0D9488;
+            --teal-dark: #0F766E;
+            --teal-light: #99F6E4;
+            --emerald: #10B981;
+            --amber: #F59E0B;
+            --orange: #EA580C;
+            --charcoal: #1C1917;
+            --stone-800: #292524;
+            --stone-700: #44403C;
+            --stone-600: #57534E;
+            --stone-500: #78716C;
+            --stone-400: #A8A29E;
+            --stone-300: #D6D3D1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            background: var(--cream);
+            color: var(--stone-700);
+            line-height: 1.65;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            color: var(--charcoal);
+            line-height: 1.2;
+        }
+
+        section {
+            padding: 100px 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--cream-warm) 50%, var(--sand) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 70%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(13, 148, 136, 0.08) 0%, transparent 60%);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 50%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 50%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 750px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(13, 148, 136, 0.2);
+            padding: 10px 18px;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            color: var(--teal-dark);
+            font-weight: 500;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            font-size: 3.75rem;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--stone-500);
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--charcoal);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(28, 25, 23, 0.15);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(28, 25, 23, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--stone-600);
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            border: 2px solid var(--stone-300);
+            transition: all 0.25s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        /* Stats */
+        .stats {
+            background: var(--charcoal);
+            padding: 60px 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+        }
+
+        @media (max-width: 800px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--stone-400);
+            font-size: 0.95rem;
+            margin-top: 8px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.1) 0%, rgba(16, 185, 129, 0.08) 100%);
+            color: var(--teal-dark);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 2.75rem;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--stone-500);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Growth Story */
+        .growth {
+            background: var(--sand);
+        }
+
+        .growth-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        @media (max-width: 800px) {
+            .growth-grid { grid-template-columns: 1fr; }
+        }
+
+        .growth-content h2 {
+            font-size: 2.25rem;
+            margin-bottom: 20px;
+        }
+
+        .growth-content p {
+            font-size: 1.1rem;
+            color: var(--stone-600);
+            margin-bottom: 24px;
+        }
+
+        .growth-points {
+            list-style: none;
+        }
+
+        .growth-points li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            font-size: 1rem;
+            color: var(--stone-700);
+        }
+
+        .growth-points .icon {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .growth-visual {
+            background: var(--cream);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--sand-dark);
+        }
+
+        .growth-equation {
+            text-align: center;
+        }
+
+        .growth-equation .before {
+            font-size: 1.1rem;
+            color: var(--stone-500);
+            margin-bottom: 16px;
+        }
+
+        .growth-equation .arrow {
+            font-size: 2rem;
+            color: var(--teal);
+            margin: 16px 0;
+        }
+
+        .growth-equation .after {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--charcoal);
+        }
+
+        .growth-equation .after span {
+            color: var(--teal);
+        }
+
+        .multiplier-box {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .multiplier-box .number {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .multiplier-box .label {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        /* Roles */
+        .roles {
+            background: var(--cream);
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1100px) {
+            .roles-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .roles-grid { grid-template-columns: 1fr; }
+        }
+
+        .role-card {
+            background: var(--sand);
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.25s;
+        }
+
+        .role-card:hover {
+            border-color: var(--teal);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(13, 148, 136, 0.1);
+        }
+
+        .role-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .role-card h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .role-card .title {
+            font-size: 0.8rem;
+            color: var(--teal);
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .role-card p {
+            font-size: 0.85rem;
+            color: var(--stone-500);
+        }
+
+        /* Connective Tissue */
+        .connective {
+            background: var(--charcoal);
+            color: white;
+        }
+
+        .connective .section-title {
+            color: white;
+        }
+
+        .connective .section-subtitle {
+            color: var(--stone-400);
+        }
+
+        .cycle-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cycle-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        @media (max-width: 800px) {
+            .cycle-steps { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .cycle-step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            position: relative;
+        }
+
+        .cycle-step::after {
+            content: '→';
+            position: absolute;
+            right: -18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--teal);
+            font-size: 1.25rem;
+        }
+
+        .cycle-step:last-child::after {
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .cycle-step::after { display: none; }
+        }
+
+        .cycle-step .number {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0 auto 16px;
+        }
+
+        .cycle-step h4 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .cycle-step p {
+            color: var(--stone-400);
+            font-size: 0.9rem;
+        }
+
+        .cycle-example {
+            background: rgba(13, 148, 136, 0.15);
+            border: 1px solid rgba(13, 148, 136, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .cycle-example h4 {
+            color: var(--teal-light);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+
+        .cycle-example p {
+            color: var(--stone-300);
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .cycle-example .highlight {
+            color: var(--teal-light);
+            font-weight: 500;
+        }
+
+        /* Maturity Journey */
+        .maturity {
+            background: var(--sand);
+        }
+
+        .maturity-journey {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 800px) {
+            .maturity-journey { grid-template-columns: 1fr; }
+        }
+
+        .maturity-stage {
+            background: var(--cream);
+            border-radius: 20px;
+            padding: 36px;
+            text-align: center;
+            position: relative;
+            border: 2px solid transparent;
+            transition: all 0.25s;
+        }
+
+        .maturity-stage:hover {
+            border-color: var(--teal);
+        }
+
+        .maturity-stage.active {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+            color: white;
+        }
+
+        .maturity-stage.active h3,
+        .maturity-stage.active p {
+            color: white;
+        }
+
+        .maturity-stage .stage-number {
+            width: 48px;
+            height: 48px;
+            background: var(--sand);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--teal);
+            margin: 0 auto 20px;
+        }
+
+        .maturity-stage.active .stage-number {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .maturity-stage h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .maturity-stage .function {
+            font-size: 0.9rem;
+            color: var(--stone-500);
+            margin-bottom: 16px;
+        }
+
+        .maturity-stage.active .function {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .maturity-stage p {
+            font-size: 0.95rem;
+            color: var(--stone-600);
+        }
+
+        .maturity-arrow {
+            display: none;
+        }
+
+        @media (min-width: 801px) {
+            .maturity-arrow {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: absolute;
+                right: -24px;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 48px;
+                height: 48px;
+                background: var(--sand);
+                border-radius: 50%;
+                color: var(--teal);
+                font-size: 1.25rem;
+                z-index: 1;
+            }
+        }
+
+        /* Process */
+        .process {
+            background: var(--cream);
+        }
+
+        .process-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 60px;
+            right: 60px;
+            height: 3px;
+            background: var(--sand-dark);
+        }
+
+        @media (max-width: 700px) {
+            .process-timeline {
+                flex-direction: column;
+                gap: 32px;
+            }
+            .process-timeline::before {
+                display: none;
+            }
+        }
+
+        .process-step {
+            text-align: center;
+            position: relative;
+            flex: 1;
+        }
+
+        .process-step .dot {
+            width: 56px;
+            height: 56px;
+            background: var(--charcoal);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 auto 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .process-step h4 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .process-step p {
+            color: var(--stone-500);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .process-step .time {
+            display: inline-block;
+            background: var(--sand);
+            color: var(--teal-dark);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Team */
+        .team {
+            background: var(--sand);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 600px) {
+            .team-grid { grid-template-columns: 1fr; }
+        }
+
+        .team-card {
+            background: var(--cream);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid var(--sand-dark);
+        }
+
+        .team-avatar {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+
+        .team-avatar.johan {
+            background: linear-gradient(135deg, #5D4037 0%, #6D4C41 100%);
+        }
+
+        .team-avatar.bridget {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--emerald) 100%);
+        }
+
+        .team-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        .team-card .role {
+            color: var(--teal);
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .team-card p {
+            color: var(--stone-500);
+            font-size: 0.95rem;
+        }
+
+        /* CTA */
+        .cta {
+            background: linear-gradient(135deg, var(--charcoal) 0%, var(--stone-800) 100%);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 30% 0%, rgba(13, 148, 136, 0.2) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 100%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+        }
+
+        .cta .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            font-size: 2.75rem;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .cta h2 span {
+            background: linear-gradient(135deg, var(--teal-light) 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta > .container > p {
+            color: var(--stone-400);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: var(--charcoal);
+            padding: 18px 40px;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 48px;
+            flex-wrap: wrap;
+        }
+
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--stone-400);
+            font-size: 0.95rem;
+        }
+
+        .cta-feature span {
+            color: var(--emerald);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--charcoal);
+            padding: 48px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-tagline {
+            color: var(--stone-500);
+            margin-bottom: 16px;
+        }
+
+        .footer-contact {
+            color: var(--teal);
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .section-title { font-size: 2rem; }
+            section { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-eyebrow">
+                    🤖 VULKN — Agentes de IA para PyMEs
+                </div>
+                <h1>Un <span class="highlight">agente de IA</span> que conecta toda tu empresa</h1>
+                <p class="hero-subtitle">Tu propio agente inteligente que une datos, personas y decisiones. El pegamento invisible que convierte equipos pequeños en potencias.</p>
+                <div class="hero-ctas">
+                    <a href="#contacto" class="btn-primary">
+                        Comenzar ahora →
+                    </a>
+                    <a href="#como" class="btn-secondary">
+                        Ver cómo funciona
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">100x</div>
+                    <div class="stat-label">El poder de cada persona</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">43%</div>
+                    <div class="stat-label">Más rentabilidad (Deloitte)</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoreo continuo</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Crecimiento desbloqueado</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Growth Story -->
+    <section class="growth" id="como">
+        <div class="container">
+            <div class="growth-grid">
+                <div class="growth-content">
+                    <h2>De personas ocupadas a personas <em>superpotentes</em></h2>
+                    <p>Cuando tu equipo deja de buscar información y empieza a tomar decisiones, el crecimiento explota.</p>
+                    <ul class="growth-points">
+                        <li>
+                            <span class="icon">→</span>
+                            <span><strong>Tu vendedor</strong> cierra 10x más porque sabe exactamente cuándo llamar y qué decir</span>
+                        </li>
+                        <li>
+                            <span class="icon">→</span>
+                            <span><strong>Tu operador</strong> detecta problemas antes de que exploten</span>
+                        </li>
+                        <li>
+                            <span class="icon">→</span>
+                            <span><strong>Tu contador</strong> reconcilia en minutos lo que antes tomaba días</span>
+                        </li>
+                        <li>
+                            <span class="icon">→</span>
+                            <span><strong>Tu CEO</strong> ve toda la empresa en una oración cada mañana</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="growth-visual">
+                    <div class="growth-equation">
+                        <div class="before">5 personas × tareas manuales = crecimiento limitado</div>
+                        <div class="arrow">↓</div>
+                        <div class="after">5 personas × <span>poder de 100</span> = <strong>500x capacidad</strong></div>
+                    </div>
+                    <div class="multiplier-box">
+                        <div class="number">500x</div>
+                        <div class="label">La capacidad de tu equipo actual</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Role Personas -->
+    <section class="roles">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">El Agente Ayuda a Cada Rol</span>
+                <h2 class="section-title">Tu equipo, superpoderoso</h2>
+                <p class="section-subtitle">El agente sabe qué necesita cada persona y entrega información justo cuando la necesitan.</p>
+            </div>
+
+            <div class="roles-grid">
+                <div class="role-card">
+                    <div class="role-icon">👁️</div>
+                    <h4>El Visionario</h4>
+                    <div class="title">CEO / Dueño</div>
+                    <p>Un resumen de una oración cada mañana. Toda la empresa, sin ruido.</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-icon">🎯</div>
+                    <h4>El Rainmaker</h4>
+                    <div class="title">Ventas</div>
+                    <p>Sabe el momento perfecto para llamar y qué decir a cada cliente.</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-icon">⚙️</div>
+                    <h4>El Optimizer</h4>
+                    <div class="title">Operaciones</div>
+                    <p>Alerta cuando un proyecto va 20% atrasado, antes de que explote.</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-icon">🛡️</div>
+                    <h4>El Guardian</h4>
+                    <div class="title">Admin / Finanzas</div>
+                    <p>Reconcilia bancos vs facturas automáticamente y alerta recibos faltantes.</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-icon">💬</div>
+                    <h4>La Cara</h4>
+                    <div class="title">Soporte</div>
+                    <p>Ve 2 años de historia del cliente en segundos, sin buscar.</p>
+                </div>
+                <div class="role-card">
+                    <div class="role-icon">🔮</div>
+                    <h4>El Estratega</h4>
+                    <div class="title">Marketing</div>
+                    <p>Detecta tendencias del mercado y sentimiento del cliente antes que la competencia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connective Tissue -->
+    <section class="connective">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Tu Agente en Acción</span>
+                <h2 class="section-title">Un agente que nunca duerme</h2>
+                <p class="section-subtitle">Tu agente de IA trabaja 24/7 conectando sistemas, alertando humanos y aprendiendo de cada interacción.</p>
+            </div>
+
+            <div class="cycle-container">
+                <div class="cycle-steps">
+                    <div class="cycle-step">
+                        <div class="number">1</div>
+                        <h4>Observa</h4>
+                        <p>El agente escucha APIs, emails y logs de todos tus sistemas</p>
+                    </div>
+                    <div class="cycle-step">
+                        <div class="number">2</div>
+                        <h4>Conecta</h4>
+                        <p>El agente une puntos entre departamentos que no se hablan</p>
+                    </div>
+                    <div class="cycle-step">
+                        <div class="number">3</div>
+                        <h4>Actúa</h4>
+                        <p>El agente envía alertas, nudges y ejecuta tareas automáticas</p>
+                    </div>
+                    <div class="cycle-step">
+                        <div class="number">4</div>
+                        <h4>Aprende</h4>
+                        <p>El agente guarda en su memoria para ser más listo mañana</p>
+                    </div>
+                </div>
+
+<!-- example removed -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Maturity Journey -->
+    <section class="maturity">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">El Viaje</span>
+                <h2 class="section-title">De caos a autonomía</h2>
+                <p class="section-subtitle">Tres niveles de madurez digital. Cada uno construye sobre el anterior.</p>
+            </div>
+
+            <div class="maturity-journey">
+                <div class="maturity-stage" style="position: relative;">
+                    <div class="stage-number">1</div>
+                    <h3>Visibilidad</h3>
+                    <div class="function">Observación: APIs, Emails, Logs</div>
+                    <p>No más "No sabía que eso estaba pasando."</p>
+                    <div class="maturity-arrow">→</div>
+                </div>
+                <div class="maturity-stage" style="position: relative;">
+                    <div class="stage-number">2</div>
+                    <h3>Inteligencia</h3>
+                    <div class="function">Síntesis: Conectar departamentos</div>
+                    <p>De almacenar datos a entenderlos.</p>
+                    <div class="maturity-arrow">→</div>
+                </div>
+                <div class="maturity-stage active">
+                    <div class="stage-number">3</div>
+                    <h3>Autonomía</h3>
+                    <div class="function">Ejecución: Herramientas + Nudges</div>
+                    <p>El negocio se auto-sana y optimiza.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="process">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Proceso</span>
+                <h2 class="section-title">Simple y sin fricciones</h2>
+                <p class="section-subtitle">De la primera llamada a resultados tangibles.</p>
+            </div>
+
+            <div class="process-timeline">
+                <div class="process-step">
+                    <div class="dot">1</div>
+                    <h4>Diagnóstico</h4>
+                    <p>Entendemos tu operación</p>
+                    <span class="time">1 llamada</span>
+                </div>
+                <div class="process-step">
+                    <div class="dot">2</div>
+                    <h4>Diseño</h4>
+                    <p>Plan + quick wins</p>
+                    <span class="time">1 semana</span>
+                </div>
+                <div class="process-step">
+                    <div class="dot">3</div>
+                    <h4>Construcción</h4>
+                    <p>Herramientas + conexiones</p>
+                    <span class="time">2-4 semanas</span>
+                </div>
+                <div class="process-step">
+                    <div class="dot">4</div>
+                    <h4>Evolución</h4>
+                    <p>Crecemos contigo</p>
+                    <span class="time">Continuo</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="team">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Equipo</span>
+                <h2 class="section-title">Quiénes somos</h2>
+                <p class="section-subtitle">Obsesionados con hacer que la tecnología trabaje para las personas.</p>
+            </div>
+
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar johan">🧑‍💻</div>
+                    <h4>Johan</h4>
+                    <p class="role">Co-fundador</p>
+                    <p>Arquitecto de sistemas con experiencia en transformación digital.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar bridget">👩‍💼</div>
+                    <h4>Bridget</h4>
+                    <p class="role">Co-fundadora</p>
+                    <p>Especialista en datos y estrategia para potenciar equipos humanos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta" id="contacto">
+        <div class="container">
+            <h2>¿Listo para <span>desbloquear</span> el crecimiento?</h2>
+            <p>Agenda una llamada y veamos juntos el potencial oculto de tu equipo.</p>
+
+            <a href="mailto:hola@vulkn.ai" class="cta-button">
+                📞 Agendar diagnóstico gratuito
+            </a>
+
+            <div class="cta-features">
+                <div class="cta-feature"><span>✓</span> Diagnóstico sin costo</div>
+                <div class="cta-feature"><span>✓</span> Propuesta en 48h</div>
+                <div class="cta-feature"><span>✓</span> Resultados en semanas</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            🔥 VULKN
+        </div>
+        <p class="footer-tagline">Nosotros construimos. Tú lideras.</p>
+        <p class="footer-contact">hola@vulkn.ai</p>
+    </footer>
+</body>
+</html>

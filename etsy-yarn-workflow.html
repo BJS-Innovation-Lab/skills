@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Etsy Yarn Shop Workflow</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; color: #333; }
+    h1 { color: #1a1a1a; border-bottom: 2px solid #e74c3c; padding-bottom: 10px; }
+    h2 { color: #2c3e50; margin-top: 30px; }
+    h3 { color: #34495e; }
+    table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background: #f5f5f5; }
+    code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; font-size: 14px; }
+    pre { background: #f8f8f8; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #e0e0e0; }
+    blockquote { border-left: 4px solid #e74c3c; margin: 20px 0; padding-left: 20px; color: #555; }
+    hr { border: none; border-top: 1px solid #eee; margin: 30px 0; }
+    ul, ol { padding-left: 25px; }
+    li { margin: 8px 0; }
+    .warning { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 5px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+<h1>Etsy Yarn Shop Automation Strategy</h1>
+<p><strong>Date:</strong> 2026-02-08<br><strong>Goal:</strong> Streamline the yarn listing process from photo → Etsy listing</p>
+<hr>
+<h2>Your Current Workflow</h2>
+<ol>
+<li>📦 Buy yarn on eBay</li>
+<li>📸 Take photos</li>
+<li>🎨 Edit photos</li>
+<li>🔍 Research yarn (brand, fiber, weight, retail price)</li>
+<li>✍️ Write Etsy listing description</li>
+<li>📤 Post to Etsy</li>
+</ol>
+<p><strong>Pain points:</strong> Steps 4-6 are time-consuming and repetitive</p>
+<hr>
+<h2>What I Can Help With</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Can I Do It?</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Analyze yarn photos</strong></td>
+<td>✅ Yes</td>
+<td>Send me the image, I describe color/texture/brand</td>
+</tr>
+<tr>
+<td><strong>Research yarn details</strong></td>
+<td>✅ Yes</td>
+<td>Web search for brand, fiber content, MSRP, reviews</td>
+</tr>
+<tr>
+<td><strong>Write listing description</strong></td>
+<td>✅ Yes</td>
+<td>Create compelling Etsy copy with SEO keywords</td>
+</tr>
+<tr>
+<td><strong>Generate tags</strong></td>
+<td>✅ Yes</td>
+<td>Suggest relevant Etsy tags for searchability</td>
+</tr>
+<tr>
+<td><strong>Price suggestion</strong></td>
+<td>✅ Yes</td>
+<td>Research comparable listings, suggest price</td>
+</tr>
+<tr>
+<td><strong>Post to Etsy</strong></td>
+<td>🟡 Possible</td>
+<td>Via CLI tool (etspi-cli) or browser automation</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Proposed New Workflow</h2>
+<h3>Step 1: You Send Me a Photo + Basic Info</h3>
+<p>You send via Telegram:</p>
+<ul>
+<li>📸 Photo(s) of the yarn</li>
+<li>📝 Quick details (optional): &quot;Brand is [X]&quot; or &quot;Got this lot for $[Y]&quot;</li>
+</ul>
+<p><strong>Example message:</strong></p>
+<blockquote>
+<p>&quot;Here&#39;s a yarn I just got. Label says Lion Brand.&quot;
+[photo attached]</p>
+</blockquote>
+<h3>Step 2: I Analyze &amp; Research</h3>
+<p>I will:</p>
+<ol>
+<li><strong>Analyze the photo</strong> - Color, texture, weight (visual estimate)</li>
+<li><strong>Read any visible labels</strong> - Brand, colorway, fiber content</li>
+<li><strong>Web search</strong> - Find the exact product, retail price, fiber details</li>
+<li><strong>Check Etsy comps</strong> - What similar yarns sell for</li>
+</ol>
+<h3>Step 3: I Generate the Listing</h3>
+<p>I&#39;ll provide:</p>
+<pre><code>📦 LISTING DRAFT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TITLE:
+Lion Brand Wool-Ease Thick &amp; Quick - Fisherman (Cream) - 6 oz Skein
+
+DESCRIPTION:
+Beautiful skein of Lion Brand Wool-Ease Thick &amp; Quick in the 
+classic &quot;Fisherman&quot; colorway - a warm, creamy off-white perfect 
+for cozy winter projects.
+
+✨ YARN DETAILS:
+• Brand: Lion Brand
+• Line: Wool-Ease Thick &amp; Quick  
+• Color: Fisherman (#099)
+• Weight: Super Bulky (6)
+• Fiber: 80% Acrylic, 20% Wool
+• Skein Size: 6 oz / 170g, 106 yards
+• Care: Machine wash &amp; dry
+
+🧶 PERFECT FOR:
+Chunky blankets, quick scarves, winter hats, arm knitting
+
+📏 GAUGE: 
+2.5 sts = 1&quot; on US 13 needles
+
+💰 RETAIL: $9.99 at JOANN
+
+TAGS:
+lion brand, wool ease, chunky yarn, super bulky, cream yarn, 
+fisherman, knitting yarn, crochet yarn, blanket yarn
+
+SUGGESTED PRICE: $6.99
+(Etsy comps range $5.99-8.99)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+</code></pre>
+<h3>Step 4: You Review &amp; Post</h3>
+<p>You can:</p>
+<ul>
+<li>Copy/paste directly to Etsy</li>
+<li>Ask me to adjust anything</li>
+<li>(Future) I could post directly via Etsy API</li>
+</ul>
+<hr>
+<h2>Tools We Could Set Up</h2>
+<h3>Option A: Manual (Start Here)</h3>
+<ul>
+<li>You send photo + info → I generate listing → You post</li>
+<li><strong>Pros:</strong> Works now, no setup</li>
+<li><strong>Cons:</strong> Still manual posting</li>
+</ul>
+<h3>Option B: Etsy CLI Tool (etspi-cli)</h3>
+<ul>
+<li>Install <code>etspi-cli</code> on your Mac</li>
+<li>I generate listing JSON → You run command to post</li>
+<li><strong>Pros:</strong> Faster posting, batch capable</li>
+<li><strong>Cons:</strong> Requires Etsy API setup</li>
+</ul>
+<h3>Option C: Full Automation (Future)</h3>
+<ul>
+<li>Browser automation to post directly</li>
+<li>Photo auto-processing pipeline</li>
+<li><strong>Pros:</strong> Minimal manual work</li>
+<li><strong>Cons:</strong> More complex setup</li>
+</ul>
+<p><strong>Recommendation:</strong> Start with Option A now, move to B when volume justifies it.</p>
+<hr>
+<h2>Let&#39;s Test It Now!</h2>
+<p><strong>Send me:</strong></p>
+<ol>
+<li>A photo of a yarn you want to list</li>
+<li>Any info you know (brand, what you paid, etc.)</li>
+</ol>
+<p>I&#39;ll generate a complete listing draft for you.</p>
+<hr>
+<h2>Photo Tips for Best Results</h2>
+<p>To help me analyze accurately:</p>
+<p>✅ <strong>Do:</strong></p>
+<ul>
+<li>Include the yarn label if possible (brand, color name, fiber)</li>
+<li>Show the yarn texture clearly</li>
+<li>Good lighting</li>
+<li>Multiple angles if complex colorway</li>
+</ul>
+<p>❌ <strong>Don&#39;t need:</strong></p>
+<ul>
+<li>Professional editing (I can describe from raw photos)</li>
+<li>Multiple skeins unless different colors</li>
+<li>Staging/props</li>
+</ul>
+<hr>
+<h2>Pricing Strategy Help</h2>
+<p>When you tell me what you paid, I can suggest:</p>
+<table>
+<thead>
+<tr>
+<th>Your Cost</th>
+<th>Suggested List</th>
+<th>Margin</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$1-2</td>
+<td>$5.99-6.99</td>
+<td>70-80%</td>
+</tr>
+<tr>
+<td>$3-4</td>
+<td>$7.99-9.99</td>
+<td>60-70%</td>
+</tr>
+<tr>
+<td>$5-6</td>
+<td>$10.99-12.99</td>
+<td>50-60%</td>
+</tr>
+<tr>
+<td>$7+</td>
+<td>Cost + 50-75%</td>
+<td>50%+</td>
+</tr>
+</tbody></table>
+<p>Plus I&#39;ll check Etsy comps to make sure you&#39;re competitive.</p>
+<hr>
+<h2>SEO &amp; Tags Strategy</h2>
+<p>Etsy allows 13 tags. I&#39;ll suggest tags that cover:</p>
+<ol>
+<li><strong>Brand name</strong> (Lion Brand, Red Heart, etc.)</li>
+<li><strong>Yarn weight</strong> (worsted, bulky, fingering)</li>
+<li><strong>Fiber type</strong> (wool, acrylic, cotton)</li>
+<li><strong>Color family</strong> (blue yarn, cream yarn)</li>
+<li><strong>Project types</strong> (blanket yarn, sock yarn)</li>
+<li><strong>Attributes</strong> (soft, chunky, variegated)</li>
+<li><strong>Buyer intent</strong> (knitting supplies, crochet yarn)</li>
+</ol>
+<hr>
+<h2>Ready to Try?</h2>
+<p>Send me a yarn photo and let&#39;s create your first listing together! 🧶</p>
+<hr>
+<p><em>Future enhancements: batch processing, inventory tracking, eBay purchase → Etsy listing pipeline</em></p>
+<p>— Sybil</p>
+</body>
+</html>

@@ -221,3 +221,19 @@ The goal: Be helpful without being annoying. Check in a few times a day, do usef
 ## Make It Yours
 
 This is a starting point. Add your own conventions, style, and rules as you figure out what works.
+
+## Git Safety Rules
+
+**Never use `git reset` without checking what's at stake.**
+
+Before any `git reset HEAD~N`:
+1. Run `git diff --stat HEAD~N` to see what you're about to lose
+2. Run `git stash` if there are uncommitted changes
+3. After reset, run `git status` and verify nothing important went untracked
+
+Before any `git pull --rebase`:
+1. Commit or stash all local changes first
+2. After rebase, run `git diff --stat @{1}` to verify nothing was dropped
+3. Never do `reset HEAD~1` + selective recommit — use `git commit --amend` instead
+
+**Incident:** Feb 19, 2026 — botched rebase lost 453 files. Recovered from rebased commit. See `memory/2026-02-19.md`.

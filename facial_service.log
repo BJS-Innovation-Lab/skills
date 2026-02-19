@@ -1,0 +1,255 @@
+INFO:     Started server process [64688]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    [Errno 48] error while attempting to bind on address ('0.0.0.0INFO:     127.0.0.1:58647 - "HEAD /health HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:58655 - "GET /health HTTP/1.1" 200 OK
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58658 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58660 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58662 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58664 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58666 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58668 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58670 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58672 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58674 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58676 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58678 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58680 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58682 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58684 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58686 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58688 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58690 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58692 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58694 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58696 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58698 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58700 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58702 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58704 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58706 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58708 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58710 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58712 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58714 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58716 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58718 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58720 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58722 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58724 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58726 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58728 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58730 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58732 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58734 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58736 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58738 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58740 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58742 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58744 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58746 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58748 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58750 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58752 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58754 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58756 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58758 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58760 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58762 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58764 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58766 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58768 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58770 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58772 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58774 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58776 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58778 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58780 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58782 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58784 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58786 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58788 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58790 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58792 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58794 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58796 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58798 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58800 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58802 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58804 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58806 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58808 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58810 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58812 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58814 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58816 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58818 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58820 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58822 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58824 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58826 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58828 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58830 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58832 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58834 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58836 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58838 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58840 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58842 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58844 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58847 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58849 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58851 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58853 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58855 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58857 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58859 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58861 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58863 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58865 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58867 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58869 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58871 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58873 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58875 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58877 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58879 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58881 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58883 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58885 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58887 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58889 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58891 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58893 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58895 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58897 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:58899 - "POST /analyze/video?sample_rate=2 HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:62200 - "HEAD /status HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62208 - "HEAD / HTTP/1.1" 404 Not Found
+ERROR:__main__:Video analysis error: No module named 'feat'
+INFO:     127.0.0.1:62214 - "POST /analyze/video?sample_rate=100 HTTP/1.1" 500 Internal Server Error
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [63907]

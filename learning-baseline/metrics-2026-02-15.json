@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-02-15T14:00:11Z",
+  "agent": "Sybil",
+  "system": "baseline (simple memory)",
+  "storage": {
+    "memory_md_bytes": 9500,
+    "daily_memory_kb": 108,
+    "learnings_kb": 12,
+    "total_kb": 120
+  },
+  "counts": {
+    "daily_memory_files": 15,
+    "learnings_logged": 1,
+    "errors_logged": 0
+0
+  },
+  "a2a": {
+    "inbox_lines":     1816,
+    "pending_notifications": 56
+  }
+}
