@@ -42,6 +42,12 @@ const CORRECTION_SIGNALS = [
   /\bred\s+herring/i, /\bmistake/i, /\bbroke[n]?\b/i,
   /\broot\s+cause.*NOT/i, /\bwasn't\s+(the|actually)/i,
   /\bshould\s+have\b/i, /\bnext\s+time\b/i,
+  // Added: patterns from actual daily notes
+  /\*\*Root\s+cause:\*\*/i, /\bRoot\s+cause:/i,
+  /\*\*Fix:\*\*/i, /\bused\s+wrong\b/i,
+  /\bwere\s+failing/i, /\bjobs?\s+fail(ing|ed)/i,
+  /\bThe\s+problem\s+(was|yesterday)/i,
+  /\bwrong\s+(model|config|setting|path|url)/i,
 ];
 
 const INSIGHT_SIGNALS = [
@@ -51,6 +57,14 @@ const INSIGHT_SIGNALS = [
   /\bdata\s+point/i, /\bpaper\s+(data|relevant|insight)/i,
   /\bvalidat(ed|es)\b/i, /\bconfirms?\b/i,
   /\bnever\s+again\b/i, /\balways\s+check\b/i,
+  // Added: structured learning patterns from daily notes
+  /\bThree\s+settings\s+that\s+fix/i,
+  /\bsettings?\s+that\s+(fix|solve|resolve)/i,
+  /\*\*Relevance\s+to/i, /\bRelevance:/i,
+  /\bDirect(ly)?\s+applicable\s+to/i,
+  /\bConfig\s+(Change|Fix)\b/i,
+  /\bOptimization\b/i,
+  /\bStandardization\b/i,
 ];
 
 const RESEARCH_SIGNALS = [
