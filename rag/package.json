@@ -1,0 +1,17 @@
+{
+  "name": "sybil-rag",
+  "version": "1.0.0",
+  "description": "Personal RAG system for Sybil",
+  "type": "module",
+  "scripts": {
+    "ingest": "node ingest.js",
+    "ingest:all": "node ingest.js --all",
+    "search": "node search.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "glob": "^10.3.10",
+    "openai": "^4.28.0",
+    "pg": "^8.18.0"
+  }
+}

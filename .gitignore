@@ -3,6 +3,7 @@
 
 # Allow skills directory
 !/skills/
+!/rag/
 
 # Allow specific root files
 !/.gitignore
@@ -13,3 +14,4 @@
 .DS_Store
 node_modules/
 *.log
+rag/client_secret*.json
