@@ -1,0 +1,20 @@
+# Sensitive Config
+config.json
+agent.conf
+.env
+*.local.json
+
+# Local State
+*.log
+*.pid
+*.sock
+inbox.json
+notifications.json
+processed_ids.json
+status.json
+last_activity
+logs/
+
+# Build/Deps
+node_modules/
+dist/

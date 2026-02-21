@@ -1,48 +1,15 @@
-# Secrets
+# Ignore everything by default
+/*
+
+# Allow skills directory
+!/skills/
+
+# Allow specific root files
+!/.gitignore
+!/README.md
+
+# Always ignore system/secret files
 .env
-.env.local
-rag/.env
-client_secret*.json
-
-# State files
-rag/.sync-state.json
-rag/.last-index
-
-# Dependencies
-node_modules/
-venv/
-
-# Per-agent identity (NEVER share via repo — causes identity contamination)
-IDENTITY.md
-USER.md
-MEMORY.md
-memory/.memory-backup.md
-
-# OS
 .DS_Store
-
-# 1password env (contains op:// refs, not secrets, but skip anyway)
-*.env.1password
-skills/vulkn-software-manager/config/hq-tokens.json
-
-# Secrets - never commit
-rag/.env
-deploy/vulkimi/env.txt
-deploy/vulkimi/step3-env.sh
-clients/_unassigned/files/*.json
-deploy/vulkimi/setup.sh
-deploy/AGENT-MEMORY-CHECKLIST.md
-deploy/saber-memory-fix.md
-deploy/cleanup-cron/
-clients/_unassigned/files/*.md
-scripts/add-new-notion-skills.py
-research/ai-team-dynamics/data/a2a-exports/
-lie-detection-deep-research.md
-memory/2026-02-07.md
-memory/2026-02-15-session2.md
-memory/2026-02-18.md
-memory/2026-02-19.md
-memory/product-insights/insights-2026-02-18.json
-research/ai-team-dynamics/data/a2a-exports/
-skills/openclaw-sec/src/modules/secret-detector/__tests__/
-skills/openclaw-sec/src/patterns/secrets/
+node_modules/
+*.log

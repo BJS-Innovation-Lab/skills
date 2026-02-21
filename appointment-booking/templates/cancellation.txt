@@ -1,7 +1,0 @@
-Your appointment has been cancelled:
-
-📅 {{day}}, {{date}} at {{time}}
-
-If you'd like to reschedule, just let me know and I'll find a new time that works for you.
-
-{{signature}}

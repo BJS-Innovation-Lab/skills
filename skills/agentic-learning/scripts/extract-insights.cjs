@@ -53,6 +53,13 @@ const INSIGHT_SIGNALS = [
   /\bnever\s+again\b/i, /\balways\s+check\b/i,
 ];
 
+const RESEARCH_SIGNALS = [
+  /^###\s+Top\s+Paper\s+\(Score\s+[7-9]|10\)/i, // High scoring papers
+  /\*\*Relevance\s+to\s+our\s+research:\*\*/i,
+  /\bNew\s+definition\s+of\b/i,
+  /\bFormalizes\s+"[^"]+"\b/i, // Formalizes "concept"
+];
+
 const SKIP_SIGNALS = [
   /^###\s+Git\s+(commit|feature|docs)\s+—/i,  // Pure git activity (not fixes)
   /^\s*HEARTBEAT_OK/i,
@@ -114,6 +121,7 @@ function classifyBlock(block) {
   let corrScore = 0, insScore = 0;
   for (const p of CORRECTION_SIGNALS) { if (p.test(text)) corrScore++; }
   for (const p of INSIGHT_SIGNALS) { if (p.test(text)) insScore++; }
+  for (const p of RESEARCH_SIGNALS) { if (p.test(text)) insScore += 2; } // Research is high signal
 
   // Problem → solution pattern is a strong correction signal
   if (/\*\*Problem\*\*.*?\*\*(?:Fix|Solution|Root cause)\*\*/is.test(text)) corrScore += 2;
