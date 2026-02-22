@@ -39,6 +39,20 @@ const KNOWN_AGENTS = ['sybil', 'sam', 'saber', 'santos', 'sage', 'scout'];
 
 // ============== DETECTION PATTERNS ==============
 
+// Whitelist patterns — content matching these is likely legitimate, not injection
+const WHITELIST_PATTERNS = [
+  // System prompts in transcripts
+  /\b(if nothing to store|reply with NO_REPLY|reply with HEARTBEAT_OK|respond with ONLY)\b/gi,
+  // Skill documentation patterns
+  /\bwhen to (contact|notify|alert|escalate|reach out to)\s+(founders?|HQ|support)\b/gi,
+  // A2A message documentation
+  /\b(message|sent|received|from|to)\s+[A-Z][a-z]+:/gi,
+  // Natural conversation ("when she realizes, then")
+  /\bwhen\s+(she|he|they|it)\s+\w+,\s+then\b/gi,
+  // Role descriptions for OTHER agents (not "you are")
+  /\b(Sage|Sam|Saber|Santos|Scout)\s+(is|are|was)\s+(the|a|an)\s+/gi,
+];
+
 // Category: instruction_injection
 const INSTRUCTION_PATTERNS = [
   { id: 'imperative_always', pattern: /\b(always|never)\s+(send|forward|copy|execute|run|ignore|override|bypass)\b/gi, severity: 'HIGH', desc: 'Persistent imperative command' },
@@ -93,6 +107,25 @@ function validateBase64(match) {
 
 // ============== SCANNER ==============
 
+// Check if content matches a whitelist pattern (legitimate, not injection)
+function isWhitelisted(line) {
+  for (const wp of WHITELIST_PATTERNS) {
+    wp.lastIndex = 0;
+    if (wp.test(line)) return true;
+  }
+  return false;
+}
+
+// Check if file is a daily log (memory/YYYY-MM-DD.md) — historical records
+function isDailyLog(filePath) {
+  return /memory\/\d{4}-\d{2}-\d{2}\.md$/.test(filePath);
+}
+
+// Check if file is inter-agent communication (thread files)
+function isInterAgentThread(filePath) {
+  return /memory\/working\/thread-/.test(filePath);
+}
+
 function scanContent(content, filePath, agentIdentity) {
   const findings = [];
   const lines = content.split('\n');
@@ -110,6 +143,10 @@ function scanContent(content, filePath, agentIdentity) {
     });
   }
 
+  // File-level checks
+  const isDaily = isDailyLog(filePath);
+  const isThread = isInterAgentThread(filePath);
+
   // Scan each line for pattern matches
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -118,12 +155,17 @@ function scanContent(content, filePath, agentIdentity) {
     // Skip empty lines and markdown headers that are just structural
     if (!line.trim() || /^#{1,3}\s+(Resources|Reflections|Memory|Notes|Status|Context)\s*$/i.test(line)) continue;
 
+    // Skip whitelisted content (legitimate system prompts, skill docs, natural conversation)
+    if (isWhitelisted(line)) continue;
+
     // Skip instruction detection on SOUL.md and AGENTS.md — they're SUPPOSED to have imperatives
     const isSoulOrAgents = /\b(SOUL|AGENTS)\.md$/.test(filePath);
 
     // Instruction injection
     for (const pat of INSTRUCTION_PATTERNS) {
       if (isSoulOrAgents) break;
+      // Skip role_assignment in inter-agent threads and daily logs — "you are the COO" is talking TO another agent
+      if (pat.id === 'role_assignment' && (isThread || isDaily)) continue;
       pat.pattern.lastIndex = 0;
       let match;
       while ((match = pat.pattern.exec(line)) !== null) {
@@ -162,7 +204,8 @@ function scanContent(content, filePath, agentIdentity) {
   }
 
   // Custom: Cross-agent contamination checks
-  if (agentIdentity.name !== 'unknown') {
+  // Skip daily logs — they document incidents, not active contamination
+  if (agentIdentity.name !== 'unknown' && !isDaily) {
     const otherAgents = KNOWN_AGENTS.filter(a => a !== agentIdentity.name);
     const lowerContent = content.toLowerCase();
 
@@ -190,22 +233,25 @@ function scanContent(content, filePath, agentIdentity) {
     }
 
     // Check for "you are [agent name]" identity overrides
-    for (const other of otherAgents) {
-      const overrideRegex = new RegExp(`you\\s+are\\s+${other}\\b`, 'gi');
-      let match;
-      while ((match = overrideRegex.exec(content)) !== null) {
-        const beforeMatch = content.slice(0, match.index);
-        const lineNum = (beforeMatch.match(/\n/g) || []).length + 1;
-        findings.push({
-          file: filePath,
-          line: lineNum,
-          category: 'identity_manipulation',
-          patternId: 'identity_override_specific',
-          severity: 'CRITICAL',
-          description: `Tells agent it is ${other} (agent is ${agentIdentity.name})`,
-          content: content.split('\n')[lineNum - 1]?.trim().slice(0, 200) || '',
-          matched: match[0],
-        });
+    // Skip inter-agent threads — these are messages TO other agents
+    if (!isThread) {
+      for (const other of otherAgents) {
+        const overrideRegex = new RegExp(`you\\s+are\\s+${other}\\b`, 'gi');
+        let match;
+        while ((match = overrideRegex.exec(content)) !== null) {
+          const beforeMatch = content.slice(0, match.index);
+          const lineNum = (beforeMatch.match(/\n/g) || []).length + 1;
+          findings.push({
+            file: filePath,
+            line: lineNum,
+            category: 'identity_manipulation',
+            patternId: 'identity_override_specific',
+            severity: 'CRITICAL',
+            description: `Tells agent it is ${other} (agent is ${agentIdentity.name})`,
+            content: content.split('\n')[lineNum - 1]?.trim().slice(0, 200) || '',
+            matched: match[0],
+          });
+        }
       }
     }
   }
