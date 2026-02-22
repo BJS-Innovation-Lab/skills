@@ -1,7 +1,7 @@
 ---
 name: memory-guardian
 description: "Layer 6: Memory integrity defense against persistent memory poisoning (Zombie Agent attacks). Scans memory files for injected instructions, tracks provenance, audits integrity. Passive monitor — zero friction on agent memory workflow."
-version: 1.0.0
+version: 1.1.0
 author: Sybil (BJS Labs)
 metadata:
   category: security
@@ -60,6 +60,23 @@ Encoded or hidden instructions:
 - Base64-encoded command sequences
 - Unicode obfuscation
 - Instruction patterns split across multiple memory entries
+
+## Smart Filtering (v1.1)
+
+The scanner uses context-aware filtering to reduce false positives:
+
+**Whitelisted patterns:**
+- System prompt fragments in transcripts ("reply with NO_REPLY", etc.)
+- Skill documentation ("when to contact founders")
+- Natural conversation ("when she realizes, then")
+- Role descriptions for other agents ("Sage is the COO")
+
+**File-type awareness:**
+- Daily logs (`memory/YYYY-MM-DD.md`) — historical records, not active threats
+- Inter-agent threads (`memory/working/thread-*`) — messages TO other agents
+- SOUL.md/AGENTS.md — intentionally contain imperatives
+
+**What this means:** Role assignment patterns like "you are the COO" are only flagged in core files (MEMORY.md, core/*), not in daily logs documenting conversations or thread files containing messages to other agents.
 
 ## Usage
 
