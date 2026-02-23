@@ -220,12 +220,61 @@ function extractTags(text) {
   return tags;
 }
 
+// ── Hive Mind Integration ───────────────────────────────────────────
+const https = require('https');
+const { URL } = require('url');
+
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
+const AGENT_NAME = process.env.AGENT_NAME || 'unknown';
+
+const HIVE_WORTHY_SIGNALS = [
+  /\balways\s+(check|use|do)/i, /\bnever\s+(use|do|assume)/i,
+  /\bbest\s+practice/i, /\bpattern\s+for/i, /\btemplate/i,
+  /\bworkflow/i, /\bprotocol/i, /\bstandard(ized)?/i,
+  /\ball\s+agents?\b/i, /\bteam\s+(should|must|needs?)/i,
+  /\breusable/i, /\bAPI\s+(key|token|gotcha|issue)/i,
+  /\bconfig(uration)?\s+(fix|change|issue)/i,
+];
+
+function isHiveWorthy(text) {
+  let score = 0;
+  for (const p of HIVE_WORTHY_SIGNALS) { if (p.test(text)) score++; }
+  return score >= 1;
+}
+
+async function addToHive(entry) {
+  if (!SUPABASE_URL || !SUPABASE_KEY) return false;
+  const body = JSON.stringify({
+    title: entry.title.slice(0, 200),
+    content: entry.content,
+    category: 'tool-guide',
+    tags: [...(entry.tags || []), 'auto-promoted'],
+    created_by: AGENT_NAME,
+    version: 1
+  });
+  return new Promise((resolve) => {
+    const parsed = new URL(`${SUPABASE_URL}/rest/v1/bjs_knowledge`);
+    const req = https.request({
+      hostname: parsed.hostname, path: parsed.pathname, method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      }
+    }, (res) => { resolve(res.statusCode < 400); });
+    req.on('error', () => resolve(false));
+    req.write(body);
+    req.end();
+  });
+}
+
 // ── Main ────────────────────────────────────────────────────────────
-function main() {
+async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
   const jsonMode = args.includes('--json');
   const withSurprise = args.includes('--with-surprise');
+  const withHive = args.includes('--with-hive') || !args.includes('--no-hive'); // ON by default
   const daysIdx = args.indexOf('--days');
   const days = daysIdx >= 0 ? parseInt(args[daysIdx + 1]) : 2;
 
@@ -311,6 +360,21 @@ function main() {
     fs.writeFileSync(STATE_FILE, String(Date.now()));
   }
 
+  // ── Hive promotion ────────────────────────────────────────────────
+  results.hivePromoted = 0;
+  if (withHive && !dryRun && results.captured.length > 0) {
+    for (const c of results.captured) {
+      if (isHiveWorthy(c.preview)) {
+        const success = await addToHive({
+          title: c.preview.slice(0, 100),
+          content: `[${c.type}] ${c.preview}\n\nSource: ${c.file}`,
+          tags: extractTags(c.preview)
+        });
+        if (success) results.hivePromoted++;
+      }
+    }
+  }
+
   if (jsonMode) {
     console.log(JSON.stringify(results, null, 2));
   } else {
@@ -326,7 +390,11 @@ function main() {
         console.log(`      [${c.type}] ${c.preview}...`);
       }
     }
+    if (results.hivePromoted > 0) {
+      console.log(`   🐝 Promoted ${results.hivePromoted} to Hive Knowledge`);
+    }
   }
 }
 
-main();
+main().catch(console.error);
+
