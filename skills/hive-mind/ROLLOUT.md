@@ -2,9 +2,16 @@
 
 ## Overview
 
-VULKN now has two memory layers:
-1. **Daily Logs** (`memory/YYYY-MM-DD.md`) — Your personal notes, routine tasks
-2. **Hive Knowledge** (`bjs_knowledge` in Supabase) — Team-wide validated learnings
+VULKN agents share **TWO Supabase databases**:
+
+| Database | Table | Purpose | What goes there |
+|----------|-------|---------|-----------------|
+| **Memory Sync** | `memory_entries` | Daily events backup | Raw daily logs, synced automatically every night |
+| **Hive Knowledge** | `bjs_knowledge` | Shared insights | Curated learnings, auto-promoted from corrections/insights |
+
+Both use the same Supabase instance but different tables:
+- `memory_entries` = searchable archive of everyone's daily work
+- `bjs_knowledge` = the "gold" — validated, reusable knowledge
 
 **Queen: Sybil** (responsible for curation and validation)
 
@@ -32,16 +39,23 @@ export SUPABASE_KEY="<your-anon-key>"  # Ask Sybil or check skills/research-inte
 
 ---
 
-## Step 3: Add to MEMORY.md
+## Step 3: Add to AGENTS.md
 
-Add this section to your MEMORY.md:
+Add this section to your AGENTS.md (NOT MEMORY.md — it gets overwritten):
 
 ```markdown
-# HIVE MIND
-- **Two-layer memory:** Daily logs (personal) + Hive Knowledge (team-wide)
-- **Before new research:** Query hive first → `node skills/hive-mind/scripts/hive-query.cjs --search "topic"`
-- **After learning something reusable:** Add to hive → `node skills/hive-mind/scripts/hive-add.cjs --title "..." --content "..." --category tool-guide --tags "..."`
-- **Queen:** Sybil curates and validates entries
+# SHARED MEMORY (Two Supabase Tables)
+
+| Table | What | Searchable by |
+|-------|------|---------------|
+| `memory_entries` | Daily logs (synced nightly) | All agents |
+| `bjs_knowledge` | Curated insights (hive) | All agents |
+
+**Protocol:**
+- Your daily logs sync automatically (no action needed)
+- Corrections/insights auto-promote to hive if reusable
+- Before new research → query hive: `node skills/hive-mind/scripts/hive-query.cjs --search "topic"`
+- Questions → ask Sybil (Queen) via A2A
 ```
 
 ---
