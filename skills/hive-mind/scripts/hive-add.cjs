@@ -7,7 +7,8 @@
 const https = require('https');
 const { URL } = require('url');
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fcgiuzmmvcnovaciykbx.supabase.co';
+// Required env vars - no hardcoded fallbacks
+const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
 
 function parseArgs() {
@@ -104,8 +105,11 @@ async function main() {
     process.exit(1);
   }
   
-  if (!SUPABASE_KEY) {
-    console.error('❌ SUPABASE_KEY or SUPABASE_ANON_KEY required');
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    console.error('❌ Missing required env vars:');
+    if (!SUPABASE_URL) console.error('   - SUPABASE_URL');
+    if (!SUPABASE_KEY) console.error('   - SUPABASE_KEY or SUPABASE_ANON_KEY');
+    console.error('\nSet these in your environment or source your .env file first.');
     process.exit(1);
   }
   
