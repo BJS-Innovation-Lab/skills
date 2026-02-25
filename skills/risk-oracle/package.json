@@ -1,0 +1,14 @@
+{
+  "name": "risk-oracle",
+  "version": "1.0.0",
+  "description": "Pre-action risk assessment for AI agents",
+  "main": "risk-check-local.cjs",
+  "scripts": {
+    "check": "node risk-check-local.cjs",
+    "sync": "node sync-correction-local.cjs --all",
+    "stats": "node local-db.cjs stats"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}
