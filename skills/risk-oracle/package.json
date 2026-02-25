@@ -1,12 +1,16 @@
 {
   "name": "risk-oracle",
-  "version": "1.0.0",
-  "description": "Pre-action risk assessment for AI agents",
+  "version": "1.1.0",
+  "description": "Emotional memory triggers for AI agents (fear + frustration)",
   "main": "risk-check-local.cjs",
   "scripts": {
     "check": "node risk-check-local.cjs",
     "sync": "node sync-correction-local.cjs --all",
-    "stats": "node local-db.cjs stats"
+    "stats": "node local-db.cjs stats",
+    "frustration:check": "node frustration-detector.cjs check",
+    "frustration:log": "node frustration-detector.cjs log",
+    "frustration:list": "node frustration-detector.cjs list",
+    "frustration:stats": "node frustration-detector.cjs stats"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0"
