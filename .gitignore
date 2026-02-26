@@ -17,3 +17,4 @@ node_modules/
 rag/client_secret*.json
 credentials/
 !/creative/
+!/projects/
