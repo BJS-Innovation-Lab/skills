@@ -303,11 +303,15 @@ if (!prompt) {
   process.exit(1);
 }
 
+// Model selection: use flag, env var, or default
+const defaultModel = 'anthropic/claude-sonnet-4-20250514';
+const agentModel = flags.model || process.env.AGENT_MODEL || process.env.DEFAULT_MODEL || defaultModel;
+
 // Output the spawn-ready task
 const output = {
   task: prompt,
   label: 'memory-retriever',
-  model: type === 'multihop' ? 'anthropic/claude-sonnet-4-20250514' : 'anthropic/claude-sonnet-4-20250514',
+  model: agentModel,
   thinking: type === 'multihop' ? 'low' : undefined
 };
 

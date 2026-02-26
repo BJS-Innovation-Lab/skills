@@ -1,6 +1,6 @@
 ---
 name: memory-retriever
-description: Sub-agent memory retrieval system. Spawns a Sonnet sub-agent to search memory files, A2A logs, and learning entries — returns concise summaries without bloating the main session's context window.
+description: Sub-agent memory retrieval system. Spawns a sub-agent to search memory files, A2A logs, and learning entries — returns concise summaries without bloating the main session's context window. Model is configurable via AGENT_MODEL env var.
 metadata: {"openclaw":{"emoji":"🔍"}}
 ---
 
@@ -29,8 +29,21 @@ Spawn a memory retriever when:
 sessions_spawn({
   task: "<your query — see templates below>",
   label: "memory-retriever",
-  model: "anthropic/claude-sonnet-4-20250514"
+  model: "your-preferred-model"  // or omit to use AGENT_MODEL env var
 })
+```
+
+### Model Configuration
+
+The retriever uses the model in this priority:
+1. `--model` flag (CLI usage)
+2. `AGENT_MODEL` env var
+3. `DEFAULT_MODEL` env var
+4. Falls back to `anthropic/claude-sonnet-4-20250514`
+
+**For agents using other models (e.g., MiniMax):**
+```bash
+export AGENT_MODEL="minimax/minimax-2.5"
 ```
 
 ### 🔴 Disambiguation Rule (Prevent Scope Drift)
