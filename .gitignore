@@ -15,3 +15,5 @@
 node_modules/
 *.log
 rag/client_secret*.json
+credentials/
+!/creative/
