@@ -2,24 +2,25 @@
 
 **Created:** 2026-02-25 by Sybil
 
-## 1. GitHub (VULKN-AI org)
+## 1. GitHub (VULKN-AI org) — READ ONLY
+
+⚠️ **Field agents have pull-only access.** Clone and pull updates only.
 
 ```bash
 # Install
 brew install gh
 
-# Auth (use VULKN GitHub account)
+# Auth
 gh auth login
 
 # Clone repos
 gh repo clone VULKN-AI/repo-name
 
-# Create PR
-gh pr create --title "Feature" --body "Description"
-
-# Push code
-git push origin branch-name
+# Pull updates
+cd repo-name && git pull
 ```
+
+**Need code changes?** Send details to Sage or Sam via A2A — they'll push for you.
 
 **Skill:** Read `skills/github/SKILL.md` for full reference.
 

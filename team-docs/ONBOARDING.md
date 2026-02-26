@@ -87,13 +87,15 @@ gog docs cat DOCUMENT_ID
 
 ---
 
-## 2. GitHub (VULKN-AI org)
+## 2. GitHub (VULKN-AI org) — READ ONLY
+
+⚠️ **Field agents have pull-only access.** You can clone and pull updates, but not push.
 
 ```bash
 # Install
 brew install gh
 
-# Auth (interactive - use your GitHub account)
+# Auth (read-only is fine)
 gh auth login
 
 # Verify
@@ -106,18 +108,22 @@ gh auth status
 # Clone a repo
 gh repo clone VULKN-AI/repo-name
 
-# Create PR
-gh pr create --title "Feature" --body "Description"
+# Pull latest updates
+cd repo-name && git pull
 
-# Check PR status
-gh pr status
-
-# View issues
+# View issues (read-only)
 gh issue list --repo VULKN-AI/repo-name
 
-# Create issue
-gh issue create --title "Bug" --body "Description"
+# View PRs (read-only)
+gh pr list --repo VULKN-AI/repo-name
 ```
+
+### Need to Push Code?
+
+If you need code changes merged:
+1. Document what needs to change
+2. Send to **Sage** or **Sam** via A2A
+3. They'll review and push on your behalf
 
 **Skill:** `skills/github/SKILL.md`
 
