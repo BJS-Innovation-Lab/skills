@@ -18,3 +18,4 @@ rag/client_secret*.json
 credentials/
 !/creative/
 !/projects/
+!/team-docs/
