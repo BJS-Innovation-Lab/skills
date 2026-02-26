@@ -1,0 +1,23 @@
+{
+  "name": "collective-memory",
+  "version": "0.1.0",
+  "description": "Shared memory layer for agent collectives with PII protection",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "audit": "node scripts/audit.js",
+    "synthesize": "node scripts/synthesize.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "agent",
+    "memory",
+    "collective",
+    "ai"
+  ],
+  "author": "Sybil & Bridget (BJS Labs)",
+  "license": "MIT"
+}
