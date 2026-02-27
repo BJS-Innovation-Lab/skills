@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VULKN Presentacion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: #0D0D12; }
+
+.page { 
+  width: 1280px; 
+  min-height: 720px; 
+  background: linear-gradient(160deg, #1A1A24 0%, #0D0D12 100%); 
+  margin: 20px auto; 
+  padding: 50px 60px; 
+  position: relative; 
+  page-break-after: always; 
+  break-after: page;
+  border-radius: 24px;
+}
+.page-num { position: absolute; bottom: 20px; right: 30px; font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* Gradients marca */
+.gradient-text { background: linear-gradient(135deg, #0EA5FF, #D946EF); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.gradient-bg { background: linear-gradient(135deg, #0EA5FF, #D946EF); }
+.gradient-purple-pink { background: linear-gradient(135deg, #9333EA, #EC4899); }
+.gradient-blue-cyan { background: linear-gradient(135deg, #3B82F6, #06B6D4); }
+
+/* Textos */
+h1.slide-title { font-size: 48px; font-weight: 700; color: #FFFFFF; margin-bottom: 30px; }
+h2.slide-subtitle { font-size: 26px; font-weight: 500; color: rgba(255,255,255,0.7); margin-bottom: 25px; }
+p.body-text { font-size: 20px; line-height: 1.7; color: rgba(255,255,255,0.6); }
+p.body-text strong { background: linear-gradient(135deg, #0EA5FF, #06B6D4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
+
+/* Tarjetas */
+.card { 
+  background: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.06); 
+  border-radius: 16px; 
+  padding: 24px;
+}
+.card-dark {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+/* Portada */
+.page-cover { 
+  background: linear-gradient(160deg, #1A1A24 0%, #0D0D12 100%); 
+  color: white; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  text-align: center; 
+  padding: 60px;
+  border-radius: 24px;
+}
+.page-cover .harvard-tag { 
+  font-size: 14px; 
+  color: #0EA5FF; 
+  letter-spacing: 4px; 
+  margin-bottom: 25px; 
+  text-transform: uppercase; 
+  font-weight: 600; 
+}
+.page-cover h1 { 
+  font-size: 140px; 
+  font-weight: 800; 
+  background: linear-gradient(135deg, #0EA5FF 0%, #D946EF 50%, #9333EA 100%); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+  margin-bottom: 20px; 
+  letter-spacing: -2px;
+}
+.page-cover .logo-icon {
+  width: 90px; height: 90px;
+  background: linear-gradient(135deg, #0EA5FF, #D946EF);
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 45px;
+  margin-bottom: 35px;
+  box-shadow: 0 20px 60px rgba(14, 165, 255, 0.3);
+}
+.page-cover p { 
+  font-size: 24px; 
+  color: rgba(255,255,255,0.7); 
+  max-width: 750px; 
+  line-height: 1.6; 
+}
+.page-cover .tagline { 
+  font-size: 18px; 
+  color: rgba(255,255,255,0.4); 
+  margin-top: 35px; 
+  letter-spacing: 1px;
+}
+
+/* Grid */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 25px; }
+.grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 25px; }
+
+/* Solution cards */
+.solution-card { 
+  background: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.06); 
+  border-radius: 16px; 
+  padding: 22px;
+  transition: all 0.3s ease;
+}
+.solution-card:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(14,165,255,0.3);
+  transform: translateY(-2px);
+}
+.solution-card h3 { 
+  font-size: 20px; 
+  color: #FFFFFF; 
+  margin-bottom: 10px; 
+  font-weight: 600; 
+}
+.solution-card p { 
+  font-size: 15px; 
+  color: rgba(255,255,255,0.5); 
+  line-height: 1.5;
+}
+.solution-card .icon { 
+  font-size: 28px; 
+  margin-bottom: 12px;
+}
+
+/* Highlight box */
+.highlight-box { 
+  margin-top: 30px; 
+  padding: 30px; 
+  background: linear-gradient(135deg, rgba(14,165,255,0.1), rgba(147,51,234,0.1)); 
+  border: 1px solid rgba(14,165,255,0.2); 
+  border-radius: 16px; 
+}
+.highlight-box p { 
+  font-size: 22px; 
+  color: rgba(255,255,255,0.9); 
+  line-height: 1.7; 
+}
+.highlight-box .highlight { 
+  color: #0EA5FF; 
+  font-weight: 600; 
+}
+
+/* Steps */
+.step { text-align: center; padding: 20px; }
+.step-num { 
+  width: 56px; height: 56px; 
+  background: linear-gradient(135deg, #0EA5FF, #D946EF); 
+  border-radius: 16px; 
+  display: flex; align-items: center; justify-content: center; 
+  font-size: 24px; font-weight: 700; color: white; 
+  margin: 0 auto 18px;
+  box-shadow: 0 10px 30px rgba(14, 165, 255, 0.3);
+}
+.step h3 { font-size: 22px; color: #FFFFFF; margin-bottom: 8px; font-weight: 600; }
+.step p { font-size: 15px; color: rgba(255,255,255,0.5); }
+.step .meta { font-size: 14px; color: #0EA5FF; margin-top: 10px; font-weight: 600; }
+
+/* Industry cards */
+.industry-card { 
+  background: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.05); 
+  border-radius: 14px; 
+  padding: 20px; 
+  text-align: center;
+}
+.industry-card h4 { font-size: 18px; color: #FFFFFF; margin-bottom: 8px; font-weight: 600; }
+.industry-card p { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+/* Pricing */
+.pricing-page { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  padding: 30px;
+}
+.pricing-grid { 
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 16px; 
+  width: 100%; 
+  margin-top: 30px; 
+}
+.pricing-card { 
+  background: rgba(255,255,255,0.03); 
+  border: 1px solid rgba(255,255,255,0.06); 
+  border-radius: 20px; 
+  padding: 24px; 
+  text-align: center; 
+  transition: all 0.3s ease;
+}
+.pricing-card:hover {
+  background: rgba(255,255,255,0.05);
+}
+.pricing-card.featured { 
+  background: linear-gradient(135deg, rgba(14,165,255,0.15), rgba(147,51,234,0.15)); 
+  border: 2px solid #0EA5FF; 
+  transform: scale(1.02);
+}
+.pricing-card h3 { font-size: 22px; color: #FFFFFF; margin-bottom: 6px; font-weight: 700; }
+.pricing-card .price { 
+  font-size: 36px; 
+  font-weight: 800; 
+  background: linear-gradient(135deg, #0EA5FF, #D946EF); 
+  -webkit-background-clip: text; 
+  -webkit-text-fill-color: transparent; 
+}
+.pricing-card .period { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+.pricing-card .devices { font-size: 13px; color: #0EA5FF; font-weight: 600; margin-bottom: 12px; }
+.pricing-card ul { list-style: none; text-align: left; }
+.pricing-card li { 
+  font-size: 12px; 
+  padding: 5px 0; 
+  border-bottom: 1px solid rgba(255,255,255,0.05); 
+  padding-left: 16px; 
+  position: relative; 
+  color: rgba(255,255,255,0.5);
+}
+.pricing-card li::before { 
+  content: "✓"; 
+  position: absolute; left: 0; 
+  color: #0EA5FF; 
+  font-weight: bold; 
+}
+.pricing-card .badge { 
+  display: inline-block; 
+  padding: 6px 16px; 
+  background: linear-gradient(135deg, #9333EA, #EC4899); 
+  color: white; 
+  border-radius: 20px; 
+  font-size: 11px; 
+  margin-bottom: 12px; 
+  font-weight: 600; 
+}
+
+/* CTA */
+.page-cta { 
+  background: linear-gradient(160deg, #1A1A24 0%, #0D0D12 100%); 
+  color: white; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  text-align: center; 
+  padding: 60px;
+  border-radius: 24px;
+}
+.page-cta h1 { color: white; font-size: 52px; font-weight: 700; }
+.page-cta p { font-size: 24px; color: rgba(255,255,255,0.6); margin: 20px 0 30px; }
+.page-cta .email { font-size: 24px; color: #0EA5FF; font-weight: 600; }
+.page-cta .phone { font-size: 22px; color: #D946EF; margin-top: 15px; font-weight: 600; }
+
+/* Footer */
+.page-footer { 
+  background: #0A0A0F; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  border-radius: 24px;
+}
+</style>
+</head>
+<body>
+
+<!-- D1: Portada -->
+<div class="page page-cover">
+  <div class="harvard-tag">Un proyecto de Harvard Innovative Labs</div>
+  <div class="logo-icon">🌋</div>
+  <h1>VULKN</h1>
+  <p>Tu equipo de IA que nunca descansa. Un equipo que trabaja 24/7, que potencia a cada persona en tu empresa y que crece junto a tu negocio.</p>
+  <div class="tagline">Inteligencia artificial diseñada para multiplicar lo que ya haces bien</div>
+  <div class="page-num" style="color:rgba(255,255,255,0.3)">1 / 10</div>
+</div>
+
+<!-- D2: Quiénes Somos -->
+<div class="page">
+  <h1 class="slide-title">Quiénes Somos</h1>
+  <p class="body-text">Las PyMEs mexicanas compiten contra empresas con <strong>10x más recursos</strong>. No tienen tiempo, personal ni presupuesto para adoptar tecnología que las grandes ya usan.</p>
+  
+  <div class="highlight-box">
+    <p><strong>VULKN</strong> es un proyecto de <span class="highlight">Harvard Innovative Labs</span>, desarrollado por <span class="highlight">manos mexicanas</span> con un objetivo claro: llevar inteligencia artificial de primera clase a las pequeñas y medianas empresas en México.</p>
+    <p style="margin-top:18px">Creemos que el futuro no debe ser un privilegio de las grandes corporaciones. <span class="highlight">Traemos el futuro directamente a tu oficina.</span></p>
+  </div>
+  
+  <div class="page-num">2 / 10</div>
+</div>
+
+<!-- D3: La Oportunidad -->
+<div class="page">
+  <h1 class="slide-title">La Oportunidad</h1>
+  <p class="body-text">Las personas son increíbles. Pero tienen un límite. Las mejores empresas no eligen entre personas o tecnología. Combinan ambas.</p>
+  
+  <div class="grid-4">
+    <div class="solution-card">
+      <div class="icon">⏱️</div>
+      <h3>El tiempo es el recurso más valioso</h3>
+      <p>Imagina si tu equipo pudiera enfocarse solo en lo importante</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📊</div>
+      <h3>Información dispersa</h3>
+      <p>Reportes y datos organizados sin esfuerzo manual</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">⚡</div>
+      <h3>Procesos consume tiempo</h3>
+      <p>Procesos consistentes, sin variaciones ni descuidos</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🚀</div>
+      <h3>Capacidad limitada</h3>
+      <p>Cada persona haciendo lo que mejor sabe hacer</p>
+    </div>
+  </div>
+  
+  <p class="body-text" style="margin-top:30px;font-style:italic;font-size:18px;color:rgba(255,255,255,0.4)">No se trata de trabajar más. Se trata de trabajar mejor.</p>
+  <div class="page-num">3 / 10</div>
+</div>
+
+<!-- D4: Qué es VULKN -->
+<div class="page">
+  <h1 class="slide-title">Qué es VULKN</h1>
+  <h2 class="slide-subtitle">Un nuevo integrante para tu equipo que potencia a todos los demás</h2>
+  
+  <div class="grid-4">
+    <div class="solution-card">
+      <div class="icon">🕐</div>
+      <h3>Disponible 24/7</h3>
+      <p>Atiende clientes, procesa solicitudes y resuelve dudas a cualquier hora.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🎯</div>
+      <h3>Precisión constante</h3>
+      <p>Ejecuta procesos con la misma calidad siempre. Sin variaciones.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🧠</div>
+      <h3>Aprende tu negocio</h3>
+      <p>Se adapta a tu industria, tus procesos. Cada día sabe más.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">👥</div>
+      <h3>Trabaja con tu gente</h3>
+      <p>Se integra a WhatsApp, web, correo. Sin cambiar cómo trabajas.</p>
+    </div>
+  </div>
+  
+  <div class="highlight-box" style="margin-top:30px;text-align:center">
+    <p style="font-size:20px;text-align:center">Piensa en VULKN como el integrante más versátil de tu equipo.</p>
+  </div>
+  <div class="page-num">4 / 10</div>
+</div>
+
+<!-- D5: Capacidades -->
+<div class="page">
+  <h1 class="slide-title">Capacidades</h1>
+  
+  <div class="grid-6">
+    <div class="solution-card">
+      <div class="icon">🎧</div>
+      <h3>Atención al cliente</h3>
+      <p>WhatsApp, web y correo. Agenda, dudas, cotizaciones.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">📈</div>
+      <h3>Reportes inteligentes</h3>
+      <p>Patrones, oportunidades, análisis completo.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">⚙️</div>
+      <h3>Automatización</h3>
+      <p>Cobranza, facturación, inventario.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🚀</div>
+      <h3>Prospección</h3>
+      <p>Leads qualifiés, nurturing, cierre.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🎬</div>
+      <h3>Producción de video</h3>
+      <p>Contenido con IA. Promocionales, reels.</p>
+    </div>
+    <div class="solution-card">
+      <div class="icon">🛒</div>
+      <h3>E-commerce</h3>
+      <p>Pedidos, inventario, envíos, atención.</p>
+    </div>
+  </div>
+  <div class="page-num">5 / 10</div>
+</div>
+
+<!-- D6: Cómo Funciona -->
+<div class="page">
+  <h1 class="slide-title">Cómo Funciona</h1>
+  <h2 class="slide-subtitle">Resultados reales en menos de una semana</h2>
+  
+  <div class="grid-4" style="margin-top:40px">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Conversamos</h3>
+      <p>Nos cuentas sobre tu negocio y dónde sientes que podrías ganar eficiencia.</p>
+      <div class="meta">30 min</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Diseñamos</h3>
+      <p>Configuramos tu agente: qué sabe, cómo habla, qué procesos maneja.</p>
+      <div class="meta">0 conocimiento técnico</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Integramos</h3>
+      <p>Tu agente se conecta a tus canales y herramientas existentes.</p>
+      <div class="meta">24/7 operación</div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Evoluciona</h3>
+      <p>El agente mejora continuamente. Nosotros monitoreamos y optimizamos.</p>
+      <div class="meta">100% soporte</div>
+    </div>
+  </div>
+  <div class="page-num">6 / 10</div>
+</div>
+
+<!-- D7: Industrias -->
+<div class="page">
+  <h1 class="slide-title">Industrias</h1>
+  <p class="body-text">Cada industria tiene sus propios retos. Nuestros agentes se adaptan a las necesidades específicas de tu sector.</p>
+  
+  <div class="grid-3" style="margin-top:25px">
+    <div class="industry-card">
+      <h4>🏥 Salud y Bienestar</h4>
+      <p>Clínicas, consultorios, laboratorios.</p>
+    </div>
+    <div class="industry-card">
+      <h4>⚖️ Servicios Legales</h4>
+      <p>Despachos, aseguradoras, contadores.</p>
+    </div>
+    <div class="industry-card">
+      <h4>🏠 Inmobiliaria</h4>
+      <p>Desarrolladores, agentes, constructoras.</p>
+    </div>
+    <div class="industry-card">
+      <h4>🛒 Comercio y Retail</h4>
+      <p>Tiendas, e-commerce.</p>
+    </div>
+    <div class="industry-card">
+      <h4>🏭 Servicios e Industria</h4>
+      <p>Talleres, manufactura, logística.</p>
+    </div>
+    <div class="industry-card">
+      <h4>🏨 Hospitalidad</h4>
+      <p>Restaurantes, hoteles, gyms.</p>
+    </div>
+  </div>
+  
+  <p class="body-text" style="margin-top:25px;font-size:16px;font-style:italic;color:rgba(255,255,255,0.35)">Si tu industria no aparece aquí, conversemos.</p>
+  <div class="page-num">7 / 10</div>
+</div>
+
+<!-- D8: Inversión -->
+<div class="page pricing-page">
+  <h1 class="slide-title">Inversión</h1>
+  <p class="body-text" style="max-width:800px">Un empleado operativo tiene costo de $25,000-$40,000 MXN mensuales. Un agente VULKN absorbe la carga de múltiples posiciones.</p>
+  
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <h3>Vulki Mini</h3>
+      <div class="price">$20K</div>
+      <div class="period">MXN/mes</div>
+      <div class="devices">📱 1 dispositivo</div>
+      <ul>
+        <li>Redes Sociales</li>
+        <li>Copywriting</li>
+        <li>Email Marketing</li>
+        <li>Agenda</li>
+        <li>CRM</li>
+        <li>Prospección</li>
+        <li>Mensajes</li>
+        <li>Propuestas</li>
+        <li>Proyectos</li>
+        <li>Reportes</li>
+        <li>Investigación</li>
+        <li>Atención al Cliente</li>
+      </ul>
+    </div>
+    
+    <div class="pricing-card featured">
+      <div class="badge">⭐ RECOMENDADO</div>
+      <h3>Vulki Pro</h3>
+      <div class="price">$40K</div>
+      <div class="period">MXN/mes</div>
+      <div class="devices">📱 2 dispositivos</div>
+      <ul>
+        <li>Todas las del Mini</li>
+        <li>Video (Veo 3.1)</li>
+        <li>Imagen (IA)</li>
+        <li>Publicidad Ads</li>
+        <li>Desarrollo</li>
+        <li>Infraestructura</li>
+        <li>Diseño & UI</li>
+        <li>Legal & Finanzas</li>
+        <li>Branding</li>
+        <li>Presentaciones</li>
+        <li>Llamadas</li>
+        <li>Facturas</li>
+      </ul>
+    </div>
+    
+    <div class="pricing-card">
+      <h3>Vulkn Teams</h3>
+      <div class="price">$140K</div>
+      <div class="period">MXN/mes</div>
+      <div class="devices">📱 3 dispositivos</div>
+      <ul>
+        <li>5 agentes Vulki Pro</li>
+        <li>OpenAI Frontier</li>
+        <li>Equipos especializados</li>
+        <li>Operación 24/7</li>
+        <li>Integraciones ERP/CRM</li>
+        <li>Dashboard centralizado</li>
+        <li>Soporte prioritario</li>
+        <li>Gerente de cuenta</li>
+      </ul>
+    </div>
+    
+    <div class="pricing-card">
+      <h3>Enterprise</h3>
+      <div class="price">Custom</div>
+      <div class="period">MXN/mes</div>
+      <div class="devices">📱 Ilimitado</div>
+      <ul>
+        <li>Agentes ilimitados</li>
+        <li>API Access</li>
+        <li>Integraciones a medida</li>
+        <li>SLA personalizado</li>
+        <li>Training con tus datos</li>
+        <li>Soporte 24/7</li>
+        <li>Onboarding dedicado</li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-num">8 / 10</div>
+</div>
+
+<!-- D9: CTA -->
+<div class="page page-cta">
+  <h1>El futuro pertenece a quienes actúan</h1>
+  <p>La inteligencia artificial no es una tendencia. Es la evolución en la forma de operar.</p>
+  
+  <div style="margin-top:45px">
+    <p style="font-size:20px;color:rgba(255,255,255,0.5)">Agenda una llamada y diseñamos juntos la solución ideal.</p>
+    <p class="email" style="margin-top:25px">contact@vulkn-ai.com</p>
+    <p class="phone">+52 7441058169</p>
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.3)">9 / 10</div>
+</div>
+
+<!-- D10: Footer -->
+<div class="page page-footer">
+  <div style="text-align:center">
+    <div style="width:70px;height:70px;background:linear-gradient(135deg,#0EA5FF,#D946EF);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 25px;font-size:35px;">🌋</div>
+    <h1 style="color:white;font-size:48px;background:linear-gradient(135deg,#0EA5FF,#D946EF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;">VULKN</h1>
+    <p style="color:rgba(255,255,255,0.5);font-size:16px;margin-top:15px">Inteligencia Artificial Superior, Accesible para Todos</p>
+    <p style="color:rgba(255,255,255,0.25);font-size:13px;margin-top:40px">© 2026 VULKN / Harvard Innovative Labs. Todos los derechos reservados.</p>
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.2)">10 / 10</div>
+</div>
+
+</body>
+</html>
