@@ -18,3 +18,4 @@ logs/
 # Build/Deps
 node_modules/
 dist/
+.shared-credentials/

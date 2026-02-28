@@ -57,6 +57,8 @@ const INSIGHT_SIGNALS = [
   /\bdata\s+point/i, /\bpaper\s+(data|relevant|insight)/i,
   /\bvalidat(ed|es)\b/i, /\bconfirms?\b/i,
   /\bnever\s+again\b/i, /\balways\s+check\b/i,
+  /\b(how\s+they\s+didn't\s+realize|what\s+is\s+possible|invisible\s+burden)\b/i,
+  /\b(discovery\s+opportunity|new\s+use\s+case|magic\s+moment)\b/i,
   // Added: structured learning patterns from daily notes
   /\bThree\s+settings\s+that\s+fix/i,
   /\bsettings?\s+that\s+(fix|solve|resolve)/i,
