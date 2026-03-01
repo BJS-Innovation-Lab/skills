@@ -1,0 +1,254 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-02-28",
+  "skills": [
+    {
+      "name": "1password",
+      "description": "Set up and use 1Password CLI (op). Install CLI, sign in, read/inject secrets.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/1password/SKILL.md",
+      "triggers": ["password", "secret", "1password", "op", "credential", "vault"],
+      "quickStart": ["op signin", "op read op://vault/item/field", "op run -- command"],
+      "gotchas": ["Needs desktop app integration enabled for biometric unlock"]
+    },
+    {
+      "name": "apple-notes",
+      "description": "Manage Apple Notes via memo CLI. Create, view, edit, delete, search notes.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/apple-notes/SKILL.md",
+      "triggers": ["apple notes", "memo", "notes app", "note to self"],
+      "quickStart": ["memo list", "memo add 'title' 'body'", "memo search 'query'"],
+      "gotchas": ["macOS only, uses memo CLI"]
+    },
+    {
+      "name": "apple-reminders",
+      "description": "Manage Apple Reminders via remindctl CLI. List, add, complete, delete reminders.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/apple-reminders/SKILL.md",
+      "triggers": ["reminder", "reminders app", "remind me", "todo apple"],
+      "quickStart": ["remindctl list", "remindctl add 'task'", "remindctl complete ID"],
+      "gotchas": ["macOS only"]
+    },
+    {
+      "name": "bear-notes",
+      "description": "Create, search, manage Bear notes via grizzly CLI.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/bear-notes/SKILL.md",
+      "triggers": ["bear", "bear notes", "grizzly"],
+      "quickStart": ["grizzly search 'query'", "grizzly create 'title'"],
+      "gotchas": ["Requires Bear app installed"]
+    },
+    {
+      "name": "blogwatcher",
+      "description": "Monitor blogs and RSS/Atom feeds for updates.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/blogwatcher/SKILL.md",
+      "triggers": ["blog", "rss", "feed", "monitor website", "new posts"],
+      "quickStart": ["blogwatcher add URL", "blogwatcher check"],
+      "gotchas": []
+    },
+    {
+      "name": "camsnap",
+      "description": "Capture frames or clips from RTSP/ONVIF cameras.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/camsnap/SKILL.md",
+      "triggers": ["camera", "rtsp", "security camera", "capture frame", "onvif"],
+      "quickStart": ["camsnap snap rtsp://url", "camsnap clip rtsp://url -d 10"],
+      "gotchas": ["Needs ffmpeg installed"]
+    },
+    {
+      "name": "coding-agent",
+      "description": "Delegate coding tasks to Codex, Claude Code, or Pi agents via background process.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/coding-agent/SKILL.md",
+      "triggers": ["build app", "create feature", "refactor", "code review", "PR review", "implement"],
+      "quickStart": ["Spawn agent with pty:true", "Use for multi-file changes", "Good for iterative coding"],
+      "gotchas": ["NOT for simple one-liner fixes", "Never spawn in ~/clawd workspace"]
+    },
+    {
+      "name": "docx",
+      "description": "Create, read, edit Word documents (.docx). Tables, formatting, headers, images.",
+      "path": "~/.openclaw/workspace/skills/office-suite/docx/SKILL.md",
+      "triggers": ["word", "docx", "word document", "letter", "memo", "report"],
+      "quickStart": ["python-docx library", "Template-based creation", "docx.Document()"],
+      "gotchas": ["Part of office-suite family"]
+    },
+    {
+      "name": "pptx",
+      "description": "Create, read, edit PowerPoint presentations (.pptx). Slides, layouts, images.",
+      "path": "~/.openclaw/workspace/skills/office-suite/pptx/SKILL.md",
+      "triggers": ["powerpoint", "pptx", "presentation", "slides", "deck", "pitch deck"],
+      "quickStart": ["python-pptx library", "Presentation()", "slide.shapes"],
+      "gotchas": ["Part of office-suite family", "Complex layouts may need manual adjustment"]
+    },
+    {
+      "name": "xlsx",
+      "description": "Create, read, edit Excel spreadsheets (.xlsx). Formulas, charts, data processing.",
+      "path": "~/.openclaw/workspace/skills/office-suite/xlsx/SKILL.md",
+      "triggers": ["excel", "xlsx", "spreadsheet", "csv", "data", "budget", "financial model"],
+      "quickStart": ["openpyxl library", "Workbook()", "ws.cell()"],
+      "gotchas": ["Part of office-suite family"]
+    },
+    {
+      "name": "pdf",
+      "description": "Read, create, merge, split, fill PDF files. OCR support.",
+      "path": "~/.openclaw/workspace/skills/office-suite/pdf/SKILL.md",
+      "triggers": ["pdf", "merge pdf", "split pdf", "fill form", "extract text pdf"],
+      "quickStart": ["PyPDF2 for manipulation", "pdfplumber for extraction", "reportlab for creation"],
+      "gotchas": ["Part of office-suite family"]
+    },
+    {
+      "name": "gog",
+      "description": "Google Workspace CLI. Gmail, Calendar, Drive, Sheets, Docs, Contacts.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/gog/SKILL.md",
+      "triggers": ["gmail", "google calendar", "google drive", "google sheets", "google docs", "send email"],
+      "quickStart": ["gog gmail send --to X --subject Y --body Z", "gog calendar events", "gog sheets get ID"],
+      "gotchas": ["Needs OAuth setup first: gog auth add email"]
+    },
+    {
+      "name": "github",
+      "description": "GitHub operations via gh CLI. Issues, PRs, CI runs, code review.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/github/SKILL.md",
+      "triggers": ["github", "gh", "pull request", "issue", "ci", "actions", "repo"],
+      "quickStart": ["gh pr list", "gh issue create", "gh run list", "gh api"],
+      "gotchas": ["Need gh auth login first"]
+    },
+    {
+      "name": "himalaya",
+      "description": "CLI email via IMAP/SMTP. List, read, write, reply, search emails.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/himalaya/SKILL.md",
+      "triggers": ["email", "imap", "smtp", "inbox", "mail"],
+      "quickStart": ["himalaya list", "himalaya read ID", "himalaya send"],
+      "gotchas": ["Needs account config in ~/.himalaya/config.toml"]
+    },
+    {
+      "name": "imsg",
+      "description": "iMessage/SMS CLI. List chats, history, send messages via Messages.app.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/imsg/SKILL.md",
+      "triggers": ["imessage", "sms", "text message", "messages app"],
+      "quickStart": ["imsg chats", "imsg history CHAT", "imsg send CHAT 'message'"],
+      "gotchas": ["macOS only", "Needs Messages.app access"]
+    },
+    {
+      "name": "wacli",
+      "description": "Send WhatsApp messages or search/sync WhatsApp history.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/wacli/SKILL.md",
+      "triggers": ["whatsapp", "wa", "wacli"],
+      "quickStart": ["wacli send '+1234567890' 'message'", "wacli chats", "wacli history"],
+      "gotchas": ["Need to link via QR code first", "For sending TO others, not your own chats"]
+    },
+    {
+      "name": "weather",
+      "description": "Get current weather and forecasts via wttr.in or Open-Meteo.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/weather/SKILL.md",
+      "triggers": ["weather", "temperature", "forecast", "rain", "sunny"],
+      "quickStart": ["curl wttr.in/CityName", "curl 'wttr.in/CityName?format=3'"],
+      "gotchas": ["No API key needed"]
+    },
+    {
+      "name": "summarize",
+      "description": "Summarize or extract text/transcripts from URLs, podcasts, local files.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/summarize/SKILL.md",
+      "triggers": ["summarize", "transcript", "youtube", "podcast", "tldr"],
+      "quickStart": ["summ URL", "summ file.mp3"],
+      "gotchas": ["Great fallback for 'transcribe this video'"]
+    },
+    {
+      "name": "video-frames",
+      "description": "Extract frames or short clips from videos using ffmpeg.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/video-frames/SKILL.md",
+      "triggers": ["video frame", "extract frame", "video clip", "ffmpeg", "screenshot video"],
+      "quickStart": ["ffmpeg -i video.mp4 -vf fps=1 frame%d.png"],
+      "gotchas": ["Needs ffmpeg installed"]
+    },
+    {
+      "name": "notion",
+      "description": "Notion API for creating and managing pages, databases, blocks.",
+      "path": "~/.openclaw/workspace/skills/notion/SKILL.md",
+      "triggers": ["notion", "notion page", "notion database"],
+      "quickStart": ["notion-cli commands", "API integration"],
+      "gotchas": ["Needs Notion API key"]
+    },
+    {
+      "name": "obsidian",
+      "description": "Work with Obsidian vaults (plain Markdown notes).",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/obsidian/SKILL.md",
+      "triggers": ["obsidian", "vault", "markdown notes", "pkm"],
+      "quickStart": ["obsidian-cli", "Direct file manipulation"],
+      "gotchas": ["Vaults are just folders of .md files"]
+    },
+    {
+      "name": "things-mac",
+      "description": "Manage Things 3 via things CLI. Add/update projects+todos, search tasks.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/things-mac/SKILL.md",
+      "triggers": ["things", "things 3", "todo", "task manager"],
+      "quickStart": ["things add 'task'", "things list inbox", "things today"],
+      "gotchas": ["macOS only, requires Things 3 app"]
+    },
+    {
+      "name": "openhue",
+      "description": "Control Philips Hue lights and scenes.",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/openhue/SKILL.md",
+      "triggers": ["hue", "lights", "philips hue", "smart lights"],
+      "quickStart": ["openhue lights", "openhue on", "openhue scene NAME"],
+      "gotchas": ["Needs Hue Bridge setup"]
+    },
+    {
+      "name": "sonoscli",
+      "description": "Control Sonos speakers (discover/status/play/volume/group).",
+      "path": "/opt/homebrew/lib/node_modules/openclaw/skills/sonoscli/SKILL.md",
+      "triggers": ["sonos", "speaker", "music", "play music"],
+      "quickStart": ["sonos status", "sonos play", "sonos volume 50"],
+      "gotchas": []
+    },
+    {
+      "name": "a2a-protocol",
+      "description": "Agent-to-Agent communication between BJS LABS agents via A2A Relay.",
+      "path": "~/.openclaw/workspace/skills/a2a-protocol/skill/SKILL.md",
+      "triggers": ["a2a", "agent to agent", "message agent", "saber", "santos", "sam", "sage"],
+      "quickStart": ["./scripts/send.sh AGENT 'message'", "Check ~/.openclaw/a2a/notifications.json"],
+      "gotchas": ["Truncates long files >2KB", "Use GitHub for large content"]
+    },
+    {
+      "name": "memory-retriever",
+      "description": "Sub-agent memory retrieval. Searches memory files, A2A logs, learning entries.",
+      "path": "~/.openclaw/workspace/skills/memory-retriever/SKILL.md",
+      "triggers": ["search memory", "what happened", "find in memory", "cross-day search"],
+      "quickStart": ["sessions_spawn({ task: 'Search memory for X', label: 'memory-retriever' })"],
+      "gotchas": ["Use for 2+ files or cross-day searches to keep context clean"]
+    },
+    {
+      "name": "agentic-learning",
+      "description": "Unified learning system. Captures corrections, insights, outcomes with auto-promotion.",
+      "path": "~/.openclaw/workspace/skills/agentic-learning/SKILL.md",
+      "triggers": ["learning", "correction", "mistake", "remember this", "lesson learned"],
+      "quickStart": ["Log learnings to learning system", "Auto-promotes high-value insights"],
+      "gotchas": ["Ask 'what was at risk?' before logging"]
+    },
+    {
+      "name": "field-admin",
+      "description": "Admin skills for field agents. Escalation, nightly reporting, onboarding.",
+      "path": "~/.openclaw/workspace/skills/field-admin/SKILL.md",
+      "triggers": ["field agent", "escalation", "nightly report", "client onboarding"],
+      "quickStart": ["Load for any field agent deployment"],
+      "gotchas": ["Umbrella skill coordinating multiple sub-skills"]
+    },
+    {
+      "name": "vulkn-office",
+      "description": "Documentos profesionales para PyMEs mexicanas. Facturas, cotizaciones, contratos.",
+      "path": "~/.openclaw/workspace/skills/vulkn-office/SKILL.md",
+      "triggers": ["factura", "cotización", "contrato", "cfdi", "sat", "rfc", "presupuesto"],
+      "quickStart": ["Spanish language", "Mexican business document formats"],
+      "gotchas": ["Part of VULKN field agent toolkit"]
+    },
+    {
+      "name": "peekaboo",
+      "description": "Capture and automate macOS UI with Peekaboo CLI.",
+      "path": "~/.openclaw/workspace/skills/peekaboo/SKILL.md",
+      "triggers": ["macos ui", "screen capture", "ui automation", "accessibility"],
+      "quickStart": ["peekaboo capture", "peekaboo click"],
+      "gotchas": ["Needs accessibility permissions"]
+    },
+    {
+      "name": "skill-creator",
+      "description": "Guide for creating new skills that extend capabilities.",
+      "path": "~/.openclaw/workspace/skills/skill-creator/SKILL.md",
+      "triggers": ["create skill", "new skill", "build skill", "skill template"],
+      "quickStart": ["Follow skill structure guide", "SKILL.md format"],
+      "gotchas": ["Use trigger-rich descriptions"]
+    }
+  ]
+}
