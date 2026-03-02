@@ -1,3 +1,8 @@
+---
+name: google-docs-writer
+description: "Write and edit Google Docs using service account. Use when: appending text to existing Google Docs, clearing doc content, or programmatic doc manipulation. Requires vulkn-service-account.json. Triggers: Google Doc, append, write to doc, clear doc."
+---
+
 # Google Docs Writer Skill
 
 This skill allows the agent to write and edit Google Docs using a service account.

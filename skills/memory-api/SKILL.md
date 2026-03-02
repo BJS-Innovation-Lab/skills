@@ -1,3 +1,8 @@
+---
+name: memory-api
+description: "Dynamic boot memory generation. Use when: starting a session and need context-aware memory (replaces static MEMORY.md), generating personalized memory based on who's talking/channel/topic. Compresses raw context into signal. Triggers: boot memory, session start, memory load, context generation."
+---
+
 # Memory API — Dynamic Boot Memory System
 
 **Version:** 1.0  

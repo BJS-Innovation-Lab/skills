@@ -1,3 +1,8 @@
+---
+name: web-scraping
+description: "Turn any website into clean markdown or structured data. Use when: user asks to 'scrape', 'crawl', 'extract', or 'get data from' a website, converting webpages to markdown, downloading documentation, competitor analysis, or content extraction. Triggers: scrape, crawl, extract, website, URL, page content, documentation."
+---
+
 # Web Scraping Skill (Firecrawl)
 
 Turn any website into clean markdown or structured data. Use for research, competitor analysis, documentation, content extraction, or data collection.

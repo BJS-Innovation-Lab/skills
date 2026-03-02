@@ -6,6 +6,26 @@ license: Complete terms in LICENSE.txt
 
 # Skill Creator
 
+## ⚠️ CRITICAL: Frontmatter Required
+
+**Every SKILL.md MUST start with YAML frontmatter or the skill will be INVISIBLE to agents:**
+
+```yaml
+---
+name: my-skill
+description: "What this skill does. Use when: specific triggers. Triggers: keywords."
+---
+```
+
+**Without this frontmatter, the skill will NOT appear in `<available_skills>` and agents cannot use it.**
+
+To validate all skills have frontmatter:
+```bash
+find ~/.openclaw/workspace/skills -name "SKILL.md" | while read f; do head -1 "$f" | grep -q "^---" || echo "BROKEN: $f"; done
+```
+
+---
+
 This skill provides guidance for creating effective skills.
 
 ## About Skills

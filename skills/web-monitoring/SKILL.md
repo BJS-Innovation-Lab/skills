@@ -1,3 +1,8 @@
+---
+name: web-monitoring
+description: "Monitor websites for changes and get alerts. Use when: tracking competitor pricing, watching for content updates, monitoring news mentions, or any 'alert me when X changes' request. Sets up scheduled checks with email notifications. Triggers: monitor, watch, track, alert, notify, changes, competitor, pricing updates."
+---
+
 # Web Monitoring Skill (Open Scouts)
 
 Monitor websites for changes and get email alerts. Track competitor pricing, news mentions, product updates, or any web content that matters to your business.

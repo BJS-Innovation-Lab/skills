@@ -1,3 +1,8 @@
+---
+name: firecrawl
+description: "Web scraping, crawling, and data extraction via Firecrawl CLI. Use when: scraping websites to markdown, crawling entire sites, extracting structured data, or any task involving 'scrape', 'crawl', 'extract from website'. Requires firecrawl auth first. Triggers: scrape, crawl, website data, extract, markdown from URL."
+---
+
 # Firecrawl Skill
 
 Web scraping, crawling, and data extraction using Firecrawl tools.

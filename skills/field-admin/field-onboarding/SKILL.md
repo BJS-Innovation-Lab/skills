@@ -1,3 +1,8 @@
+---
+name: field-onboarding
+description: "Gold standard for deploying VULKN field agents. Use when: onboarding new field agents, setting up client deployments, or defining operational protocols. Includes skill routing, document generation, and multi-step workflow guidance. Triggers: onboard agent, deploy field agent, agent setup."
+---
+
 # Field Agent Onboarding & Operations 🚀
 
 This skill defines the "Gold Standard" for deploying a VULKN Field Agent to the cloud.

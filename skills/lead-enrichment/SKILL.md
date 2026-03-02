@@ -1,3 +1,8 @@
+---
+name: lead-enrichment
+description: "Turn email addresses into rich company profiles. Use when: user has an email and wants company info (funding, tech stack, employee count, industry), sales prospecting, lead qualification, CRM enrichment, or 'who is this company?' from an email. Triggers: lead, prospect, company info, enrich, email lookup, sales research, who is, company profile."
+---
+
 # Lead Enrichment Skill (Fire Enrich)
 
 Turn email addresses into rich company profiles. Get funding data, tech stacks, employee counts, and more from just an email. Perfect for sales prospecting, lead qualification, and CRM enrichment.

@@ -1,3 +1,8 @@
+---
+name: knowledge-graph
+description: "Cross-client intelligence via entity/relationship extraction. Use when: extracting entities from conversations, building relationship graphs, querying connections between people/companies/concepts, or institutional memory across clients. Stores in PostgreSQL/Supabase. Triggers: knowledge graph, entities, relationships, connections, who knows who, extract from conversations."
+---
+
 # Knowledge Graph Skill
 
 Cross-client intelligence system for VULKN. Extracts entities and relationships from agent conversations, stores in PostgreSQL (Supabase), enables multi-hop graph queries.
