@@ -99,12 +99,12 @@ function listProjects(registry) {
   }
   
   for (const [name, config] of Object.entries(projects)) {
-    const filePath = path.join(WORKSPACE, config.file);
-    const exists = fs.existsSync(filePath);
+    const resolvedPath = resolveProjectPath(config.file);
+    const exists = resolvedPath !== null;
     const triggers = config.triggers?.join(', ') || '(none)';
     
     console.log(`   ${exists ? '✅' : '❌'} ${name}`);
-    console.log(`      File: ${config.file}`);
+    console.log(`      File: ${config.file}${resolvedPath && resolvedPath !== path.join(WORKSPACE, config.file) ? ' → ' + path.basename(path.dirname(resolvedPath)) + '/PROJECT.md' : ''}`);
     console.log(`      Triggers: ${triggers}`);
     if (config.description) {
       console.log(`      Description: ${config.description}`);
@@ -152,6 +152,30 @@ function findMatches(registry, text, skipDedup = false) {
   return matches.slice(0, maxProjects);
 }
 
+// Resolve project file path - supports both flat files and folders with PROJECT.md
+function resolveProjectPath(configFile) {
+  const fullPath = path.join(WORKSPACE, configFile);
+  
+  // Check if it's a direct file path
+  if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+    return fullPath;
+  }
+  
+  // Check if it's a folder with PROJECT.md inside
+  const folderProjectPath = path.join(fullPath, 'PROJECT.md');
+  if (fs.existsSync(folderProjectPath)) {
+    return folderProjectPath;
+  }
+  
+  // Check if configFile points to a folder (without PROJECT.md specified)
+  const asFolder = path.join(WORKSPACE, 'memory/projects', configFile.replace('memory/projects/', '').replace('.md', ''), 'PROJECT.md');
+  if (fs.existsSync(asFolder)) {
+    return asFolder;
+  }
+  
+  return null;  // Not found
+}
+
 // Load a specific project file
 function loadProject(name, registry) {
   const projects = registry.projects || {};
@@ -163,15 +187,17 @@ function loadProject(name, registry) {
     process.exit(1);
   }
   
-  const filePath = path.join(WORKSPACE, config.file);
-  if (!fs.existsSync(filePath)) {
+  const filePath = resolveProjectPath(config.file);
+  if (!filePath) {
     console.error(`❌ Project file not found: ${config.file}`);
+    console.error('   Checked: flat file, folder/PROJECT.md');
     process.exit(1);
   }
   
   return {
     name,
     file: config.file,
+    resolvedPath: filePath,
     content: fs.readFileSync(filePath, 'utf-8')
   };
 }
@@ -246,18 +272,18 @@ function main() {
   console.log(`\n🎯 Found ${matches.length} matching project(s):\n`);
   
   for (const match of matches) {
-    const filePath = path.join(WORKSPACE, match.file);
+    const resolvedPath = resolveProjectPath(match.file);
     
-    if (!fs.existsSync(filePath)) {
+    if (!resolvedPath) {
       console.log(`⚠️  ${match.name}: file not found (${match.file})`);
       continue;
     }
     
-    const content = fs.readFileSync(filePath, 'utf-8');
+    const content = fs.readFileSync(resolvedPath, 'utf-8');
     
     console.log(`${'─'.repeat(60)}`);
     console.log(`📁 ${match.name} (triggered by: "${match.trigger}")`);
-    console.log(`   File: ${match.file}`);
+    console.log(`   File: ${match.file}${resolvedPath !== path.join(WORKSPACE, match.file) ? ' → PROJECT.md' : ''}`);
     console.log(`${'─'.repeat(60)}\n`);
     console.log(content);
     console.log();
