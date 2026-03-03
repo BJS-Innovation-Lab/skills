@@ -74,6 +74,18 @@ function detectTopic(text, registry) {
   return 'general';
 }
 
+// Map script categories to valid DB categories
+// DB allows: procedure, best-practice, template, skill-doc, escalation, tool-guide
+function mapCategory(category) {
+  const mapping = {
+    'insight': 'best-practice',
+    'correction': 'procedure',
+    'warning': 'escalation',
+    'decision': 'procedure'
+  };
+  return mapping[category] || 'best-practice';
+}
+
 // Check if learning mentions "general" or "best practice" (explicit share)
 function isExplicitlyGeneral(text) {
   const generalPatterns = [
@@ -137,7 +149,7 @@ async function pushToHive(learning) {
   const body = JSON.stringify({
     title: learning.content.slice(0, 100),
     content: learning.content,
-    category: learning.category,
+    category: mapCategory(learning.category),
     tags: [
       learning.topic,
       `namespace:${learning.namespace}`,
