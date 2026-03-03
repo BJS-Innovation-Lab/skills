@@ -22,13 +22,61 @@ const args = process.argv.slice(2);
 const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw/workspace');
 const REGISTRY_PATH = path.join(WORKSPACE, 'memory/projects/_registry.json');
 const PROJECTS_DIR = path.join(WORKSPACE, 'memory/projects');
+const SESSION_STATE_PATH = path.join(WORKSPACE, 'memory/.session-engrams.json');
+
+// Session timeout: 4 hours (typical conversation window)
+const SESSION_TIMEOUT_MS = 4 * 60 * 60 * 1000;
 
 // Flags
 const listMode = args.includes('--list');
 const jsonMode = args.includes('--json');
 const verbose = args.includes('--verbose');
+const resetMode = args.includes('--reset');
+const noDedup = args.includes('--no-dedup');
 const specificProject = args.find((a, i) => args[i - 1] === '--project');
 const contextText = args.filter(a => !a.startsWith('--')).join(' ');
+
+// ─── Session State Management ───────────────────────────────────────────────
+
+function getSessionState() {
+  if (!fs.existsSync(SESSION_STATE_PATH)) {
+    return { timestamp: Date.now(), injected: [] };
+  }
+  try {
+    const state = JSON.parse(fs.readFileSync(SESSION_STATE_PATH, 'utf-8'));
+    // Expire stale sessions
+    if (Date.now() - state.timestamp > SESSION_TIMEOUT_MS) {
+      if (verbose) console.log('Session expired, starting fresh.');
+      return { timestamp: Date.now(), injected: [] };
+    }
+    return state;
+  } catch (e) {
+    return { timestamp: Date.now(), injected: [] };
+  }
+}
+
+function getInjectedEngrams() {
+  return new Set(getSessionState().injected);
+}
+
+function markInjected(projectNames) {
+  const state = getSessionState();
+  const existing = new Set(state.injected);
+  projectNames.forEach(p => existing.add(p));
+  fs.writeFileSync(SESSION_STATE_PATH, JSON.stringify({
+    timestamp: Date.now(),
+    injected: [...existing]
+  }, null, 2));
+}
+
+function resetSession() {
+  if (fs.existsSync(SESSION_STATE_PATH)) {
+    fs.unlinkSync(SESSION_STATE_PATH);
+    console.log('✅ Session state cleared.');
+  } else {
+    console.log('ℹ️  No session state to clear.');
+  }
+}
 
 // Load registry
 function loadRegistry() {
@@ -66,12 +114,21 @@ function listProjects(registry) {
 }
 
 // Find matching projects based on context
-function findMatches(registry, text) {
+function findMatches(registry, text, skipDedup = false) {
   const matches = [];
   const textLower = text.toLowerCase();
   const projects = registry.projects || {};
   
+  // Get already-injected projects for this session
+  const alreadyInjected = skipDedup ? new Set() : getInjectedEngrams();
+  
   for (const [name, config] of Object.entries(projects)) {
+    // Skip if already injected this session
+    if (alreadyInjected.has(name)) {
+      if (verbose) console.log(`⏭️  Skipping ${name} (already injected this session)`);
+      continue;
+    }
+    
     const triggers = config.triggers || [];
     
     for (const trigger of triggers) {
@@ -90,7 +147,7 @@ function findMatches(registry, text) {
   // Sort by trigger length (longer = more specific = higher priority)
   matches.sort((a, b) => b.trigger.length - a.trigger.length);
   
-  // Limit to maxProjectsPerSession
+  // Limit to maxProjectsPerSession (now actually per-session with dedup!)
   const maxProjects = registry.config?.maxProjectsPerSession || 3;
   return matches.slice(0, maxProjects);
 }
@@ -121,6 +178,12 @@ function loadProject(name, registry) {
 
 // Main
 function main() {
+  // Reset mode
+  if (resetMode) {
+    resetSession();
+    return;
+  }
+  
   const registry = loadRegistry();
   
   // List mode
@@ -147,10 +210,12 @@ function main() {
     console.error('Usage: project-recall.cjs "context text"');
     console.error('       project-recall.cjs --list');
     console.error('       project-recall.cjs --project <name>');
+    console.error('       project-recall.cjs --reset');
+    console.error('       project-recall.cjs --no-dedup  (skip session deduplication)');
     process.exit(1);
   }
   
-  const matches = findMatches(registry, contextText);
+  const matches = findMatches(registry, contextText, noDedup);
   
   if (matches.length === 0) {
     if (verbose) {
@@ -167,6 +232,9 @@ function main() {
     
     process.exit(0);
   }
+  
+  // Mark these projects as injected for this session
+  markInjected(matches.map(m => m.name));
   
   if (jsonMode) {
     // Just return matches, don't load content
