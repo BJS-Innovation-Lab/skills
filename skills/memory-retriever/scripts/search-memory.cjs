@@ -656,8 +656,12 @@ async function main() {
     // track-usage not available, skip
   }
   
-  // Cache-on-use: Save useful Supabase results locally for faster future retrieval
-  if (totalResults > 0 && (output.sources.rag?.length || output.sources.kb?.length)) {
+  // Cache-on-use: Save Supabase results locally (only when retrieved from Supabase, not local)
+  // Filter to only real results (not skipped/error responses)
+  const realRagResults = (output.sources.rag || []).filter(r => !r.error && !r.skipped && r.content);
+  const realKbResults = (output.sources.kb || []).filter(r => !r.error && !r.skipped && r.content);
+  
+  if (realRagResults.length > 0 || realKbResults.length > 0) {
     try {
       const fs = require('fs');
       const path = require('path');
@@ -678,12 +682,12 @@ async function main() {
         timestamp: new Date().toISOString(),
         agent: opts.agent,
         results: {
-          rag: (output.sources.rag || []).slice(0, 3).map(r => ({
+          rag: realRagResults.slice(0, 3).map(r => ({
             title: r.title,
             content: r.content?.slice(0, 500),
             similarity: r.similarity
           })),
-          kb: (output.sources.kb || []).slice(0, 3).map(r => ({
+          kb: realKbResults.slice(0, 3).map(r => ({
             title: r.title,
             content: r.content?.slice(0, 500),
             category: r.category
@@ -695,22 +699,20 @@ async function main() {
       
       // 2. RETRIEVED MEMORY (persistent - Markdown for agent learning)
       const retrievedFile = path.join(retrievedDir, `${today}.md`);
-      const header = fs.existsSync(retrievedFile) ? '' : `# Retrieved Knowledge — ${today}\n\nKnowledge pulled from Supabase (RAG + Hive) during searches.\nThis persists locally so the agent learns and doesn't need to re-fetch.\n\n---\n\n`;
+      const header = fs.existsSync(retrievedFile) ? '' : `# Retrieved Knowledge — ${today}\n\nKnowledge pulled from Supabase during searches.\nThis persists locally so the agent learns and doesn't need to re-fetch.\n\n---\n\n`;
       
       let mdContent = header;
       mdContent += `## ${timestamp} — "${opts.query}"\n\n`;
       
-      // Write top RAG results
-      const topRag = (output.sources.rag || []).filter(r => !r.error).slice(0, 2);
-      for (const r of topRag) {
+      // Write top RAG results (from Supabase documents)
+      for (const r of realRagResults.slice(0, 2)) {
         mdContent += `### ${r.title || 'Untitled'}\n`;
-        mdContent += `*Source: RAG | Similarity: ${(r.similarity * 100).toFixed(0)}%*\n\n`;
+        mdContent += `*Source: Supabase RAG | Similarity: ${(r.similarity * 100).toFixed(0)}%*\n\n`;
         mdContent += `${(r.content || '').slice(0, 400)}\n\n`;
       }
       
-      // Write top KB results  
-      const topKb = (output.sources.kb || []).filter(r => !r.error).slice(0, 2);
-      for (const r of topKb) {
+      // Write top KB results (shouldn't happen anymore since KB is skipped, but keep for safety)
+      for (const r of realKbResults.slice(0, 2)) {
         mdContent += `### ${r.title || 'Untitled'}\n`;
         mdContent += `*Source: Hive Mind | Category: ${r.category}*\n\n`;
         mdContent += `${(r.content || '').slice(0, 400)}\n\n`;
