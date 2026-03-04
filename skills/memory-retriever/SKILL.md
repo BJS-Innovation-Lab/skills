@@ -325,17 +325,17 @@ The retriever searches THREE sources simultaneously:
 
 ```bash
 # Search all sources
-node skills/memory-retriever/scripts/search-supabase.cjs "your query" --sources all
+node skills/memory-retriever/scripts/search-memory.cjs "your query" --sources all
 
 # Search specific sources
-node skills/memory-retriever/scripts/search-supabase.cjs "calendar fix" --sources kb
-node skills/memory-retriever/scripts/search-supabase.cjs "Santos tokens" --sources rag,files
+node skills/memory-retriever/scripts/search-memory.cjs "calendar fix" --sources kb
+node skills/memory-retriever/scripts/search-memory.cjs "Santos tokens" --sources rag,files
 
 # Different agent's memory
-node skills/memory-retriever/scripts/search-supabase.cjs "client status" --agent santos
+node skills/memory-retriever/scripts/search-memory.cjs "client status" --agent santos
 
 # Output as JSON for programmatic use
-node skills/memory-retriever/scripts/search-supabase.cjs "pricing" --json
+node skills/memory-retriever/scripts/search-memory.cjs "pricing" --json
 ```
 
 **Why all three matter:**
@@ -384,7 +384,7 @@ Load all context about Café Bonito client.
 
 ## Tools
 
-### Unified Search (search-supabase.cjs)
+### Unified Search (search-memory.cjs)
 Three-source search: local files + RAG embeddings + BJS Knowledge Base.
 
 ### Auto-Retrieve (auto-retrieve.cjs)

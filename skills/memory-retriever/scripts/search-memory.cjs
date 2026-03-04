@@ -8,10 +8,10 @@
  * 3. BJS Knowledge Base search (shared KB)
  * 
  * Usage:
- *   node search-supabase.cjs "what did Santos say about tokens" --sources all
- *   node search-supabase.cjs "calendar sync fix" --sources kb
- *   node search-supabase.cjs "client pricing" --sources rag,files
- *   node search-supabase.cjs "Santos role change" --sources rag --agent sybil
+ *   node search-memory.cjs "what did Santos say about tokens" --sources all
+ *   node search-memory.cjs "calendar sync fix" --sources kb
+ *   node search-memory.cjs "client pricing" --sources rag,files
+ *   node search-memory.cjs "Santos role change" --sources rag --agent sybil
  * 
  * Sources:
  *   files  — Local memory files (memory/*.md, memory/core/*, etc.)
@@ -482,7 +482,7 @@ async function main() {
   const opts = parseArgs();
   
   if (!opts.query) {
-    console.error('Usage: node search-supabase.cjs "your query" [--sources all|files|rag|kb] [--agent sybil] [--days 7] [--limit 10] [--client name]');
+    console.error('Usage: node search-memory.cjs "your query" [--sources all|files|rag|kb] [--agent sybil] [--days 7] [--limit 10] [--client name]');
     process.exit(1);
   }
   

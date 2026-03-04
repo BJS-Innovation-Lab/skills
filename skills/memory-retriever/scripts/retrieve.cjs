@@ -45,7 +45,7 @@ const templates = {
 
 **STEP 1 — Run Supabase search FIRST:**
 \`\`\`bash
-cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-memory.cjs "${query}" --sources all
 \`\`\`
 This searches local files + RAG embeddings + Knowledge Base simultaneously.
 
@@ -168,7 +168,7 @@ Return format:
 
 **STEP 1 — Run Supabase search FIRST:**
 \`\`\`bash
-cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-memory.cjs "${query}" --sources all
 \`\`\`
 
 **STEP 2 — Supplement with manual file checks:**
@@ -215,7 +215,7 @@ This requires multi-hop reasoning — don't just do a keyword search.
 
 **Phase 0 — Run Supabase search FIRST:**
 \`\`\`bash
-cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-memory.cjs "${query}" --sources all
 \`\`\`
 This gives you comprehensive results from files + RAG + KB instantly.
 

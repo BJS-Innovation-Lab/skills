@@ -25,7 +25,7 @@ const { execSync } = require('child_process');
 
 const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw/workspace');
 const SMART_TRIGGER = path.join(WORKSPACE, 'rag/smart-trigger.cjs');
-const SEARCH = path.join(WORKSPACE, 'skills/memory-retriever/scripts/search-supabase.cjs');
+const SEARCH = path.join(WORKSPACE, 'skills/memory-retriever/scripts/search-memory.cjs');
 
 function parseArgs() {
   const args = process.argv.slice(2);

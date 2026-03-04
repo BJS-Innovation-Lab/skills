@@ -23,7 +23,7 @@ const { execSync } = require('child_process');
 
 const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw/workspace');
 const LEARNING_DIR = path.join(WORKSPACE, 'memory/learning');
-const RETRIEVER = path.join(WORKSPACE, 'skills/memory-retriever/scripts/search-supabase.cjs');
+const RETRIEVER = path.join(WORKSPACE, 'skills/memory-retriever/scripts/search-memory.cjs');
 
 // --- Args ---
 function parseArgs() {
