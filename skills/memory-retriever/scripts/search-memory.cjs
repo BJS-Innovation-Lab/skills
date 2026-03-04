@@ -601,7 +601,7 @@ async function main() {
       console.log();
     }
     
-    if (output.sources.rag?.length && !output.sources.rag[0]?.error) {
+    if (output.sources.rag?.length && !output.sources.rag[0]?.error && !output.sources.rag[0]?.skipped) {
       console.log(`🧠 RAG EMBEDDINGS (${output.sources.rag.length} results, two-phase ranked):`);
       for (const r of output.sources.rag) {
         const sim = (r.similarity * 100).toFixed(0);
@@ -623,7 +623,7 @@ async function main() {
       console.log();
     }
     
-    if (output.sources.kb?.length && !output.sources.kb[0]?.error) {
+    if (output.sources.kb?.length && !output.sources.kb[0]?.error && !output.sources.kb[0]?.skipped) {
       console.log(`📚 KNOWLEDGE BASE (${output.sources.kb.length} results):`);
       for (const r of output.sources.kb) {
         const pct = (r.similarity * 100).toFixed(0);
@@ -633,10 +633,13 @@ async function main() {
       console.log();
     }
     
-    // Errors
+    // Errors and skipped sources
     for (const [src, results] of Object.entries(output.sources)) {
       if (Array.isArray(results) && results[0]?.error) {
         console.log(`⚠️  ${src}: ${results[0].error}`);
+      }
+      if (Array.isArray(results) && results[0]?.skipped) {
+        console.log(`⏭️  ${src}: ${results[0].reason}`);
       }
     }
     
