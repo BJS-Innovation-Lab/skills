@@ -150,9 +150,10 @@ async function pushToHive(learning) {
     title: learning.content.slice(0, 100),
     content: learning.content,
     category: mapCategory(learning.category),
+    namespace: learning.namespace,  // Actual column for filtering
     tags: [
       learning.topic,
-      `namespace:${learning.namespace}`,
+      `namespace:${learning.namespace}`,  // Also in tags for backward compat
       `date:${learning.date}`,
       `agent:${AGENT_NAME}`
     ],

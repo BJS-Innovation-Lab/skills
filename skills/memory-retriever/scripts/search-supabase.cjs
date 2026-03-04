@@ -77,6 +77,8 @@ function parseArgs() {
       case '--client': opts.clientId = args[++i].toLowerCase(); break;
       case '--user': opts.userId = args[++i]; break;
       case '--isolation': opts.isolation = args[++i]; break;
+      case '--no-cache': opts.noCache = true; break;
+      case '--workspace': opts.workspace = args[++i]; break;
       default:
         if (!args[i].startsWith('--')) opts.query = args[i];
     }
@@ -433,12 +435,87 @@ function autoDetectClient(opts) {
 }
 
 // --- Main ---
+// Check local cache for recent similar queries
+function checkCache(query, opts) {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const cacheDir = `${opts.workspace || '~/.openclaw/workspace'}/memory/cache`.replace(/^~/, process.env.HOME);
+    
+    if (!fs.existsSync(cacheDir)) return null;
+    
+    // Check last 3 days of cache
+    const results = [];
+    for (let d = 0; d < 3; d++) {
+      const date = new Date(Date.now() - d * 86400000).toISOString().split('T')[0];
+      const cacheFile = path.join(cacheDir, `${date}.jsonl`);
+      
+      if (!fs.existsSync(cacheFile)) continue;
+      
+      const lines = fs.readFileSync(cacheFile, 'utf8').trim().split('\n');
+      for (const line of lines) {
+        try {
+          const entry = JSON.parse(line);
+          // Simple similarity: check if query words overlap significantly
+          const queryWords = query.toLowerCase().split(/\s+/);
+          const cacheWords = entry.query.toLowerCase().split(/\s+/);
+          const overlap = queryWords.filter(w => cacheWords.includes(w) || cacheWords.some(cw => cw.includes(w) || w.includes(cw)));
+          const similarity = overlap.length / Math.max(queryWords.length, cacheWords.length);
+          
+          if (similarity > 0.6) {
+            results.push({ ...entry, similarity, cacheDate: date });
+          }
+        } catch (e) {}
+      }
+    }
+    
+    // Return best match if found
+    if (results.length > 0) {
+      results.sort((a, b) => b.similarity - a.similarity);
+      return results[0];
+    }
+  } catch (e) {}
+  return null;
+}
+
 async function main() {
   const opts = parseArgs();
   
   if (!opts.query) {
     console.error('Usage: node search-supabase.cjs "your query" [--sources all|files|rag|kb] [--agent sybil] [--days 7] [--limit 10] [--client name]');
     process.exit(1);
+  }
+  
+  // Check local cache first (unless --no-cache flag)
+  if (!opts.noCache) {
+    const cached = checkCache(opts.query, opts);
+    if (cached) {
+      if (opts.json) {
+        console.log(JSON.stringify({ cached: true, ...cached }, null, 2));
+      } else {
+        console.log(`\n💾 CACHE HIT (${(cached.similarity * 100).toFixed(0)}% match from ${cached.cacheDate})`);
+        console.log(`   Original query: "${cached.query}"\n`);
+        
+        if (cached.results.rag?.length) {
+          console.log(`🧠 RAG (cached):`);
+          for (const r of cached.results.rag) {
+            console.log(`  ${(r.similarity * 100).toFixed(0)}% ${r.title}`);
+            if (r.content) console.log(`      ${r.content.split('\n')[0].slice(0, 100)}`);
+          }
+        }
+        
+        if (cached.results.kb?.length) {
+          console.log(`📚 KB (cached):`);
+          for (const r of cached.results.kb) {
+            console.log(`  [${r.category}] ${r.title}`);
+            if (r.content) console.log(`      ${r.content.split('\n')[0].slice(0, 100)}`);
+          }
+        }
+        
+        console.log(`\n💡 Use --no-cache to force fresh search`);
+      }
+      return;
+    }
   }
   
   // Auto-detect client if map exists
@@ -543,6 +620,64 @@ async function main() {
     }
     
     console.log(`\n📊 Total: ${totalResults} results across ${sources.length} sources`);
+  }
+  
+  // Track usage (fire-and-forget)
+  try {
+    const { trackUsage } = require('./track-usage.cjs');
+    trackUsage({
+      query: opts.query,
+      sources: sources.join(','),
+      resultsCount: totalResults
+    }).catch(() => {}); // Ignore tracking errors
+  } catch (e) {
+    // track-usage not available, skip
+  }
+  
+  // Cache-on-use: Save useful Supabase results locally for faster future retrieval
+  if (totalResults > 0 && (output.sources.rag?.length || output.sources.kb?.length)) {
+    try {
+      const cacheDir = `${opts.workspace || '~/.openclaw/workspace'}/memory/cache`;
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Ensure cache directory exists
+      const expandedCacheDir = cacheDir.replace(/^~/, process.env.HOME);
+      if (!fs.existsSync(expandedCacheDir)) {
+        fs.mkdirSync(expandedCacheDir, { recursive: true });
+      }
+      
+      // Create cache entry with top results
+      const cacheEntry = {
+        query: opts.query,
+        timestamp: new Date().toISOString(),
+        agent: opts.agent,
+        results: {
+          rag: (output.sources.rag || []).slice(0, 3).map(r => ({
+            title: r.title,
+            content: r.content?.slice(0, 500),
+            similarity: r.similarity
+          })),
+          kb: (output.sources.kb || []).slice(0, 3).map(r => ({
+            title: r.title,
+            content: r.content?.slice(0, 500),
+            category: r.category
+          }))
+        }
+      };
+      
+      // Save to cache file (append to daily cache)
+      const today = new Date().toISOString().split('T')[0];
+      const cacheFile = path.join(expandedCacheDir, `${today}.jsonl`);
+      fs.appendFileSync(cacheFile, JSON.stringify(cacheEntry) + '\n');
+      
+      if (!opts.json) {
+        console.log(`\n💾 Cached ${cacheEntry.results.rag.length + cacheEntry.results.kb.length} results to ${cacheFile}`);
+      }
+    } catch (e) {
+      // Caching failed, not critical
+      if (!opts.json) console.error(`⚠️ Cache write failed: ${e.message}`);
+    }
   }
 }
 
