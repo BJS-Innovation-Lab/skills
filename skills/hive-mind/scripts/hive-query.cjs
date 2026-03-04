@@ -82,6 +82,16 @@ async function query(opts) {
     url += `&or=(title.ilike.*${encodeURIComponent(opts.search)}*,content.ilike.*${encodeURIComponent(opts.search)}*)`;
   }
   
+  if (opts.namespace) {
+    // Filter to specific namespace (e.g., "vulkn", "client:acme", "general")
+    url += `&namespace=eq.${encodeURIComponent(opts.namespace)}`;
+  }
+  
+  if (opts.excludeClient) {
+    // Field agents: only see vulkn (HQ) and general knowledge, not other clients
+    url += `&or=(namespace.eq.vulkn,namespace.eq.general,namespace.is.null)`;
+  }
+  
   return new Promise((resolve, reject) => {
     const parsed = new URL(url);
     const req = https.request({
