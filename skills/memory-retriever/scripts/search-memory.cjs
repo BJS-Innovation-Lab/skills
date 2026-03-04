@@ -316,10 +316,11 @@ async function searchRAG(query, embedding, opts) {
   
   // HQ agents with allAgents=true can see all documents (no filter)
   // Field agents and default: filter to own agent_id
+  // RPC signature: search_documents(filter, match_count, query_embedding)
   const body = {
-    query_embedding: embedding,
+    filter: opts.allAgents ? {} : { agent_id: agentId },  // empty filter = HQ sees all
     match_count: broadCount,
-    filter_agent_id: opts.allAgents ? null : agentId  // null = no filter (HQ sees all)
+    query_embedding: embedding
   };
   
   const resp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/search_documents`, {
