@@ -637,17 +637,20 @@ async function main() {
   // Cache-on-use: Save useful Supabase results locally for faster future retrieval
   if (totalResults > 0 && (output.sources.rag?.length || output.sources.kb?.length)) {
     try {
-      const cacheDir = `${opts.workspace || '~/.openclaw/workspace'}/memory/cache`;
       const fs = require('fs');
       const path = require('path');
+      const workspace = (opts.workspace || '~/.openclaw/workspace').replace(/^~/, process.env.HOME);
+      const cacheDir = path.join(workspace, 'memory', 'cache');
+      const retrievedDir = path.join(workspace, 'memory', 'retrieved');
       
-      // Ensure cache directory exists
-      const expandedCacheDir = cacheDir.replace(/^~/, process.env.HOME);
-      if (!fs.existsSync(expandedCacheDir)) {
-        fs.mkdirSync(expandedCacheDir, { recursive: true });
-      }
+      // Ensure directories exist
+      if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+      if (!fs.existsSync(retrievedDir)) fs.mkdirSync(retrievedDir, { recursive: true });
       
-      // Create cache entry with top results
+      const today = new Date().toISOString().split('T')[0];
+      const timestamp = new Date().toISOString().split('T')[1].slice(0, 5);
+      
+      // 1. CACHE (optimization - JSON for fast similar-query lookup)
       const cacheEntry = {
         query: opts.query,
         timestamp: new Date().toISOString(),
@@ -665,18 +668,41 @@ async function main() {
           }))
         }
       };
-      
-      // Save to cache file (append to daily cache)
-      const today = new Date().toISOString().split('T')[0];
-      const cacheFile = path.join(expandedCacheDir, `${today}.jsonl`);
+      const cacheFile = path.join(cacheDir, `${today}.jsonl`);
       fs.appendFileSync(cacheFile, JSON.stringify(cacheEntry) + '\n');
       
+      // 2. RETRIEVED MEMORY (persistent - Markdown for agent learning)
+      const retrievedFile = path.join(retrievedDir, `${today}.md`);
+      const header = fs.existsSync(retrievedFile) ? '' : `# Retrieved Knowledge — ${today}\n\nKnowledge pulled from Supabase (RAG + Hive) during searches.\nThis persists locally so the agent learns and doesn't need to re-fetch.\n\n---\n\n`;
+      
+      let mdContent = header;
+      mdContent += `## ${timestamp} — "${opts.query}"\n\n`;
+      
+      // Write top RAG results
+      const topRag = (output.sources.rag || []).filter(r => !r.error).slice(0, 2);
+      for (const r of topRag) {
+        mdContent += `### ${r.title || 'Untitled'}\n`;
+        mdContent += `*Source: RAG | Similarity: ${(r.similarity * 100).toFixed(0)}%*\n\n`;
+        mdContent += `${(r.content || '').slice(0, 400)}\n\n`;
+      }
+      
+      // Write top KB results  
+      const topKb = (output.sources.kb || []).filter(r => !r.error).slice(0, 2);
+      for (const r of topKb) {
+        mdContent += `### ${r.title || 'Untitled'}\n`;
+        mdContent += `*Source: Hive Mind | Category: ${r.category}*\n\n`;
+        mdContent += `${(r.content || '').slice(0, 400)}\n\n`;
+      }
+      
+      mdContent += `---\n\n`;
+      fs.appendFileSync(retrievedFile, mdContent);
+      
       if (!opts.json) {
-        console.log(`\n💾 Cached ${cacheEntry.results.rag.length + cacheEntry.results.kb.length} results to ${cacheFile}`);
+        console.log(`\n💾 Cached + saved to memory/retrieved/${today}.md`);
       }
     } catch (e) {
       // Caching failed, not critical
-      if (!opts.json) console.error(`⚠️ Cache write failed: ${e.message}`);
+      if (!opts.json) console.error(`⚠️ Cache/memory write failed: ${e.message}`);
     }
   }
 }
