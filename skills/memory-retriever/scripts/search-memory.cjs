@@ -65,7 +65,12 @@ function parseArgs() {
     const m = id.match(/\*\*Name:\*\*\s*(.+)/i);
     if (m) defaultAgent = m[1].trim().toLowerCase();
   } catch {}
-  const opts = { sources: 'all', limit: 10, agent: defaultAgent, days: 7 };
+  
+  // Detect role from env or IDENTITY.md (HQ agents: sybil, sage, santos, saber, sam)
+  const HQ_AGENTS = ['sybil', 'sage', 'santos', 'saber', 'sam'];
+  const defaultRole = process.env.AGENT_ROLE || (HQ_AGENTS.includes(defaultAgent) ? 'hq' : 'field');
+  
+  const opts = { sources: 'all', limit: 10, agent: defaultAgent, days: 7, role: defaultRole };
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
       case '--sources': opts.sources = args[++i]; break;
@@ -79,6 +84,8 @@ function parseArgs() {
       case '--isolation': opts.isolation = args[++i]; break;
       case '--no-cache': opts.noCache = true; break;
       case '--workspace': opts.workspace = args[++i]; break;
+      case '--role': opts.role = args[++i]; break;  // Override auto-detected role
+      case '--all-agents': opts.allAgents = true; break;  // HQ: search all agents' docs
       default:
         if (!args[i].startsWith('--')) opts.query = args[i];
     }
@@ -305,6 +312,16 @@ async function searchRAG(query, embedding, opts) {
   // Phase 1: Broad retrieval (fetch more than needed)
   const broadCount = Math.max(opts.limit * 3, 20);
   
+  // HQ agents with allAgents=true can see all documents (no filter)
+  // Field agents and default: filter to own agent_id
+  const body = {
+    query_embedding: embedding,
+    match_count: broadCount
+  };
+  if (!opts.allAgents) {
+    body.filter_agent_id = agentId;
+  }
+  
   const resp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/search_documents`, {
     method: 'POST',
     headers: {
@@ -312,11 +329,7 @@ async function searchRAG(query, embedding, opts) {
       'Authorization': `Bearer ${SUPABASE_KEY}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      query_embedding: embedding,
-      match_count: broadCount,
-      filter_agent_id: agentId
-    })
+    body: JSON.stringify(body)
   });
   
   if (!resp.ok) {
@@ -542,16 +555,26 @@ async function main() {
     output.sources.files = searchLocalFiles(opts.query, opts);
   }
   
-  if (sources.includes('rag') && embedding) {
-    promises.push(searchRAG(opts.query, embedding, opts).then(r => output.sources.rag = r));
-  } else if (sources.includes('rag') && !embedding) {
-    output.sources.rag = [{ source: 'rag', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
+  // RAG (documents table): HQ sees all agents, field agents skip (isolated)
+  if (sources.includes('rag')) {
+    if (opts.role === 'field') {
+      output.sources.rag = [{ source: 'rag', skipped: true, reason: 'Field agents search local only (isolated)' }];
+    } else if (embedding) {
+      // HQ agents: search ALL documents (no agent_id filter)
+      const hqOpts = { ...opts, allAgents: true };
+      promises.push(searchRAG(opts.query, embedding, hqOpts).then(r => output.sources.rag = r));
+    } else {
+      output.sources.rag = [{ source: 'rag', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
+    }
   }
   
-  if (sources.includes('kb') && embedding) {
-    promises.push(searchKB(opts.query, embedding, opts).then(r => output.sources.kb = r));
-  } else if (sources.includes('kb') && !embedding) {
-    output.sources.kb = [{ source: 'kb', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
+  // KB (Hive Mind): Field agents should have this locally via hive-pull, but allow query as fallback
+  if (sources.includes('kb')) {
+    if (embedding) {
+      promises.push(searchKB(opts.query, embedding, opts).then(r => output.sources.kb = r));
+    } else {
+      output.sources.kb = [{ source: 'kb', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
+    }
   }
   
   await Promise.all(promises);
