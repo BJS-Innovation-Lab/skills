@@ -20,7 +20,9 @@ function parseArgs() {
     tag: null,
     recent: null,
     limit: 10,
-    json: false
+    json: false,
+    namespace: null,        // Filter to specific namespace (e.g., "vulkn", "client:acme", "general")
+    excludeClient: false    // Field agents: exclude client-specific entries from other clients
   };
   
   for (let i = 0; i < args.length; i++) {
@@ -30,6 +32,8 @@ function parseArgs() {
     else if (arg === '--tag' && args[i+1]) opts.tag = args[++i];
     else if (arg === '--recent' && args[i+1]) opts.recent = parseInt(args[++i]);
     else if (arg === '--limit' && args[i+1]) opts.limit = parseInt(args[++i]);
+    else if (arg === '--namespace' && args[i+1]) opts.namespace = args[++i];
+    else if (arg === '--exclude-client') opts.excludeClient = true;
     else if (arg === '--json') opts.json = true;
     else if (arg === '--help') {
       console.log(`
