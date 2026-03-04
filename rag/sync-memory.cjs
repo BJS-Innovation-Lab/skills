@@ -49,10 +49,11 @@ const AGENT_UUIDS = {
 };
 
 // Default paths to sync (works for any agent)
+// Everything searchable should be inside memory/
+// Structure: memory/{daily notes, projects/, learning/, hive-cache/, etc.}
+// Boot files (MEMORY.md, SOUL.md, etc.) at root don't need syncing
 const DEFAULT_PATHS = [
-  'MEMORY.md', 'SOUL.md', 'USER.md', 'IDENTITY.md',
-  'AGENTS.md', 'PENDING.md', 'TOOLS.md',
-  'memory/', 'research/', 'projects/', 'clients/',
+  'memory/',
 ];
 
 // Build agent config dynamically
