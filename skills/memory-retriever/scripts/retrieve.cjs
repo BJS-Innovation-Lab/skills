@@ -43,15 +43,21 @@ for (let d = 0; d < days; d++) {
 const templates = {
   general: `Search my memory files for information about: "${query}"
 
-Files to check (most recent first):
+**STEP 1 — Run Supabase search FIRST:**
+\`\`\`bash
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+\`\`\`
+This searches local files + RAG embeddings + Knowledge Base simultaneously.
+
+**STEP 2 — Supplement with manual file checks if needed:**
 ${dateFiles.map(f => `- ${f}`).join('\n')}
 - memory/core/*.md
 - memory/working/*.md
 - MEMORY.md
 
 Instructions:
-1. Read each file that exists (skip missing files silently)
-2. Find ALL mentions of the topic
+1. Run the Supabase search command FIRST — it's faster and more comprehensive
+2. If you need more detail on specific files, read them directly
 3. Reason about relevance — don't return everything, just what matters
 
 Return format:
@@ -160,7 +166,12 @@ Return format:
 
   briefing: `Load all context about: "${query}"
 
-Search ALL memory sources:
+**STEP 1 — Run Supabase search FIRST:**
+\`\`\`bash
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+\`\`\`
+
+**STEP 2 — Supplement with manual file checks:**
 ${dateFiles.map(f => `- ${f}`).join('\n')}
 - memory/core/*.md
 - memory/working/*.md
@@ -170,10 +181,11 @@ ${dateFiles.map(f => `- ${f}`).join('\n')}
 - MEMORY.md
 
 Instructions:
-1. Find EVERYTHING related to this topic
-2. Organize chronologically
-3. Extract: decisions made, commitments, preferences, known issues
-4. Include brand voice/tone if this is a client
+1. Run the Supabase search command FIRST
+2. Find EVERYTHING related to this topic
+3. Organize chronologically
+4. Extract: decisions made, commitments, preferences, known issues
+5. Include brand voice/tone if this is a client
 
 Return format:
 ## Briefing: ${query}
@@ -201,8 +213,14 @@ Max 500 words.`,
   multihop: `I need deep context on: "${query}"
 This requires multi-hop reasoning — don't just do a keyword search.
 
+**Phase 0 — Run Supabase search FIRST:**
+\`\`\`bash
+cd ~/.openclaw/workspace && source rag/.env && node skills/memory-retriever/scripts/search-supabase.cjs "${query}" --sources all
+\`\`\`
+This gives you comprehensive results from files + RAG + KB instantly.
+
 Phase 1 — Direct search:
-Read these files and find mentions of the topic:
+Review Supabase results, then supplement by reading key files:
 ${dateFiles.slice(0, 5).map(f => `- ${f}`).join('\n')}
 - memory/core/*.md
 - memory/working/*.md
