@@ -318,11 +318,9 @@ async function searchRAG(query, embedding, opts) {
   // Field agents and default: filter to own agent_id
   const body = {
     query_embedding: embedding,
-    match_count: broadCount
+    match_count: broadCount,
+    filter_agent_id: opts.allAgents ? null : agentId  // null = no filter (HQ sees all)
   };
-  if (!opts.allAgents) {
-    body.filter_agent_id = agentId;
-  }
   
   const resp = await fetch(`${SUPABASE_URL}/rest/v1/rpc/search_documents`, {
     method: 'POST',

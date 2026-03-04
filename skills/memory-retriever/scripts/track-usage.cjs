@@ -11,13 +11,17 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;
 const AGENT_NAME = process.env.AGENT_NAME || 'unknown';
 
 async function trackUsage(opts) {
+  // Disabled until org_id is set up in Supabase
+  // The log_agent_activity RPC requires a valid org_id foreign key
+  return true;
+  
   if (!SUPABASE_KEY) {
     console.error('[track-usage] No SUPABASE_KEY, skipping');
     return;
   }
 
   const payload = {
-    p_org_id: '00000000-0000-0000-0000-000000000001', // BJS Labs org
+    // p_org_id: '00000000-0000-0000-0000-000000000001', // Disabled — org doesn't exist yet
     p_activity_type: 'memory_retriever',
     p_title: `Memory search: ${opts.query?.slice(0, 50) || 'unknown'}`,
     p_description: `Agent ${AGENT_NAME} searched memory`,
