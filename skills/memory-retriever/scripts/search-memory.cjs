@@ -109,6 +109,8 @@ function searchLocalFiles(query, opts) {
     path.join(memDir, 'core'),
     path.join(memDir, 'working'),
     path.join(memDir, 'team'),  // team-shared memory (always included)
+    path.join(memDir, 'hive-cache'),  // Hive Mind pulled locally each morning
+    path.join(memDir, 'retrieved'),   // Knowledge pulled from Supabase (persisted)
     path.join(memDir, 'learning/corrections'),
     path.join(memDir, 'learning/insights'),
     path.join(memDir, 'learning/outcomes'),
@@ -568,13 +570,10 @@ async function main() {
     }
   }
   
-  // KB (Hive Mind): Field agents should have this locally via hive-pull, but allow query as fallback
+  // KB (Hive Mind): Everyone gets this locally via morning hive-pull, no Supabase query needed
+  // The hive-cache is searched as part of local files (memory/hive-cache/)
   if (sources.includes('kb')) {
-    if (embedding) {
-      promises.push(searchKB(opts.query, embedding, opts).then(r => output.sources.kb = r));
-    } else {
-      output.sources.kb = [{ source: 'kb', error: 'No embedding — need GEMINI_API_KEY (or OPENAI_API_KEY) + SUPABASE_URL' }];
-    }
+    output.sources.kb = [{ source: 'kb', skipped: true, reason: 'Hive Mind is pulled locally each morning — search memory/hive-cache/ instead' }];
   }
   
   await Promise.all(promises);
