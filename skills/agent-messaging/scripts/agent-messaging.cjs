@@ -10,7 +10,7 @@
  *   node agent-messaging.cjs listen  (realtime subscription)
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '../rag/.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '../../../rag/.env') });
 const { createClient } = require('@supabase/supabase-js');
 
 const AGENT_ID = process.env.AGENT_ID || 'sybil';
@@ -18,7 +18,7 @@ const CLIENT_ID = process.env.CLIENT_ID || 'vulkn-internal';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
 );
 
 async function sendMessage(toAgent, message, options = {}) {

@@ -108,9 +108,42 @@ Railway containers have public URLs, so they can receive instant push notificati
 ## Files
 
 - `scripts/agent-messaging.cjs` — Main CLI tool
-- `scripts/message-notifier.cjs` — Webhook receiver for Railway
-- `scripts/webhook-receiver.cjs` — Alternate webhook handler
+- `scripts/message-notifier.cjs` — Webhook receiver
+- `scripts/setup-funnel.sh` — One-command Tailscale Funnel setup
 - `schema/setup.sql` — Database schema
+
+## Instant Notifications (Tailscale Funnel)
+
+For **instant** message delivery (instead of heartbeat polling), set up Tailscale Funnel:
+
+### Quick Setup (One Command)
+```bash
+cd ~/.openclaw/workspace/skills/agent-messaging
+AGENT_ID=your_name ./scripts/setup-funnel.sh
+```
+
+### What It Does
+1. Checks Tailscale is connected
+2. Starts the message notifier on port 3456
+3. Enables Tailscale Funnel (public HTTPS URL)
+4. Gives you the webhook URL to register
+
+### Register Your URL
+After setup, update Supabase:
+```sql
+UPDATE known_agents 
+SET webhook_url = 'https://your-machine.tail[xxx].ts.net/'
+WHERE agent_id = 'your_name';
+```
+
+### Current Funnel URLs
+| Agent | Machine | Webhook URL |
+|-------|---------|-------------|
+| Sybil | sybils-mac-mini | `https://sybils-mac-mini.tail3a3abc.ts.net/` |
+| Saber | (pending) | — |
+| Sage | (pending) | — |
+| Santos | (pending) | — |
+| Sam | (pending) | — |
 
 ## Team
 

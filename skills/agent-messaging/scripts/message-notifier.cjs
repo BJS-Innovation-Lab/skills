@@ -13,7 +13,7 @@
  * Set the agent's webhook_url in known_agents to point here.
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '../rag/.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '../../../rag/.env') });
 const http = require('http');
 const { createClient } = require('@supabase/supabase-js');
 const { execSync } = require('child_process');
@@ -24,7 +24,7 @@ const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET || '';
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
 );
 
 // Track recent notifications to avoid duplicates
@@ -131,7 +131,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const payload = JSON.parse(body);
         
-        if (payload.event === 'new_message' && payload.to_agent === AGENT_ID) {
+        if ((payload.event === 'new_message' || payload.type === 'new_message') && (payload.to_agent === AGENT_ID || payload.to === AGENT_ID)) {
           await handleNotification(payload);
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ received: true }));
