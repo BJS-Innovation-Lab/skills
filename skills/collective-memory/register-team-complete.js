@@ -1,8 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config({ path: require('path').join(__dirname, '../../rag/.env') });
 
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_KEY = 'process.env.SUPABASE_SERVICE_KEY';
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ORG_ID = '6420346e-4e6a-47a8-b671-80beacd394b4';
+
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  console.error('❌ Missing SUPABASE_URL or SUPABASE_SERVICE_KEY env vars');
+  process.exit(1);
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -15,7 +21,8 @@ const agents = [
 ];
 
 async function registerAgents() {
-  console.log('📡 Registering VULKN Agents...');
+  console.log('📡 Registering VULKN Agents to Hive Mind...');
+  console.log(`🔗 Supabase: ${SUPABASE_URL}`);
   
   // Step 1: Create the Org if it doesn't exist
   console.log('Building Org structure...');
@@ -25,6 +32,8 @@ async function registerAgents() {
     
   if (orgError) {
     console.error('❌ Failed to create Org:', orgError.message);
+  } else {
+    console.log('✅ Org created/verified');
   }
 
   // Step 2: Register Agents
@@ -39,6 +48,8 @@ async function registerAgents() {
       console.log(`✅ Registered: ${agent.name}`);
     }
   }
+  
+  console.log('🐝 Hive Mind registration complete!');
 }
 
 registerAgents();
