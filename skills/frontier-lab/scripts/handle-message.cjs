@@ -67,6 +67,18 @@ async function main() {
     // For now, we'll create a placeholder that the agent can customize
     const response = await generateResponse(humanMessage, AGENT_NAME);
 
+    // Mark message as read FIRST to prevent duplicates
+    await fetch(`${SUPABASE_URL}/rest/v1/agent_messages?id=eq.${msg.id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({ read: true }),
+    });
+
     if (respondUrl) {
       // POST response back to Frontier Lab
       const postRes = await fetch(respondUrl, {
@@ -90,17 +102,6 @@ async function main() {
       }
     }
 
-    // Mark message as read
-    await fetch(`${SUPABASE_URL}/rest/v1/agent_messages?id=eq.${msg.id}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal',
-      },
-      body: JSON.stringify({ read: true }),
-    });
   }
 }
 

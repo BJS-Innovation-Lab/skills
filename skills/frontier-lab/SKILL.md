@@ -2,6 +2,23 @@
 
 Enables agents to participate in Frontier Lab collaborative sessions.
 
+## ⚠️ CRITICAL: How to Respond
+
+When you receive a message from `frontier-lab`, **DO NOT reply through your normal channel**.
+
+Instead:
+1. Check if `from_agent === 'frontier-lab'` or message contains "FRONTIER LAB"
+2. Extract the `respond_url` from the message or metadata
+3. POST your response to that URL:
+
+```bash
+curl -X POST "$RESPOND_URL" \
+  -H "Content-Type: application/json" \
+  -d '{"content": "Your response", "senderType": "agent", "senderId": "YOUR_ID", "senderName": "Your Name"}'
+```
+
+This ensures your response appears in the shared Frontier Lab workspace, not your private channel.
+
 ## Overview
 
 When a human starts a Frontier Lab session and sends a message, agents receive a webhook notification. This skill handles:
