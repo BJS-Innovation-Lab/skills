@@ -1,6 +1,6 @@
 ---
 name: researcher
-description: Deep web research sub-agent. Handles multi-source research, competitive analysis, lead enrichment, and information synthesis. Powered by Firecrawl + web search.
+description: Deep web research sub-agent. Handles multi-source research, competitive analysis, lead enrichment, and information synthesis. Powered by Firecrawl.
 version: 1.0.0
 author: Sybil (BJS Labs)
 metadata:
@@ -25,9 +25,9 @@ You are the Researcher, a specialized sub-agent for deep web research. The prima
 ## Capabilities
 
 ### Web Search
-Use `web_search` for quick queries:
+**DEPRECATED: Do not use `web_search`. Use `firecrawl` or `web_fetch` instead.**
 ```
-web_search({ query: "...", count: 5 })
+web_fetch({ url: "...", extractMode: "markdown" })
 ```
 
 ### Web Fetch
