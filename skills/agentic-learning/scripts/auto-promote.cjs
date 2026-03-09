@@ -39,36 +39,89 @@ const promoteToIdx = args.indexOf('--promote-to');
 const promoteTo = promoteToIdx >= 0 ? args[promoteToIdx + 1] : 'both';
 
 /**
- * Parse YAML-like frontmatter entries from a markdown file
- * Entries are separated by `---`
+ * Parse entries from markdown files
+ * Supports both:
+ *   - YAML-like frontmatter (entries separated by `---`)
+ *   - Prose markdown (entries separated by `## Title`)
  */
 function parseEntries(filePath) {
   if (!fs.existsSync(filePath)) return [];
   const content = fs.readFileSync(filePath, 'utf-8');
-  const blocks = content.split(/\n---\n/).filter(b => b.trim());
   const entries = [];
+  
+  // Try YAML-style first (separated by ---)
+  if (content.includes('\n---\n')) {
+    const blocks = content.split(/\n---\n/).filter(b => b.trim());
+    for (const block of blocks) {
+      const entry = parseYamlBlock(block);
+      if (entry.id) entries.push(entry);
+    }
+  }
+  
+  // Also parse prose markdown (## headers)
+  const proseEntries = parseProseMarkdown(content, filePath);
+  entries.push(...proseEntries);
+  
+  return entries;
+}
+
+function parseYamlBlock(block) {
+  const entry = {};
+  const lines = block.split('\n');
+  
+  for (const line of lines) {
+    if (line.startsWith('#') || !line.trim()) continue;
+    const match = line.match(/^(\w[\w_]*)\s*:\s*(.+)$/);
+    if (match) {
+      let [, key, value] = match;
+      value = value.trim().replace(/^["']|["']$/g, '');
+      if (value === 'null') value = null;
+      if (value === 'true') value = true;
+      if (value === 'false') value = false;
+      entry[key] = value;
+    }
+  }
+  return entry;
+}
+
+/**
+ * Parse prose markdown format:
+ * ## Title
+ * **Context:** ...
+ * **Learning:** ...
+ * **Stakes:** low/medium/high
+ */
+function parseProseMarkdown(content, filePath) {
+  const entries = [];
+  // Split by ## headers (but not # main title)
+  const blocks = content.split(/\n(?=## [^\n]+\n)/).filter(b => b.trim() && b.includes('## '));
   
   for (const block of blocks) {
     const entry = {};
-    const lines = block.split('\n');
     
-    for (const line of lines) {
-      // Skip headers and empty lines
-      if (line.startsWith('#') || !line.trim()) continue;
-      
-      const match = line.match(/^(\w[\w_]*)\s*:\s*(.+)$/);
-      if (match) {
-        let [, key, value] = match;
-        // Clean up values
-        value = value.trim().replace(/^["']|["']$/g, '');
-        if (value === 'null') value = null;
-        if (value === 'true') value = true;
-        if (value === 'false') value = false;
-        entry[key] = value;
-      }
+    // Extract title from ## header
+    const titleMatch = block.match(/^## ([^\n]+)/m);
+    if (titleMatch) {
+      entry.title = titleMatch[1].trim();
+      // Generate stable ID from filename + title
+      const basename = path.basename(filePath, '.md');
+      entry.id = `${basename}-${entry.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`;
     }
     
-    if (entry.id) entries.push(entry);
+    // Extract fields: **Label:** value
+    const contextMatch = block.match(/\*\*Context:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+    if (contextMatch) entry.context = contextMatch[1].trim();
+    
+    const learningMatch = block.match(/\*\*Learning:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+    if (learningMatch) entry.learning = learningMatch[1].trim();
+    
+    const stakesMatch = block.match(/\*\*Stakes:\*\*\s*(\w+)/i);
+    if (stakesMatch) entry.stakes = stakesMatch[1].toLowerCase();
+    
+    // Only add if has meaningful content
+    if (entry.title && (entry.learning || entry.context)) {
+      entries.push(entry);
+    }
   }
   
   return entries;

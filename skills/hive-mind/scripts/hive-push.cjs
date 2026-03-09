@@ -212,16 +212,57 @@ ${dryRun ? '   ⚠️  DRY RUN MODE\n' : ''}
     process.exit(1);
   }
 
-  // Load memory file
+  const registry = loadRegistry();
+  let learnings = [];
+  
+  // Load daily memory file
   const memoryPath = path.join(MEMORY_DIR, `${targetDate}.md`);
-  if (!fs.existsSync(memoryPath)) {
-    console.log(`No memory file for ${targetDate}`);
-    return;
+  if (fs.existsSync(memoryPath)) {
+    const content = fs.readFileSync(memoryPath, 'utf-8');
+    learnings = extractLearnings(content, registry, namespace);
   }
   
-  const content = fs.readFileSync(memoryPath, 'utf-8');
-  const registry = loadRegistry();
-  const learnings = extractLearnings(content, registry, namespace);
+  // Also scan learning directories (insights/corrections)
+  const learningDirs = [
+    path.join(MEMORY_DIR, 'learning', 'insights'),
+    path.join(MEMORY_DIR, 'learning', 'corrections')
+  ];
+  
+  for (const dir of learningDirs) {
+    if (!fs.existsSync(dir)) continue;
+    
+    // Find files for today's date
+    const files = fs.readdirSync(dir).filter(f => 
+      f.endsWith('.md') && f.startsWith(targetDate)
+    );
+    
+    for (const file of files) {
+      const content = fs.readFileSync(path.join(dir, file), 'utf-8');
+      const category = dir.includes('insights') ? 'insight' : 'correction';
+      
+      // Parse prose markdown format: ## Title\n**Context:**...\n**Learning:**...
+      const entries = content.split(/\n(?=## )/).filter(b => b.includes('## '));
+      
+      for (const entry of entries) {
+        const titleMatch = entry.match(/^## ([^\n]+)/);
+        const learningMatch = entry.match(/\*\*Learning:\*\*\s*([^\n]+(?:\n(?!\*\*)[^\n]+)*)/i);
+        const contextMatch = entry.match(/\*\*Context:\*\*\s*([^\n]+)/i);
+        
+        if (titleMatch && learningMatch) {
+          const text = `${titleMatch[1].trim()}: ${learningMatch[1].trim()}`;
+          const topic = detectTopic(text, registry);
+          
+          learnings.push({
+            content: text,
+            category,
+            topic,
+            namespace,
+            date: targetDate
+          });
+        }
+      }
+    }
+  }
   
   console.log(`Found ${learnings.length} learning(s)\n`);
   
