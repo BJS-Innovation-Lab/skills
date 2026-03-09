@@ -1,0 +1,12 @@
+{
+  "name": "a2a-relay-client",
+  "version": "1.0.0",
+  "description": "A2A Relay Client for BJS LABS agents",
+  "bin": {
+    "a2a-connect": "./connect.js",
+    "a2a-send": "./send.js"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.4"
+  }
+}
