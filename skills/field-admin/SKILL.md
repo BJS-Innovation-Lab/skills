@@ -20,6 +20,7 @@ This is the admin backbone for agents deployed in the field. It ensures every fi
 | `escalation` | Contact customer service agent when confused, stuck, or customer is upset | Triggered by events |
 | `consultation-oracle` | Ask Frontier Lab for advice when uncertain (before responding to customer) | Triggered by uncertainty |
 | `nightly-report` | Compile and send daily activity summary to HQ | Cron: every night |
+| `learning-extraction` | Review day, log learnings locally, share valuable ones to Hive Mind | Cron: every night (after report) |
 | `field-onboarding` | First-run checklist for new client deployment | Once, on first deployment |
 | `coherence-check` | Verify agent behavior matches brand profile, catch drift, confirm learnings applied | Cron: weekly + bi-weekly + monthly |
 
