@@ -7,7 +7,9 @@
 const https = require('https');
 const { URL } = require('url');
 
-// Load env
+// Auto-load env vars from rag/.env
+require('./env-loader.cjs').loadEnv();
+
 // Required env vars - no hardcoded fallbacks
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_ANON_KEY;

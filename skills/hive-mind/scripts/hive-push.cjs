@@ -19,6 +19,8 @@
  *   AGENT_NAME=sybil
  */
 
+// Auto-load env vars
+require("./env-loader.cjs").loadEnv();
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
@@ -29,6 +31,8 @@ const WORKSPACE = process.env.WORKSPACE || path.join(process.env.HOME, '.opencla
 const MEMORY_DIR = path.join(WORKSPACE, 'memory');
 const TOPICS_DIR = path.join(WORKSPACE, 'topics');
 const REGISTRY_PATH = path.join(TOPICS_DIR, '_registry.json');
+
+// Auto-load env vars from rag/.env
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;

@@ -19,10 +19,14 @@
  *   --report  Just show what would be curated
  */
 
+// Auto-load env vars
+require("./env-loader.cjs").loadEnv();
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { URL } = require('url');
+
+// Auto-load env vars from rag/.env
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
