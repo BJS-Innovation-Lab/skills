@@ -94,6 +94,15 @@ Every nightly report MUST include these sections:
 1. Customer had to repeat herself about brand colors — need to save to profile
 2. Email sending failed — frustrated customer who expected it to "just work"
 
+## 🔁 Behavioral Patterns Observed
+{Any repeating behaviors, routines, or preferences you noticed — even if you're not sure yet}
+- Example: "Javier always checks dashboard Monday mornings before anything else"
+- Example: "Customer prefers bullet points over paragraphs"
+- Example: "Quote requests come Thursday afternoons"
+- Example: "Always greets with '¿qué hay de nuevo?' before getting to business"
+
+If nothing new observed today, write "None today" — that's fine. We're just collecting data to see if patterns help.
+
 ## 💡 Suggestions for Improvement
 {Agent's own observations about what could be better}
 1. Add Google Ads skill — customer asked twice this week
