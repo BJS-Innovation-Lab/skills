@@ -30,13 +30,22 @@ function detectAgent() {
     const idFile = path.join(WORKSPACE, 'IDENTITY.md');
     if (fs.existsSync(idFile)) {
       const content = fs.readFileSync(idFile, 'utf-8');
+      // Try multiple patterns to extract agent name
       const nameMatch = content.match(/\*\*Name:\*\*\s*(\w+)/i) || 
+                        content.match(/^-\s*\*\*Name:\*\*\s*(\w+)/im) ||  // List format: - **Name:** Sam
                         content.match(/^Name:\s*(\w+)/im) || 
                         content.match(/^#\s*(\w+)/m);
       if (nameMatch) return nameMatch[1].toLowerCase();
     }
   } catch {}
-  return require('os').hostname().split('.')[0].toLowerCase();
+  // Fallback to hostname, but try to map common hostnames to known agents
+  const hostname = require('os').hostname().split('.')[0].toLowerCase();
+  // Extract agent name from hostnames like "sams-macbook-air" -> "sam"
+  for (const agentName of Object.keys(AGENT_UUIDS)) {
+    if (hostname.startsWith(agentName)) return agentName;
+  }
+  console.warn(`Warning: Could not detect agent from IDENTITY.md, falling back to hostname: ${hostname}`);
+  return hostname;
 }
 
 // Agent UUID lookup
@@ -56,11 +65,24 @@ const DEFAULT_PATHS = [
   'memory/',
 ];
 
+// Generate a deterministic UUID from a string (for unknown agents)
+function stringToUUID(str) {
+  const hash = crypto.createHash('md5').update(str).digest('hex');
+  // Format as UUID v4
+  return `${hash.slice(0,8)}-${hash.slice(8,12)}-4${hash.slice(13,16)}-${hash.slice(16,20)}-${hash.slice(20,32)}`;
+}
+
 // Build agent config dynamically
 const detectedName = detectAgent();
+const agentId = AGENT_UUIDS[detectedName] || (() => {
+  // If agent not in known list, generate deterministic UUID from name
+  console.warn(`Agent "${detectedName}" not in AGENT_UUIDS map. Generating deterministic UUID.`);
+  return stringToUUID(`vulkn-agent-${detectedName}`);
+})();
+
 const AGENT_CONFIGS = {
   [detectedName]: {
-    id: AGENT_UUIDS[detectedName] || detectedName,
+    id: agentId,
     workspace: WORKSPACE,
     paths: DEFAULT_PATHS,
   }

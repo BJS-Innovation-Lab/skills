@@ -51,7 +51,26 @@ const WHITELIST_PATTERNS = [
   /\bwhen\s+(she|he|they|it)\s+\w+,\s+then\b/gi,
   // Role descriptions for OTHER agents (not "you are")
   /\b(Sage|Sam|Saber|Santos|Scout)\s+(is|are|was)\s+(the|a|an)\s+/gi,
+  // Cron job documentation and system events
+  /\b(cron job|scheduled|heartbeat|system message|system event)\b/gi,
+  // Code example patterns (common in documentation)
+  /\b(example|usage|run this|execute|command):?\s*$/gi,
+  // HEARTBEAT.md and similar system file patterns
+  /\b(every heartbeat|before sending|after completing|check for)\b/gi,
+  // Notification/alert documentation
+  /\b(send (a )?notification|post (a )?(notification|alert)|notify (the )?user)\b/gi,
 ];
+
+// Check if line is inside a fenced code block
+function isInCodeBlock(lines, lineIndex) {
+  let inCodeBlock = false;
+  for (let i = 0; i < lineIndex; i++) {
+    if (lines[i].trim().startsWith('```')) {
+      inCodeBlock = !inCodeBlock;
+    }
+  }
+  return inCodeBlock;
+}
 
 // Category: instruction_injection
 const INSTRUCTION_PATTERNS = [
@@ -154,6 +173,12 @@ function scanContent(content, filePath, agentIdentity) {
 
     // Skip empty lines and markdown headers that are just structural
     if (!line.trim() || /^#{1,3}\s+(Resources|Reflections|Memory|Notes|Status|Context)\s*$/i.test(line)) continue;
+
+    // Skip content inside fenced code blocks (```...```)
+    if (isInCodeBlock(lines, i)) continue;
+
+    // Skip lines that are code block markers themselves
+    if (line.trim().startsWith('```')) continue;
 
     // Skip whitelisted content (legitimate system prompts, skill docs, natural conversation)
     if (isWhitelisted(line)) continue;
