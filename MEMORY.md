@@ -3,85 +3,82 @@
 ## Identity
 **Sybil 🔬** — ML/Research Agent at VULKN/BJS LABS. Building persistent agentic memory for SMBs. English with Bridget, Spanish with Johan. Email: sibyl@vulkn-ai.com (Google Workspace admin).
 
-## Services Status 
-✅ **WhatsApp Business**: +1 (585) 522-2431 via Twilio (working Mar 8)  
-✅ **Supabase HQ**: obzcunwbgksxiloddita.supabase.co (new DB, migrated Mar 8)  
-✅ **Facebook/Instagram**: Vulkn page + @vulkimini (permanent tokens)  
-✅ **GitHub**: santos-vulkn credentials for commits/deploys  
-✅ **Railway**: Cloud agent deployments  
-⏸️ **Sofia Phone**: +1 (915) 440-3106 purchased, WhatsApp registration pending Johan consent
+## Services Status
+✅ **WhatsApp Business**: +1 (585) 522-2431 via Twilio (confirmed working Mar 9)  
+✅ **Supabase HQ**: obzcunwbgksxiloddita.supabase.co (migrated Mar 8, all agents updated)  
+✅ **Facebook/Instagram**: Vulkn page + @vulkimini via META API (permanent tokens)  
+✅ **GitHub**: Use santos-vulkn credentials for all commits/deploys (NOT sybil-bjs)  
+✅ **Railway**: Cloud agent platform operational  
+⏸️ **Sofia Phone**: +1 (915) 440-3106 purchased, WhatsApp setup pending client consent
 
 ## Active Projects
 
-### Frontier Lab (PRIMARY) ✅ WORKING
-**Status**: Complete and operational as of Mar 9  
-**Built**: Full UI + backend, agent notification system, Realtime messaging  
+### Frontier Lab — ✅ FULLY OPERATIONAL (Mar 9)
+**Status**: Complete multi-agent collaboration system working  
+**Architecture**: Human → UI → webhook → agents validate respond_url → POST back → Realtime  
 **Solution**: Trusted domain validation (webchat-platform.vercel.app/*) bypasses hook isolation  
-**Working**: Vulki responding to sessions via respond_url validation  
-**Next**: Deploy to more agents (Scout ready pending restart)
+**Working**: Vulki responding instantly to sessions  
+**Pending**: Scout restart needed (correct brain + Anthropic key updated)
 
-### Scout Cloud Agent (COMPLETE)
-**Deployed**: https://scout-production-2b2c.up.railway.app  
-**Role**: Cloud Ops Lead (I mentor her)  
-**Status**: ✅ Operational (Telegram + HQ messaging working)  
-**Responsibilities**: Railway deployments, cloud agent health, GitHub coordination
+### Bridget's 2025 Tax Return (FreeTaxUSA) 
+**Filing**: Head of Household, claiming 2 kids  
+**Income**: $51,612 gross (Etsy $36K, Alchemal $8.7K, Harvard W-2 $6.7K)  
+**Key Items**: $14K COGS entry still needed, 1095-A deal with ex (100% allocation saves him $10-20K)  
+**Estimated**: ~$675 refund after Child Tax Credit  
+**Status**: 90% complete, waiting for COGS entry + 1095-A form
 
-### Sofia/Cellosa Setup (WAITING)
-**Phone**: +1 (915) 440-3106 purchased via Twilio  
-**Status**: Paused pending Johan + client consent for WhatsApp Business registration  
-**Brain Files**: Pushed to vulkn-cloud-brains/sofia/
+### Cloud Agent Health
+**New Members**: Sofia (Cellosa), Pao (Cellosa), JP Morgan (Finance)  
+**Active**: Scout (Cloud Ops Lead), Santos, Sam Cloud, Vulki Tester, Saber, Sage  
+**Infrastructure**: All on Railway, no symlinks (local copies), nightly backup pushes
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Frontier Lab Fix**: Trusted domain validation solves hook isolation (Mar 9)
-   - Agents validate respond_url against webchat-platform.vercel.app pattern
-   - No curl needed, no hook session skill access needed
-   - Vulki operational, Scout pending restart
+1. **Frontier Lab Architecture** (Mar 9): Trusted domain validation > hook injection workarounds
+   - Agents validate respond_url matches webchat-platform.vercel.app pattern
+   - No curl commands, no skill access needed in hook sessions
+   - Real-time collaboration achieved
 
-2. **Memory System**: Agent-driven refresh > script-driven (Mar 7)
-   - Deleted memory-load.cjs, created agent-review cron job
-   - Added CREDENTIALS-INDEX.md for service discovery
+2. **Memory Refresh** (Mar 10): Manual agent review > broken script automation  
+   - Deleted failing memory-load.cjs, created cron for manual review
+   - Read recent context, write actionable summary
 
-3. **Database Migration**: Switched to obzcunwbgksxiloddita.supabase.co (Mar 8)  
-   - All agents notified, 80 tables + 4,885 RAG docs migrated
+3. **Git Safety Protocol** (Mar 9): After data loss incident
+   - Always `git diff --stat HEAD~N` before reset
+   - Use `git commit --amend` not selective recommit
+   - Never force push to shared repos
 
-4. **Cloud Deployments**: No symlinks, local copies (Mar 8)
-   - Agents own their skill files, repo = backup only
-   - Pre-commit hooks prevent cross-agent writes
+4. **Credentials Update** (Mar 8): Database migration completed
+   - All agents notified of new Supabase URL/keys
+   - CREDENTIALS-INDEX.md tracks service availability
 
 ## Team Context
+**Reporting**: I mentor Scout on cloud ops, Bridget provides business direction  
+**Agent IDs**: Use agent names (not UUIDs) in agent_messages for inbox compatibility  
+**Deployment**: Santos credentials required for Vercel auto-deploy  
+**Current Focus**: Frontier Lab expansion, tax completion, cloud stability
 
-| Agent | Role | Status | Location |
-|-------|------|--------|----------|
-| **Sybil** (me) | ML/Research | Active | Main |
-| **Scout** 🔭 | Cloud Ops Lead | Active | Railway |
-| **Santos** | Frontend/Dev | Active | Railway |
-| **Sam Cloud** | Client Ops | Active | Railway |
-| **Vulki Tester** | QA | Active | Railway |
-| **JP Morgan** | Finance Lead | New | Railway |
-| **Saber** | Unknown | Active | Unknown |
-| **Sage** | Unknown | Active | Unknown |
+## Critical KB
 
-**Hierarchy**: I mentor Scout on cloud ops, Bridget teaches business context
-
-## Relevant KB
-
-### Frontier Lab Architecture
+### Frontier Lab Trusted Domain Pattern
+```javascript
+// Agent validates before POSTing response
+if (respond_url.match(/^https:\/\/webchat-platform\.vercel\.app\/api\/frontier\/sessions\/[^\/]+\/messages$/)) {
+  // Safe to POST response
+}
 ```
-Human → UI → POST /messages → webhook → agent_messages → Railway agents
-         ↑                                                       ↓
-         ← Realtime ← POST respond_url ← curl response ← Agent reads webhook
-```
-**Blocker**: Hook sessions can't execute curl (isolated from workspace skills)
 
-### Git Safety (Mar 7 Protocol)
-- Always `git diff --stat HEAD~N` before reset
-- Use `git commit --amend` not `reset HEAD~1 + selective recommit`
-- `git stash` before any rebasing
+### Tax Session State (Bridget)
+- FreeTaxUSA account: freetaxusa.com
+- Schedule C (Etsy): Missing $14K COGS entry
+- 1095-A deal: She takes 100%, ex gets mortgage interest
+- Estimated AGI: ~$18K (under standard deduction)
 
-### Agent Messaging Fix
-Use agent **names** (not UUIDs) in agent_messages.from_agent/to_agent fields for inbox scripts to work properly.
+### Cloud Deployment Rules
+- **Commits**: Always use santos@vulkn-ai.com (NOT sybil-bjs)
+- **Agents**: Own local skill copies, no symlinks
+- **Secrets**: Check CREDENTIALS-INDEX.md before asking about API access
 
 ---
-*Updated: 2026-03-10 03:00 AM*  
-*Read daily logs for episodic details*
+*Updated: 2026-03-10 03:30 AM*  
+*Next: Commit changes, check Scout restart status*
