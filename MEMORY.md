@@ -13,12 +13,12 @@
 
 ## Active Projects
 
-### Frontier Lab (PRIMARY)
-**Status**: Core loop complete, webhook isolation bug blocking full automation  
+### Frontier Lab (PRIMARY) ✅ WORKING
+**Status**: Complete and operational as of Mar 9  
 **Built**: Full UI + backend, agent notification system, Realtime messaging  
-**Issue**: Hook sessions isolated from workspace skills → agents can't execute curl to respond_url  
-**Options**: OpenClaw config-level trust OR polling fallback  
-**Next**: Santos/Scout to fix hook isolation OR add handle-message.cjs to Railway heartbeat
+**Solution**: Trusted domain validation (webchat-platform.vercel.app/*) bypasses hook isolation  
+**Working**: Vulki responding to sessions via respond_url validation  
+**Next**: Deploy to more agents (Scout ready pending restart)
 
 ### Scout Cloud Agent (COMPLETE)
 **Deployed**: https://scout-production-2b2c.up.railway.app  
@@ -33,14 +33,19 @@
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Memory System**: Agent-driven refresh > script-driven (Mar 7)
+1. **Frontier Lab Fix**: Trusted domain validation solves hook isolation (Mar 9)
+   - Agents validate respond_url against webchat-platform.vercel.app pattern
+   - No curl needed, no hook session skill access needed
+   - Vulki operational, Scout pending restart
+
+2. **Memory System**: Agent-driven refresh > script-driven (Mar 7)
    - Deleted memory-load.cjs, created agent-review cron job
    - Added CREDENTIALS-INDEX.md for service discovery
 
-2. **Database Migration**: Switched to obzcunwbgksxiloddita.supabase.co (Mar 8)  
+3. **Database Migration**: Switched to obzcunwbgksxiloddita.supabase.co (Mar 8)  
    - All agents notified, 80 tables + 4,885 RAG docs migrated
 
-3. **Cloud Deployments**: No symlinks, local copies (Mar 8)
+4. **Cloud Deployments**: No symlinks, local copies (Mar 8)
    - Agents own their skill files, repo = backup only
    - Pre-commit hooks prevent cross-agent writes
 
@@ -78,5 +83,5 @@ Human → UI → POST /messages → webhook → agent_messages → Railway agent
 Use agent **names** (not UUIDs) in agent_messages.from_agent/to_agent fields for inbox scripts to work properly.
 
 ---
-*Updated: 2026-03-09 03:30 AM*  
+*Updated: 2026-03-10 03:00 AM*  
 *Read daily logs for episodic details*
