@@ -40,7 +40,7 @@
     "sybil:memory/learning/index.md": "a44b9457acad80c7cdf1f3f8c56ed9da",
     "sybil:memory/learning/insights/2026-02-15.md": "fcaceb1a864e5ec052036c01b6c193a9",
     "sybil:memory/learning/outcomes/test-2026-02-15.md": "030298270f1eeb1f0573d374ec8c7984",
-    "sybil:memory/team-highlights.md": "c0163f93bd6f73d5d2256d636964fb6f",
+    "sybil:memory/team-highlights.md": "a216d17e16bfbf95c6f4bba8d3eb7ae3",
     "sybil:memory/working/escalations/2026-02-15-index.md": "5dcc70f2497b90b43ac9f4353d7947dc",
     "sybil:memory/working/thread-415a84a4-af9e-4c98-9d48-040834436e44-a2a-identity-fix---crea.md": "af6bf3f8f445d441ebaa5613f727f0ba",
     "sybil:memory/working/thread-415a84a4-af9e-4c98-9d48-040834436e44-a2a-memory-logger---pul.md": "475c60ad39eda3005c1680b0fee4c40c",
@@ -757,7 +757,7 @@
     "sybil:memory/working/archived/thread-vulki-pulling-memory-retriever-fix.md": "16a71bd91b2871b7738b62a49a2a25d1",
     "sybil:memory/working/thread-saber-weekly-learning-synthesis---mar-2-8--2026.md": "34748d99e0a7d50bd64db59b12b0d0eb",
     "sybil:memory/working/thread-sage-acknowledged.md": "d10d5c3010ca372d09db2623b26ca2f8",
-    "sybil:memory/2026-03-09.md": "edff269c4e7178218c5a00c5000afc8b",
+    "sybil:memory/2026-03-09.md": "225700488a14b5064fdba63591be75c8",
     "sybil:memory/archive/2026-02/archived/thread-415a84a4-af9e-4c98-9d48-040834436e44-google-workspace-setup-.md": "0e32e2c511da9abac1f8f7218ed35882",
     "sybil:memory/archive/2026-02/archived/thread-62bb0f39-2248-4b14-806d-1c498c654ee7-google-workspace-setup-.md": "b2107c00bb7d887e20e84a39cadafc5a",
     "sybil:memory/archive/2026-02/archived/thread-e7fabc18-75fa-4294-bd7d-9e5ed0dedacb-google-workspace-setup-.md": "95dae26d7e55933de552b4b86f0cc8cd",
@@ -795,10 +795,18 @@
     "sybil:memory/hive-cache/vulkn/topic:memory.md": "ebaad219e51d39548bb7ab0ff185b7b2",
     "sybil:memory/hive-cache/vulkn/topic:on-call.md": "e54049785bced5a6518be65eddba1054",
     "sybil:memory/hive-cache/vulkn/topic:tooling.md": "681cb65fb11f8ee0ae14095aaa28dddc",
-    "sybil:memory/learning/corrections/2026-03-09.md": "3ea45330bc6b86d4e35e2320eb8aaed9",
-    "sybil:memory/learning/insights/2026-03-09.md": "4a1b24b83e3c028b19157a8bc397bb10",
+    "sybil:memory/learning/corrections/2026-03-09.md": "d008cd231b142ffd3573e9638123f16d",
+    "sybil:memory/learning/insights/2026-03-09.md": "d2c8116ea5344776d7de8430ed44db69",
     "sybil:memory/working/archived/thread-sage-general.md": "fee091d7dc86b421dc8f1998889160ff",
-    "sybil:memory/working/archived/thread-sage-token-vault-audit-response.md": "d6e4ebaecbc6ed3d7446c71920a80345"
+    "sybil:memory/working/archived/thread-sage-token-vault-audit-response.md": "d6e4ebaecbc6ed3d7446c71920a80345",
+    "sybil:memory/2026-03-10.md": "777b45c55d08438e534213bae7579865",
+    "sybil:memory/hive-cache/general/promoted_from:unknown.md": "8ec991507a2e6a2620c45e59c0237c0c",
+    "sybil:memory/hive-cache/unknown/general.md": "bdac9656681063b78b9e7108bb478b75",
+    "sybil:memory/hive-cache/unknown/topic:infrastructure.md": "d423c76e0df360e9f48ba80554171fc1",
+    "sybil:memory/learning/corrections/2026-03-10.md": "1721cb024174382d63f27fb58b46fa34",
+    "sybil:memory/learning/insights/2026-03-10.md": "41dc40ce4167679bab75e9ba6764337a",
+    "sybil:memory/working/archived/thread-e7fabc18-75fa-4294-bd7d-9e5ed0dedacb-general.md": "10498ffe5f79cbf247acea4a431c486e",
+    "sybil:memory/working/thread-sage-read-receipt---inbox-triage-2026-03-10.md": "9e26c5511346a46c0b86e286fd164617"
   },
-  "lastSync": "2026-03-10T02:30:19.912Z"
+  "lastSync": "2026-03-11T02:30:10.209Z"
 }

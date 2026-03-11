@@ -43,7 +43,12 @@
    - Deleted failing memory-load.cjs, created cron for manual review
    - Read recent context, write actionable summary
 
-3. **Git Safety Protocol** (Mar 9): After data loss incident
+3. **Context Fetch Pattern for Multi-Agent Awareness** (Mar 10): Polling-on-trigger > realtime subscriptions
+   - Agents fetch last 10 messages before responding (context awareness without realtime webhooks)
+   - Proved working when Scout referenced Vulki's earlier message
+   - 90% of realtime collaboration value at 0% infrastructure cost
+
+4. **Git Safety Protocol** (Mar 9): After data loss incident
    - Always `git diff --stat HEAD~N` before reset
    - Use `git commit --amend` not selective recommit
    - Never force push to shared repos
