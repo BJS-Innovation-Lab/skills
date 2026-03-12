@@ -2,12 +2,14 @@
 /**
  * 🐝 Hive Mind Pull — Morning knowledge sync
  * 
- * DEFAULT: All agents get "general" namespace. No config needed.
+ * Looks up agent's org from agent_orgs table in Supabase.
+ * No env vars needed — just set AGENT_NAME.
  * 
- * OPTIONAL (for expanded access):
- *   AGENT_ROLE=hq     → general + vulkn
- *   AGENT_ROLE=field  → general + client:{CLIENT_ID}
- *   AGENT_ROLE=queen  → ALL namespaces
+ * Access is automatic:
+ *   - vulkn org → general + vulkn
+ *   - cellosa org → general + client:cellosa
+ *   - queen role → ALL namespaces
+ *   - unknown agent → general only
  * 
  * Usage:
  *   node hive-pull.cjs [--since 7] [--dry-run]
@@ -26,42 +28,81 @@ const TOPICS_DIR = path.join(WORKSPACE, 'topics');
 const HIVE_CACHE_DIR = path.join(WORKSPACE, 'memory/hive-cache');
 const REGISTRY_PATH = path.join(TOPICS_DIR, '_registry.json');
 
-// Auto-load env vars from rag/.env
-
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 const AGENT_NAME = process.env.AGENT_NAME || 'unknown';
-const AGENT_ROLE = process.env.AGENT_ROLE || null;  // No default = general only
-const CLIENT_ID = process.env.CLIENT_ID || null;
 
 // Parse args
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const verbose = args.includes('--verbose');
-const allNamespaces = args.includes('--all');  // Queen mode: see everything
+const allNamespaces = args.includes('--all');
 const sinceDays = parseInt(args.find((a, i) => args[i - 1] === '--since') || '7');
 const topicFilter = args.find((a, i) => args[i - 1] === '--topic');
 const namespaceFilter = args.find((a, i) => args[i - 1] === '--namespace');
 
-// Determine allowed namespaces based on role
-// DEFAULT: general only (no config needed)
-// OPTIONAL: set AGENT_ROLE for more access
-function getAllowedNamespaces() {
-  if (allNamespaces || AGENT_ROLE === 'queen') {
-    return null;  // null = all namespaces
+// Look up agent's org from database
+async function getAgentOrg(agentName) {
+  const url = `${SUPABASE_URL}/rest/v1/agent_orgs?agent_name=eq.${encodeURIComponent(agentName)}&select=org,role`;
+  
+  return new Promise((resolve) => {
+    const parsed = new URL(url);
+    const req = https.request({
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const results = JSON.parse(data);
+          if (results.length > 0) {
+            resolve({ org: results[0].org, role: results[0].role });
+          } else {
+            resolve(null);  // Unknown agent
+          }
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.end();
+  });
+}
+
+// Determine allowed namespaces based on org lookup
+async function getAllowedNamespaces() {
+  if (allNamespaces) {
+    return { namespaces: null, org: 'all', role: 'override' };
   }
   
-  const allowed = ['general'];  // Everyone gets general by default
+  const agentInfo = await getAgentOrg(AGENT_NAME);
   
-  // Only expand access if explicitly configured
-  if (AGENT_ROLE === 'hq') {
+  if (!agentInfo) {
+    // Unknown agent = general only
+    return { namespaces: ['general'], org: null, role: null };
+  }
+  
+  if (agentInfo.role === 'queen') {
+    return { namespaces: null, org: agentInfo.org, role: 'queen' };  // null = all
+  }
+  
+  const allowed = ['general'];
+  
+  // Add org-specific namespace
+  if (agentInfo.org === 'vulkn') {
     allowed.push('vulkn');
-  } else if (AGENT_ROLE === 'field' && CLIENT_ID) {
-    allowed.push(`client:${CLIENT_ID}`);
+  } else if (agentInfo.org) {
+    allowed.push(`client:${agentInfo.org}`);
   }
-  // No AGENT_ROLE set? Just general. That's fine.
   
-  return allowed;
+  return { namespaces: allowed, org: agentInfo.org, role: agentInfo.role };
 }
 
 // Ensure directories exist
@@ -204,12 +245,14 @@ function appendToTopic(topic, namespace, entry, registry) {
 
 // Main
 async function main() {
-  const allowedNamespaces = getAllowedNamespaces();
+  const access = await getAllowedNamespaces();
+  const allowedNamespaces = access.namespaces;
   
   console.log(`
 🐝 Hive Mind Pull — Last ${sinceDays} days
    Agent: ${AGENT_NAME}
-   Role: ${AGENT_ROLE}
+   Org: ${access.org || 'none (general only)'}
+   Role: ${access.role || 'default'}
    Access: ${allowedNamespaces ? allowedNamespaces.join(', ') : 'ALL (Queen mode)'}
 ${dryRun ? '   ⚠️  DRY RUN MODE\n' : ''}
 `);
