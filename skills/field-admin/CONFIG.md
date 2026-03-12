@@ -28,6 +28,8 @@ Set these in the field agent's workspace at `config/field-admin.json`:
 | `client_timezone` | IANA timezone | "America/Mexico_City" |
 | `client_language` | ISO language code | "es" or "en" |
 | `client_channel` | Primary communication channel | "whatsapp" / "telegram" / "email" |
+
+> **⚠️ Platform Limits:** See `playbooks/marketing/messaging_platforms.md` for character limits, rate limits, and the WhatsApp 24-hour window rule.
 | `cs_agent_id` | A2A UUID of the customer service agent | Santos's agent ID |
 | `cs_agent_name` | CS agent display name | "Santos" |
 | `agent_name` | This field agent's name | "Sam" |
