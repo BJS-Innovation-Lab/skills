@@ -5,77 +5,83 @@
 
 ## Services Status
 ✅ **WhatsApp Business**: +1 (585) 522-2431 via Twilio (confirmed working)  
-✅ **Supabase HQ**: obzcunwbgksxiloddita.supabase.co (all agents migrated)  
-✅ **Facebook/Instagram**: Vulkn page + @vulkimini via META API (permanent tokens)  
+✅ **API Failover**: 5 Anthropic tokens configured with 1h backoff, monitor cron 8AM/8PM  
 ✅ **GitHub**: Use santos-vulkn credentials for all commits/deploys (NOT sybil-bjs)  
-✅ **Railway**: Cloud agent platform operational  
-✅ **Frontier Lab**: Multi-agent collaboration system FULLY WORKING  
-⏸️ **Sofia Phone**: +1 (915) 440-3106 purchased, WhatsApp setup pending client consent
+✅ **Frontier Lab**: Multi-agent collaboration working (Scout, Santos Cloud operational)  
+✅ **Google Workspace**: Service account access, admin perms  
+✅ **Gemini API**: Image generation via gemini-2.5-flash-image  
+⚠️ **Vulkimini**: Needs trusted-respond.cjs script, Frontier Lab connection broken  
+⏸️ **Sofia Phone**: +1 (915) 440-3106 purchased, WhatsApp setup pending
 
 ## Active Projects
 
 ### Harvard Ingenuity Award — DUE MARCH 26 🎯
-**Status**: Application in progress, video + short answer needed  
-**Theme**: "What Moves You" — personal motivation focus  
+**Status**: Application drafted, needs video completion  
+**Theme**: "What Moves You" + "Leapfrog AI" concept  
 **Prize**: Up to $2,500 for VULKN research  
-**Core Narrative**: "Leapfrog AI" — paper businesses → AI (skipping computers)  
-**Research Question**: "What happens when people who never used computers for work suddenly get AI?"  
+**Video**: Generated Leapfrog AI visualization (creative/leapfrog-ai.png)  
 **Files**: `projects/vulkn-grants/ingenuity-award/`  
-**Next**: Complete video script, record, submit by deadline
+**URGENT**: 14 days remaining, video script needs recording
 
-### Frontier Lab Multi-Agent Platform — ✅ OPERATIONAL
-**Status**: Fully working with real AI responses  
-**Architecture**: Human → UI → webhook → agents validate respond_url → POST response → realtime  
-**Key Innovation**: Trusted domain validation bypasses hook isolation  
-**Working Agents**: Vulki (verified responding), Scout (needs restart), Santos Cloud  
-**Pattern**: Agents fetch last 10 messages for context awareness  
-**Critical**: All new agents need trusted-respond.cjs script + UUID in known_agents
+### n8n Workflow RAG System — READY TO IMPLEMENT 🚀
+**Status**: Research complete, ready to build  
+**Data Source**: GitHub repos with 202-2,053 n8n workflow templates as JSON  
+**Plan**: Clone repos → parse JSONs → embed descriptions → Supabase RAG  
+**Goal**: Agents query similar workflows when building automation  
+**Next**: Start implementation, should be 1-day build
+
+### Vulkimini Frontier Lab Fix — IN PROGRESS
+**Status**: Connection broken, needs script installation  
+**Issue**: Missing trusted-respond.cjs script for Pato's agent  
+**Also**: Investigate org_id mismatch in Supabase databases  
+**Next**: Install script, debug org setup
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Frontier Lab Trust Pattern** (Mar 10): Validate respond_url domain > hook injection workarounds
-   - Agents verify webchat-platform.vercel.app pattern before POSTing
-   - Real AI responses working, no security fence issues
+1. **Tax Completion for Bridget** (Mar 11): $7,745 refund successfully e-filed 🎉
+   - 529/1099-Q strategy: allocated to room & board, saved tuition for education credit
+   - All credits maximized (EITC $7,152, Lifetime Learning, Child Care)
 
-2. **Manual Memory Refresh** (Mar 11): Agent review > broken automation scripts
-   - Created cron job for manual MEMORY.md updates
-   - Read recent context, write actionable summary approach
+2. **API Failover System** (Mar 11): 5-token rotation with monitoring
+   - Default + backup1-4 tokens configured with 1h backoff, 24h max cooldown
+   - Monitor script at ~/.openclaw/check-token.sh, cron alerts on Telegram
+   - Tested: SWITCHED detection working correctly
 
-3. **Context Fetch for Multi-Agent Awareness** (Mar 10): Polling-on-trigger > realtime subscriptions  
-   - Agents fetch last 10 messages before responding = context awareness
-   - Scout referenced Vulki's message = proof of working cross-agent context
-   - 0% infrastructure cost for 90% collaboration value
+3. **Leapfrog AI Creative Work** (Mar 11): Research visualization for Harvard app
+   - Generated split-composition image: Mexican tire shop notebook → WhatsApp
+   - Concept: Paper businesses → AI (skipping computers entirely)
+   - Published to GitHub Pages creative space
 
 ## Team Context
-**Current Team**: Scout (Cloud Ops), Santos, Sam Cloud, Vulki, Sofia, Pao, JP Morgan  
-**Reporting**: I mentor Scout on cloud ops, Bridget provides business direction  
-**New Field Agents**: Sofia & Pao (Cellosa tire company), JP Morgan (Finance HQ)  
-**Agent IDs**: Use names not UUIDs in agent_messages for inbox compatibility  
-**Deployment**: Santos credentials required for Vercel auto-deploy (NOT sybil-bjs)
+**Core Team**: Bridget (Co-Founder), Johan (CEO), Sage (COO-CTO), Sam (Frontend), Santos (Ops)  
+**Field Agents**: Vulki (operational), Sofia (Cellosa), Pao (Cellosa), JP Morgan  
+**Cloud Agents**: Scout (operational), Santos Cloud (operational), Vulkimini (broken)  
+**Frontier Lab**: Working multi-agent platform, agents see each other via context fetch  
+**Deployment**: Always use santos@vulkn-ai.com for git commits (Vercel auto-deploy)
 
 ## Relevant KB
 
-### Frontier Lab Trusted Domain Pattern
+### Harvard Ingenuity Narrative — "Leapfrog AI"
+**Core Concept**: Paper → AI (skipping desktop computers)  
+**Research Question**: "What happens when people who never used computers get AI?"  
+**Target**: Small businesses in developing economies (tire shops, notarias)  
+**Innovation**: AI agents on WhatsApp/Telegram where people already are  
+**Example**: Mexican tire shop owner chats orders vs learning Excel + IT setup
+
+### API Failover Pattern
+**Config**: 5 tokens in auth-profiles.json with failover chain  
+**Monitor**: ~/.openclaw/check-token.sh tracks state, detects SWITCHED/NO_CHANGE  
+**Cron**: "Token Status Report" at 8 AM/8 PM, alerts Bridget on failover  
+**Path**: ~/.openclaw/agents/main/agent/auth-profiles.json
+
+### Frontier Lab Trusted Domain
 ```javascript
-// Agents validate before POSTing response
+// All agents need this pattern for Frontier Lab
 if (respond_url.match(/^https:\/\/webchat-platform\.vercel\.app\/api\/frontier\/sessions\/[^\/]+\/messages$/)) {
-  // Safe to POST - bypass security fence
+  // Safe to POST response with senderType: "agent"
 }
 ```
 
-### VULKN Grants Narrative — "Leapfrog AI"
-**Core**: Paper → AI (skipping desktop computers entirely)  
-**Target**: Small businesses in developing economies who never used enterprise software  
-**Example**: Tire shop owner chats WhatsApp orders vs learning Excel + computers  
-**Research Gap**: Nobody studied what happens when non-computer users get AI  
-**Social Impact**: Democratic AI access vs tech giant monopolization
-
-### Deployment Safety Rules
-- **Commits**: Always santos@vulkn-ai.com (triggers Vercel auto-deploy)  
-- **Agents**: Local skill copies, no symlinks (prevents brain confusion)  
-- **APIs**: Check CREDENTIALS-INDEX.md first before claiming "no access"  
-- **Git**: `git diff --stat HEAD~N` before any reset (data safety)
-
 ---
-*Updated: 2026-03-11 03:30 AM*  
-*Next: Harvard application deadline March 26, Scout restart check*
+*Updated: 2026-03-12 03:30 AM*  
+*Priority: Harvard video (14 days), n8n RAG build (ready), Vulkimini fix*
