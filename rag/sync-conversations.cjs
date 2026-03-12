@@ -20,7 +20,11 @@ const path = require('path');
 
 // ============== CONFIG ==============
 const WS = process.env.WORKSPACE || path.join(process.env.HOME, '.openclaw', 'workspace');
-const SESSIONS_DIR = path.join(process.env.HOME, '.openclaw', 'agents', 'main', 'sessions');
+// Handle Railway (/data/.openclaw) vs Mac (~/.openclaw)
+const OPENCLAW_BASE = process.env.OPENCLAW_HOME || 
+                      (require('fs').existsSync('/data/.openclaw') ? '/data/.openclaw' : 
+                       path.join(process.env.HOME, '.openclaw'));
+const SESSIONS_DIR = path.join(OPENCLAW_BASE, 'agents', 'main', 'sessions');
 const STATE_FILE = path.join(WS, 'rag', '.conv-sync-state.json');
 
 // Load .env
@@ -38,28 +42,42 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_AN
 // ============== AGENT IDENTITY ==============
 function getAgentInfo() {
   const identityFile = path.join(WS, 'IDENTITY.md');
-  let name = 'unknown';
-  let id = null;
+  let name = process.env.AGENT_NAME || 'unknown';
+  let id = process.env.AGENT_ID || null;
 
-  if (fs.existsSync(identityFile)) {
+  // Try to get name from IDENTITY.md
+  if (name === 'unknown' && fs.existsSync(identityFile)) {
     const content = fs.readFileSync(identityFile, 'utf-8');
     const nameMatch = content.match(/\*\*Name:\*\*\s*(.+)/i);
     if (nameMatch) name = nameMatch[1].trim().toLowerCase();
   }
 
-  // Try to get UUID from A2A config
-  const a2aConfigs = [
-    path.join(process.env.HOME, '.openclaw', 'a2a', 'config.json'),
-    path.join(WS, 'bjs-a2a-protocol', 'config.json'),
-    path.join(WS, 'a2a-protocol', 'config.json'),
-  ];
-  for (const cf of a2aConfigs) {
-    if (fs.existsSync(cf)) {
-      try {
-        const conf = JSON.parse(fs.readFileSync(cf, 'utf-8'));
-        if (conf.agentId) { id = conf.agentId; break; }
-      } catch {}
+  // Try to get UUID from A2A config (check multiple paths for Railway vs Mac)
+  if (!id) {
+    const openclaw_base = process.env.OPENCLAW_HOME || 
+                          (fs.existsSync('/data/.openclaw') ? '/data/.openclaw' : 
+                           path.join(process.env.HOME, '.openclaw'));
+    const a2aConfigs = [
+      path.join(openclaw_base, 'a2a', 'config.json'),
+      path.join(WS, 'bjs-a2a-protocol', 'config.json'),
+      path.join(WS, 'a2a-protocol', 'config.json'),
+      path.join(WS, 'skills', 'a2a-protocol', 'config.json'),
+    ];
+    for (const cf of a2aConfigs) {
+      if (fs.existsSync(cf)) {
+        try {
+          const conf = JSON.parse(fs.readFileSync(cf, 'utf-8'));
+          if (conf.agentId) { id = conf.agentId; break; }
+        } catch {}
+      }
     }
+  }
+
+  // Generate a deterministic UUID from agent name if still no ID
+  if (!id && name !== 'unknown') {
+    const crypto = require('crypto');
+    id = crypto.createHash('md5').update('vulkn-agent-' + name).digest('hex');
+    id = `${id.slice(0,8)}-${id.slice(8,12)}-${id.slice(12,16)}-${id.slice(16,20)}-${id.slice(20,32)}`;
   }
 
   return { name, id };
