@@ -7,8 +7,9 @@ const fs = require('fs');
 const path = require('path');
 
 function loadEnv() {
-  // Skip if already loaded
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
+  // Skip if already loaded (accept any key variant)
+  const hasKey = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  if (process.env.SUPABASE_URL && hasKey) {
     return;
   }
 
