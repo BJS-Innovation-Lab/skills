@@ -1,6 +1,7 @@
 ---
 name: collective-memory
-description: "Shared memory layer for agent collectives. Share learnings, search collective knowledge, synthesize insights. Includes PII protection."
+description: "⚠️ DEPRECATED — Use hive-mind instead. This skill requires tables (syntheses, collective_memories) that don't exist. See skills/hive-mind for the working version."
+deprecated: true
 metadata:
   {
     "openclaw": {
@@ -14,6 +15,25 @@ metadata:
 ---
 
 # Collective Memory
+
+> ## ⚠️ DEPRECATED — DO NOT USE
+> 
+> This skill has been replaced by **`hive-mind`**.
+> 
+> **Problem:** This skill requires `syntheses` and `collective_memories` tables that were never created in production.
+> 
+> **Solution:** Use `skills/hive-mind` instead, which uses the `bjs_knowledge` table (already exists).
+> 
+> ```bash
+> # Use these instead:
+> node skills/hive-mind/scripts/hive-query.cjs --recent 7
+> node skills/hive-mind/scripts/hive-push.cjs
+> node skills/hive-mind/scripts/hive-pull.cjs
+> ```
+
+---
+
+*Original description (for reference only):*
 
 A shared memory system for agent teams. Part of the Memory + Learning + Collective Intelligence research.
 
