@@ -1,21 +1,16 @@
 #!/usr/bin/env node
 /**
- * 🐝 Hive Mind Pull — Morning pull with namespace filtering
+ * 🐝 Hive Mind Pull — Morning knowledge sync
  * 
- * Pulls learnings based on agent's access level, stores locally.
+ * DEFAULT: All agents get "general" namespace. No config needed.
  * 
- * Access rules:
- *   - HQ agents: vulkn:* + general:*
- *   - Field agents: client:X:* + general:*
- *   - Queen (Sybil): ALL namespaces (for curation)
+ * OPTIONAL (for expanded access):
+ *   AGENT_ROLE=hq     → general + vulkn
+ *   AGENT_ROLE=field  → general + client:{CLIENT_ID}
+ *   AGENT_ROLE=queen  → ALL namespaces
  * 
  * Usage:
- *   node hive-pull.cjs [--since 7] [--topic sales] [--dry-run]
- * 
- * Env:
- *   AGENT_ROLE=hq|field|queen
- *   CLIENT_ID=acme (required if field)
- *   AGENT_NAME=sybil
+ *   node hive-pull.cjs [--since 7] [--dry-run]
  */
 
 // Auto-load env vars
@@ -36,7 +31,7 @@ const REGISTRY_PATH = path.join(TOPICS_DIR, '_registry.json');
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY;
 const AGENT_NAME = process.env.AGENT_NAME || 'unknown';
-const AGENT_ROLE = process.env.AGENT_ROLE || 'hq';
+const AGENT_ROLE = process.env.AGENT_ROLE || null;  // No default = general only
 const CLIENT_ID = process.env.CLIENT_ID || null;
 
 // Parse args
@@ -49,22 +44,22 @@ const topicFilter = args.find((a, i) => args[i - 1] === '--topic');
 const namespaceFilter = args.find((a, i) => args[i - 1] === '--namespace');
 
 // Determine allowed namespaces based on role
+// DEFAULT: general only (no config needed)
+// OPTIONAL: set AGENT_ROLE for more access
 function getAllowedNamespaces() {
   if (allNamespaces || AGENT_ROLE === 'queen') {
     return null;  // null = all namespaces
   }
   
-  const allowed = ['general'];  // Everyone gets general
+  const allowed = ['general'];  // Everyone gets general by default
   
+  // Only expand access if explicitly configured
   if (AGENT_ROLE === 'hq') {
     allowed.push('vulkn');
-  } else if (AGENT_ROLE === 'field') {
-    if (!CLIENT_ID) {
-      console.error('❌ Field agents must set CLIENT_ID');
-      process.exit(1);
-    }
+  } else if (AGENT_ROLE === 'field' && CLIENT_ID) {
     allowed.push(`client:${CLIENT_ID}`);
   }
+  // No AGENT_ROLE set? Just general. That's fine.
   
   return allowed;
 }

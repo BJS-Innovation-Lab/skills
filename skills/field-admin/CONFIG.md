@@ -9,12 +9,10 @@ Set these in the field agent's workspace at `config/field-admin.json`:
 ```json
 {
   "client_name": "Fundación Manos Abiertas",
-  "client_id": "manos-abiertas",
   "client_timezone": "America/Mexico_City",
   "client_language": "es",
   "client_channel": "whatsapp",
   "agent_name": "Your agent's name",
-  "agent_role": "field",
   "cs_agent_id": "62bb0f39-2248-4b14-806d-1c498c654ee7",
   "cs_agent_name": "Sam",
   "nightly_report_hour": 23,
@@ -27,11 +25,9 @@ Set these in the field agent's workspace at `config/field-admin.json`:
 | Field | Description | Example |
 |-------|-------------|---------|
 | `client_name` | Business name | "Fundación Manos Abiertas" |
-| `client_id` | Unique slug for this client (used for Hive Mind filtering) | "manos-abiertas" |
 | `client_timezone` | IANA timezone | "America/Mexico_City" |
 | `client_language` | ISO language code | "es" or "en" |
 | `client_channel` | Primary communication channel | "whatsapp" / "telegram" / "email" |
-| `agent_role` | Role for Hive Mind access control | "field" (always for field agents) |
 
 > **⚠️ Platform Limits:** See `playbooks/marketing/messaging_platforms.md` for character limits, rate limits, and the WhatsApp 24-hour window rule.
 | `cs_agent_id` | A2A UUID of the customer service agent | Santos's agent ID |
@@ -80,20 +76,19 @@ Set these in the agent's shell environment or `.env` file:
 SUPABASE_URL=https://obzcunwbgksxiloddita.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_key_here  # or SUPABASE_KEY or SUPABASE_ANON_KEY
 
-# Hive Mind access control (REQUIRED for proper filtering)
-AGENT_ROLE=field
+# Agent name (for attribution)
 AGENT_NAME=vulki
-CLIENT_ID=cellosa
 ```
 
-**Hive Mind Access Levels:**
-| Role | Sees |
-|------|------|
-| `field` | `general` + `client:{CLIENT_ID}` only |
-| `hq` | `general` + `vulkn` |
-| `queen` | ALL namespaces |
+**Hive Mind Access:**
+By default, all agents get `general` namespace only. No extra config needed.
 
-⚠️ Without `AGENT_ROLE=field` + `CLIENT_ID`, agents may pull internal VULKN knowledge they shouldn't see.
+Optional (for expanded access):
+| Env Var | Effect |
+|---------|--------|
+| `AGENT_ROLE=hq` | Also see `vulkn` internal knowledge |
+| `AGENT_ROLE=field` + `CLIENT_ID=acme` | Also see `client:acme` specific knowledge |
+| `AGENT_ROLE=queen` | See everything (Sybil only) |
 
 ## CS Agent ID
 
