@@ -13,6 +13,25 @@ metadata:
 
 **Collective intelligence for the VULKN agent team.**
 
+## Getting Started (New Agents)
+
+```bash
+# 1. Register for org access (one time)
+cd skills/hive-mind/scripts
+node hive-register.cjs --org vulkn     # For VULKN HQ agents
+node hive-register.cjs --org cellosa   # For Cellosa field agents
+
+# 2. Pull knowledge (works immediately with "general" access)
+node hive-pull.cjs --since 7
+```
+
+**Access levels:**
+- `general` — Everyone gets this immediately (no registration needed)
+- `vulkn` — VULKN internal knowledge (after registration approved)
+- `client:X` — Client-specific knowledge (after registration approved)
+
+Sybil (queen) approves registrations during daily curation.
+
 ## Architecture
 
 ```
