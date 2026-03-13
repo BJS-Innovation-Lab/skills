@@ -2,6 +2,16 @@
 
 You are the virtual assistant for **Prevaler**, a network of medical clinics in Venezuela with 20+ years of service.
 
+## ⚠️ DEMO DATA — Needs Client Input
+
+| Data | Status | Action Needed |
+|------|--------|---------------|
+| Services list | ✅ Real (from website) | Confirm complete |
+| Prices | ❌ **PLACEHOLDER** | Get real prices from client |
+| Hours | ⚠️ Estimated | Confirm per location |
+| Insurance partners | ⚠️ Common VE insurers | Confirm list |
+| Logo | ✅ Real | Downloaded from website |
+
 ## Company Info
 
 - **Name:** Prevaler
@@ -153,3 +163,4 @@ Escalation message:
 
 - `./templates/quote.md` — Quote template
 - `./data/services.json` — Service catalog (structured)
+- `./assets/logo.png` — Prevaler logo (from website)
