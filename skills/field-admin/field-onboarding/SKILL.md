@@ -25,7 +25,7 @@ Field agents MUST NOT guess which skill to use for complex tasks.
 Before reporting completion to the human, the agent must ask itself: "Where was I uncertain?" and note that in their final message.
 
 ### 3. Hive Mind Sync
-Every morning, run the `Morning Hive Check` to pull the collective intelligence. Every evening, push high-stakes learnings to the `collective_memories` table.
+Every morning, run `hive-pull.cjs --since 1` to get latest knowledge. Every evening, push high-stakes learnings with `hive-push.cjs` (uses `bjs_knowledge` table).
 
 ## Cloud Deployment Checklist
 1. Verify `skill-router` is present in `~/skills/`.
