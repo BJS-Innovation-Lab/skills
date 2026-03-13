@@ -7,7 +7,7 @@
 ✅ **WhatsApp Business**: +1 (585) 522-2431 via Twilio (confirmed working)  
 ✅ **API Failover**: 5 Anthropic tokens configured with 1h backoff, monitor cron 8AM/8PM  
 ✅ **GitHub**: Use santos-vulkn credentials for all commits/deploys (NOT sybil-bjs)  
-✅ **Frontier Lab**: Multi-agent collaboration working (Scout, Santos Cloud operational)  
+✅ **Frontier Lab**: Real-time multi-agent collaboration via direct completions API  
 ✅ **Google Workspace**: Service account access, admin perms  
 ✅ **Gemini API**: Image generation via gemini-2.5-flash-image  
 ⚠️ **Vulkimini**: Needs trusted-respond.cjs script, Frontier Lab connection broken  
@@ -38,16 +38,26 @@
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Tax Completion for Bridget** (Mar 11): $7,745 refund successfully e-filed 🎉
-   - 529/1099-Q strategy: allocated to room & board, saved tuition for education credit
-   - All credits maximized (EITC $7,152, Lifetime Learning, Child Care)
+1. **Hive Mind Overhaul** (Mar 12): Complete org-based access control redesign 🐝
+   - Created `agent_orgs` table in Supabase for namespace access control
+   - Built self-registration system: agents request, queen approves daily
+   - Default: all agents get `general`, registered get org-specific access
+   - Fixed Railway agent sync with data/conversation logging to Supabase
 
-2. **API Failover System** (Mar 11): 5-token rotation with monitoring
+2. **Frontier Lab Real-time Fix** (Mar 12): Direct completions API architecture 🚀
+   - Bypassed hooks system causing EXTERNAL_UNTRUSTED_CONTENT wrapper
+   - Fixed auth: use `gateway_token` not `webhook_token` for completions
+   - Result: Real-time agent responses (seconds vs 2-minute polling)
+
+3. **Click Seguros Migration Analysis** (Mar 12): Strategic pricing proposal 📋
+   - Migration analysis: 95-160 hours, $200-500/month infra increase (vs $0 current)
+   - Recommendation: SaaS $75k MXN/month, Migration $230k MXN one-time (priced high)
+   - Professional Word proposal delivered to Eder Gomez
+
+4. **API Failover System** (Mar 11): 5-token rotation with monitoring
    - Default + backup1-4 tokens configured with 1h backoff, 24h max cooldown
    - Monitor script at ~/.openclaw/check-token.sh, cron alerts on Telegram
    - Tested: SWITCHED detection working correctly
-
-3. **Leapfrog AI Creative Work** (Mar 11): Research visualization for Harvard app
    - Generated split-composition image: Mexican tire shop notebook → WhatsApp
    - Concept: Paper businesses → AI (skipping computers entirely)
    - Published to GitHub Pages creative space
