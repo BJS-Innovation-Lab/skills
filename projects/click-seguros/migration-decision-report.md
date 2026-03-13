@@ -176,6 +176,7 @@ Include: NDA, security documentation, 99.5% uptime SLA, data encryption at rest/
 
 **Key talking point for Johan:** The migration Javier wants would actually HURT Click Seguros:
 
+### Cost Comparison
 | Factor | Current (Vercel/Supabase) | After Migration (Windows/IIS/SQL) |
 |--------|---------------------------|-----------------------------------|
 | Monthly infra cost | ~$0 | $200-500 USD |
@@ -184,6 +185,22 @@ Include: NDA, security documentation, 99.5% uptime SLA, data encryption at rest/
 | Security updates | Automatic | Manual patches required |
 | Backups | Automatic daily | Must configure themselves |
 | CDN/Performance | Global edge network | Single server location |
+
+### Security Comparison (Sam's Analysis)
+**The irony:** Moving to Windows/SQL Server in-house is almost certainly LESS secure than the current cloud stack.
+
+| Security Concern | Our Stack (Supabase/Vercel) | Windows/SQL Server On-Prem |
+|------------------|------------------------------|----------------------------|
+| Data encryption at rest | ✅ AES-256 (Supabase default) | ⚠️ Depends on their setup |
+| Encryption in transit | ✅ TLS/SSL auto (Vercel) | ⚠️ They need to configure |
+| DDoS protection | ✅ Cloudflare via Vercel | ❌ They need to buy it |
+| Backups | ✅ Daily automatic (Supabase) | ⚠️ They need to set up |
+| SOC 2 compliance | ✅ Supabase is SOC 2 Type II | ⚠️ Depends on their hosting |
+| Uptime SLA | ✅ 99.9% (Vercel + Supabase) | ⚠️ Depends on their IT |
+| Auth/access control | ✅ Row Level Security, JWT | ❌ They build from scratch |
+| Patch management | ✅ Automatic (managed services) | ❌ Manual — Hugo's job |
+
+**Key message for Javier:** "Control" doesn't mean "more secure." Our managed cloud infrastructure has enterprise-grade security certifications that would cost them tens of thousands to replicate in-house.
 
 **Javier wants "control" — but what he'd actually get is:**
 - Higher costs
