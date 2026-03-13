@@ -1,0 +1,57 @@
+{
+  "company": {
+    "name": "Prevaler",
+    "tagline": "Tu salud es nuestra prioridad",
+    "phone": ["0500-7738253", "0241-7000000"],
+    "website": "https://prevaler.com",
+    "locations": ["Caracas", "Valencia", "Maracay", "Margarita"],
+    "hours": {
+      "weekdays": "7:00 AM - 7:00 PM",
+      "saturday": "7:00 AM - 1:00 PM",
+      "sunday": "Cerrado"
+    }
+  },
+  "services": {
+    "consultas": [
+      {"name": "Consulta medicina general", "price": 20, "keywords": ["general", "médico", "doctor"]},
+      {"name": "Consulta especialista", "price": 35, "keywords": ["especialista"]},
+      {"name": "Cardiología", "price": 45, "keywords": ["cardiólogo", "corazón", "cardiología"]},
+      {"name": "Ginecología", "price": 40, "keywords": ["ginecólogo", "ginecología", "mujer"]},
+      {"name": "Oftalmología", "price": 35, "keywords": ["oftalmólogo", "ojos", "vista", "oftalmología"]},
+      {"name": "Angiología", "price": 45, "keywords": ["angiólogo", "angiología", "venas", "várices"]},
+      {"name": "Odontología", "price": 25, "keywords": ["dentista", "odontología", "dientes", "dental"]},
+      {"name": "Pediatría", "price": 30, "keywords": ["pediatra", "niño", "niña", "bebé", "pediatría"]}
+    ],
+    "imagenologia": [
+      {"name": "Rayos X simple", "price": 25, "keywords": ["rayos x", "radiografía", "rx"]},
+      {"name": "Rayos X contrastado", "price": 45, "keywords": ["rayos x contraste"]},
+      {"name": "Ecografía / Ultrasonido", "price": 45, "keywords": ["eco", "ecografía", "ultrasonido"]},
+      {"name": "Ecocardiograma", "price": 60, "keywords": ["ecocardiograma", "eco corazón"]},
+      {"name": "Resonancia magnética simple", "price": 180, "keywords": ["resonancia", "rm", "rmn"]},
+      {"name": "Resonancia magnética con contraste", "price": 220, "keywords": ["resonancia contraste"]},
+      {"name": "Tomografía (TAC) simple", "price": 120, "keywords": ["tomografía", "tac", "scanner"]},
+      {"name": "Tomografía con contraste", "price": 160, "keywords": ["tomografía contraste", "tac contraste"]},
+      {"name": "Tomografía tórax/abdomen/pelvis", "price": 180, "keywords": ["tomografía tórax", "tomografía abdomen", "tomografía pelvis", "tac completo"]}
+    ],
+    "laboratorio": [
+      {"name": "Perfil básico (hematología, glicemia)", "price": 25, "keywords": ["perfil básico", "hematología", "glicemia", "examen básico"]},
+      {"name": "Perfil completo", "price": 55, "keywords": ["perfil completo", "examen completo", "chequeo"]},
+      {"name": "Perfil lipídico", "price": 30, "keywords": ["lípidos", "colesterol", "triglicéridos"]},
+      {"name": "Perfil hepático", "price": 35, "keywords": ["hígado", "hepático"]},
+      {"name": "Perfil renal", "price": 30, "keywords": ["riñón", "renal", "creatinina"]},
+      {"name": "Perfil tiroideo", "price": 45, "keywords": ["tiroides", "tiroideo", "tsh"]}
+    ],
+    "otros": [
+      {"name": "Electrocardiograma (EKG)", "price": 25, "keywords": ["electrocardiograma", "ekg", "ecg"]},
+      {"name": "Electromiografía", "price": 80, "keywords": ["electromiografía", "emg"]},
+      {"name": "Fisioterapia (sesión)", "price": 30, "keywords": ["fisioterapia", "rehabilitación", "terapia física"]},
+      {"name": "Cirugía ambulatoria", "price": null, "keywords": ["cirugía", "operación"], "note": "Consultar según procedimiento"}
+    ]
+  },
+  "insurers": [
+    "Internacional de Seguros",
+    "Seguros Caracas", 
+    "Mapfre",
+    "Mercantil Seguros"
+  ]
+}
