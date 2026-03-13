@@ -10,88 +10,89 @@
 ✅ **Frontier Lab**: Real-time multi-agent collaboration via direct completions API  
 ✅ **Google Workspace**: Service account access, admin perms  
 ✅ **Gemini API**: Image generation via gemini-2.5-flash-image  
-⚠️ **Vulkimini**: Needs trusted-respond.cjs script, Frontier Lab connection broken  
+✅ **Field Agent Sync**: All agents now logging conversations/memory to Supabase  
+⚠️ **Vulkimini**: Working but needs trusted-respond.cjs script for Frontier Lab  
 ⏸️ **Sofia Phone**: +1 (915) 440-3106 purchased, WhatsApp setup pending
 
 ## Active Projects
 
 ### Harvard Ingenuity Award — DUE MARCH 26 🎯
 **Status**: Application drafted, needs video completion  
-**Theme**: "What Moves You" + "Leapfrog AI" concept  
+**Theme**: "Leapfrog AI" concept — paper businesses → AI (skipping computers)  
 **Prize**: Up to $2,500 for VULKN research  
-**Video**: Generated Leapfrog AI visualization (creative/leapfrog-ai.png)  
+**Video**: Generated visualization (creative/leapfrog-ai.png)  
 **Files**: `projects/vulkn-grants/ingenuity-award/`  
-**URGENT**: 14 days remaining, video script needs recording
+**URGENT**: 13 days remaining, video script needs recording
 
-### n8n Workflow RAG System — READY TO IMPLEMENT 🚀
-**Status**: Research complete, ready to build  
-**Data Source**: GitHub repos with 202-2,053 n8n workflow templates as JSON  
-**Plan**: Clone repos → parse JSONs → embed descriptions → Supabase RAG  
-**Goal**: Agents query similar workflows when building automation  
-**Next**: Start implementation, should be 1-day build
+### n8n Workflow Analysis — COMPLETE ✅
+**Status**: Research complete, decision made  
+**Conclusion**: Don't RAG workflow templates — most are tutorial quality  
+**Value**: Created messaging platforms reference (WhatsApp 4096 char limit, 24h window)  
+**Files**: `projects/n8n-patterns/`, `skills/playbooks/marketing/messaging_platforms.md`  
+**Decision**: Build VULKN-tested patterns instead of using templates
 
-### Vulkimini Frontier Lab Fix — IN PROGRESS
-**Status**: Connection broken, needs script installation  
-**Issue**: Missing trusted-respond.cjs script for Pato's agent  
-**Also**: Investigate org_id mismatch in Supabase databases  
-**Next**: Install script, debug org setup
+### Field Agent Data Infrastructure — MAJOR BREAKTHROUGH ✅
+**Status**: All agents now syncing to Supabase  
+**Fixed**: Railway agent compatibility (path detection, UUID→text columns)  
+**Working**: Sam, Pao (tested), Sofia/JP Morgan/Maily/30X Baby Bot/Mike (pending deployment)  
+**Impact**: Full conversation + memory logging for intelligence mining  
+**Next**: Nightly intelligence mining crons operational
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Hive Mind Overhaul** (Mar 12): Complete org-based access control redesign 🐝
-   - Created `agent_orgs` table in Supabase for namespace access control
-   - Built self-registration system: agents request, queen approves daily
-   - Default: all agents get `general`, registered get org-specific access
-   - Fixed Railway agent sync with data/conversation logging to Supabase
+1. **Hive Mind Complete Overhaul** (Mar 12): Org-based access control 🐝
+   - Created `agent_orgs` table for namespace management
+   - Self-registration system: agents request, queen approves daily
+   - Simplified: all agents get `general` by default, no config needed
+   - **Agent roster**: sybil (queen), sage/sam/santos/saber/scout/jp-morgan (vulkn), sofia/pao (cellosa)
 
-2. **Frontier Lab Real-time Fix** (Mar 12): Direct completions API architecture 🚀
+2. **Frontier Lab Real-Time Fix** (Mar 12): Direct API architecture 🚀
    - Bypassed hooks system causing EXTERNAL_UNTRUSTED_CONTENT wrapper
-   - Fixed auth: use `gateway_token` not `webhook_token` for completions
-   - Result: Real-time agent responses (seconds vs 2-minute polling)
+   - Fixed auth: gateway_token not webhook_token for completions API
+   - **Result**: Real-time agent responses (seconds vs 2-minute polling)
+   - All commits: `84ff7ff` → `d66dd8c` in webchat-platform
 
-3. **Click Seguros Migration Analysis** (Mar 12): Strategic pricing proposal 📋
-   - Migration analysis: 95-160 hours, $200-500/month infra increase (vs $0 current)
-   - Recommendation: SaaS $75k MXN/month, Migration $230k MXN one-time (priced high)
-   - Professional Word proposal delivered to Eder Gomez
+3. **Click Seguros Strategic Proposal** (Mar 12): Professional client response 📋
+   - **Analysis**: Migration costs 95-160 hours, $200-500/month infra vs current $0
+   - **Strategy**: SaaS $75k MXN/month (preferred), Migration $230k MXN one-time (discourage)
+   - **Deliverables**: Technical analysis + professional Word proposal to Eder Gomez
+   - **Team reaction**: "great job the team loves it!"
 
 4. **API Failover System** (Mar 11): 5-token rotation with monitoring
-   - Default + backup1-4 tokens configured with 1h backoff, 24h max cooldown
-   - Monitor script at ~/.openclaw/check-token.sh, cron alerts on Telegram
-   - Tested: SWITCHED detection working correctly
-   - Generated split-composition image: Mexican tire shop notebook → WhatsApp
-   - Concept: Paper businesses → AI (skipping computers entirely)
-   - Published to GitHub Pages creative space
+   - Configured default + backup1-4 with 1h backoff, 24h max cooldown
+   - Monitor script: ~/.openclaw/check-token.sh with state tracking
+   - Cron alerts on Telegram for failover events (8AM/8PM checks)
 
 ## Team Context
-**Core Team**: Bridget (Co-Founder), Johan (CEO), Sage (COO-CTO), Sam (Frontend), Santos (Ops)  
-**Field Agents**: Vulki (operational), Sofia (Cellosa), Pao (Cellosa), JP Morgan  
-**Cloud Agents**: Scout (operational), Santos Cloud (operational), Vulkimini (broken)  
-**Frontier Lab**: Working multi-agent platform, agents see each other via context fetch  
-**Deployment**: Always use santos@vulkn-ai.com for git commits (Vercel auto-deploy)
+**Core Team**: Bridget (Co-Founder), Johan (CEO), Sage (COO-CTO), Sam (Frontend), Santos (Ops), Saber (Sales)  
+**Field Agents**: Vulki (operational), Sofia (Cellosa), Pao (Cellosa), JP Morgan, Maily, 30X Baby Bot, Mike  
+**Cloud Agents**: Scout (operational), Santos Cloud (operational), Vulkimini (working)  
+**Frontier Lab**: Active 4-agent collaboration platform with real-time responses  
+**Client Orgs**: vulkn (internal), cellosa (Sofia/Pao), click-seguros (pending decision)
 
 ## Relevant KB
 
-### Harvard Ingenuity Narrative — "Leapfrog AI"
-**Core Concept**: Paper → AI (skipping desktop computers)  
-**Research Question**: "What happens when people who never used computers get AI?"  
-**Target**: Small businesses in developing economies (tire shops, notarias)  
-**Innovation**: AI agents on WhatsApp/Telegram where people already are  
-**Example**: Mexican tire shop owner chats orders vs learning Excel + IT setup
+### Messaging Platform Limits (CRITICAL for field agents)
+- **WhatsApp**: 4,096 char limit, 24-hour window rule after user message
+- **Telegram**: 4,096 char limit, no 24h window, privacy mode gotchas
+- **SMS**: 160/70 char limits with concatenation rules
+- **Reference**: `skills/playbooks/marketing/messaging_platforms.md`
 
-### API Failover Pattern
-**Config**: 5 tokens in auth-profiles.json with failover chain  
-**Monitor**: ~/.openclaw/check-token.sh tracks state, detects SWITCHED/NO_CHANGE  
-**Cron**: "Token Status Report" at 8 AM/8 PM, alerts Bridget on failover  
-**Path**: ~/.openclaw/agents/main/agent/auth-profiles.json
+### Field Agent Railway Setup Pattern
+**Path detection**: `/data/.openclaw` (Railway) vs `~/.openclaw` (local)  
+**Database columns**: `agent_id` as TEXT not UUID for Railway compatibility  
+**Required files**: sync-conversations.cjs, gemini-embed.cjs, client-router.cjs  
+**Crons**: Memory sync 10:30 PM, conversations sync 11 PM  
+**Auth**: SUPABASE_SERVICE_ROLE_KEY for write access
 
-### Frontier Lab Trusted Domain
+### Frontier Lab Trusted Response Pattern
 ```javascript
-// All agents need this pattern for Frontier Lab
+// All agents need this for Frontier Lab participation
 if (respond_url.match(/^https:\/\/webchat-platform\.vercel\.app\/api\/frontier\/sessions\/[^\/]+\/messages$/)) {
-  // Safe to POST response with senderType: "agent"
+  // POST response with senderType: "agent", message, agent_name
 }
 ```
 
 ---
-*Updated: 2026-03-12 03:30 AM*  
-*Priority: Harvard video (14 days), n8n RAG build (ready), Vulkimini fix*
+*Updated: 2026-03-13 08:00 AM*  
+*Priority: Harvard video (13 days), Field agent deployment completion, Intelligence mining launch*
