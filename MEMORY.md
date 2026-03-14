@@ -16,13 +16,22 @@
 
 ## Active Projects
 
+### Pepe Feria Partnership — IN PROGRESS ⭐
+**Status**: Technical proposal delivered to Johan's network  
+**Client**: Fintech payroll advance app (adelantos de nómina)  
+**Proposal**: 4-module WhatsApp system ($8K/mo + $5K setup)  
+**Modules**: WhatsApp agent, document verification, SAT/IMSS risk analysis, reminders  
+**Files**: `projects/pepe-feria/VULKN_PepeFeria_Propuesta_Tecnica.docx`  
+**Context**: Connected via Federico Sada in Johan's network  
+**Next**: Client review & negotiation
+
 ### Harvard Ingenuity Award — DUE MARCH 26 🎯
 **Status**: Application drafted, needs video completion  
 **Theme**: "Leapfrog AI" concept — paper businesses → AI (skipping computers)  
 **Prize**: Up to $2,500 for VULKN research  
 **Video**: Generated visualization (creative/leapfrog-ai.png)  
 **Files**: `projects/vulkn-grants/ingenuity-award/`  
-**URGENT**: 13 days remaining, video script needs recording
+**URGENT**: 11 days remaining, video script needs recording
 
 ### n8n Workflow Analysis — COMPLETE ✅
 **Status**: Research complete, decision made  
@@ -40,13 +49,19 @@
 
 ## Recent Decisions (Last 3 Days)
 
-1. **Hive Mind Complete Overhaul** (Mar 12): Org-based access control 🐝
+1. **Leadsales Partnership** (Mar 13): Strategic mentor acquired 🤝
+   - **David Villa** (Co-Founder & COO, Leadsales) agreed to mentor VULKN
+   - Credentials: Stanford StartX, Berkeley SkyDeck, Forbes 30 Promesas 2024
+   - Key insight: "They organize chats, we answer them" — partner not competitor
+   - Can help with: Mexican SMB sales, WhatsApp best practices, LATAM scaling
+
+2. **Hive Mind Complete Overhaul** (Mar 12): Org-based access control 🐝
    - Created `agent_orgs` table for namespace management
    - Self-registration system: agents request, queen approves daily
    - Simplified: all agents get `general` by default, no config needed
    - **Agent roster**: sybil (queen), sage/sam/santos/saber/scout/jp-morgan (vulkn), sofia/pao (cellosa)
 
-2. **Frontier Lab Real-Time Fix** (Mar 12): Direct API architecture 🚀
+3. **Frontier Lab Real-Time Fix** (Mar 12): Direct API architecture 🚀
    - Bypassed hooks system causing EXTERNAL_UNTRUSTED_CONTENT wrapper
    - Fixed auth: gateway_token not webhook_token for completions API
    - **Result**: Real-time agent responses (seconds vs 2-minute polling)
