@@ -4,6 +4,7 @@
 # Allow skills directory
 !/skills/
 !/rag/
+!/scripts/
 
 # Allow specific root files
 !/.gitignore
