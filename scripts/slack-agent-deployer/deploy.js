@@ -5,9 +5,13 @@
  * Usage:
  *   node deploy.js --agent sage --workspace vulkn
  *   node deploy.js --agent sofia --generate-link --client acme
+ * 
+ * Config tokens expire in 12 hours - generate fresh at:
+ * https://api.slack.com/apps → Your user menu → Generate Token
  */
 
 const https = require('https');
+const readline = require('readline');
 
 // Agent templates
 const AGENT_TEMPLATES = {
@@ -189,6 +193,21 @@ function generateOpenClawConfig(appToken, botToken, channels = ['agent-party']) 
   };
 }
 
+// Prompt for input
+function prompt(question) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer.trim());
+    });
+  });
+}
+
 // Main CLI
 async function main() {
   const args = process.argv.slice(2);
@@ -202,7 +221,7 @@ async function main() {
     }
   }
   
-  const configToken = process.env.SLACK_CONFIG_TOKEN;
+  let configToken = process.env.SLACK_CONFIG_TOKEN;
   const clientId = process.env.SLACK_CLIENT_ID;
   const redirectUri = process.env.OAUTH_REDIRECT_URI || 'https://vulkn.ai/slack/oauth';
   
@@ -224,9 +243,18 @@ async function main() {
   if (flags.agent) {
     // Create new app
     if (!configToken) {
-      console.error('Error: SLACK_CONFIG_TOKEN required');
-      console.error('Get one at: https://api.slack.com/apps (Generate Token)');
-      process.exit(1);
+      console.log('\n📋 Slack Config Token needed (expires in 12h, that\'s OK)\n');
+      console.log('   1. Go to: https://api.slack.com/apps');
+      console.log('   2. Click your user menu (top right)');
+      console.log('   3. Select "Generate Token"');
+      console.log('   4. Choose your workspace and generate\n');
+      
+      configToken = await prompt('Paste your config token (xoxe-...): ');
+      
+      if (!configToken || !configToken.startsWith('xoxe-')) {
+        console.error('❌ Invalid token. Must start with xoxe-');
+        process.exit(1);
+      }
     }
     
     console.log(`\n🚀 Creating Slack app for agent: ${flags.agent}\n`);
